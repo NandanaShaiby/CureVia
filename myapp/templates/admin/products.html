@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CureVia Admin - Products</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://fonts.googleapis.com/css?family=Rubik:400,700,900|Crimson+Text:400,400i" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <style>
+    /* Shared Admin Styles */
+    body { font-family: 'Rubik', sans-serif; background-color: #f8f9fa; color: #343a40; }
+    h1, h2, h3, h4, h5 { font-family: 'Rubik', sans-serif; font-weight: 700; }
+    .page-title { font-size: 2.5rem; color: #333; }
+
+    .site-wrap { display: flex; min-height: 100vh; }
+    .main-content { margin-left: 250px; width: calc(100% - 250px); padding: 0; }
+    .sidebar { width: 250px; position: fixed; top: 0; left: 0; height: 100%; background-color: #343a40; z-index: 1000; }
+    .sidebar .nav { padding-top: 1.5rem; }
+    .sidebar a.nav-link { padding: 15px 25px; text-decoration: none; font-size: 1.05rem; font-weight: 500; color: #adb5bd; display: flex; align-items: center; }
+    .sidebar a.nav-link i { margin-right: 15px; width: 20px; text-align: center; }
+    .sidebar a.nav-link:hover { background-color: #495057; color: #ffffff; }
+    .sidebar a.nav-link.active { background-color: #8e44ad; color: #ffffff; border-right: 4px solid #c39bd3; }
+    .sidebar .sidebar-heading { padding: 10px 25px; font-size: 0.8rem; font-weight: 700; color: #6c757d; text-transform: uppercase; letter-spacing: .08em; }
+
+    .admin-navbar { background-color: #fff; border-bottom: 1px solid #dee2e6; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .admin-navbar .logo a { font-family: 'Rubik', sans-serif; text-transform: uppercase; letter-spacing: .2em; font-size: 22px; font-weight: 900; color: #000; text-decoration: none; }
+    .admin-navbar .admin-profile { display: flex; align-items: center; font-weight: 500; }
+    .admin-navbar .admin-profile i { font-size: 1.5rem; color: #8e44ad; margin-right: 12px; background-color: #e9ecef; padding: 8px; border-radius: 50%; }
+
+    .page-content { padding: 2.5rem; }
+    .page-header { margin-bottom: 1.5rem; }
+    .card { border: none; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
+    .card-header { background-color: #8e44ad; color: #fff; font-weight: 500; font-size: 1.25rem; padding: 1rem 1.5rem; border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom: 0; }
+    .card-body { padding: 1.5rem; }
+
+    .product-img { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; border: 1px solid #dee2e6; }
+    .badge-stock-low { background-color: #ffc107; color: #000; }
+    .badge-stock-out { background-color: #dc3545; color: #fff; }
+    .badge-stock-ok { background-color: #28a745; color: #fff; }
+
+    /* Modal Styles */
+    .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); padding-top: 60px; }
+    .modal-content { background-color: #fefefe; margin: 5% auto; padding: 0; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: animatetop 0.4s; }
+    @keyframes animatetop { from {top: -300px; opacity: 0} to {top: 0; opacity: 1} }
+    .modal-header { padding: 1rem 1.5rem; background-color: #8e44ad; color: white; border-top-left-radius: 12px; border-top-right-radius: 12px; }
+    .close-button { color: #fff; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+    .modal-body { padding: 1.5rem; }
+  </style>
+</head>
+<body>
+
+  <div class="site-wrap">
+    <div class="sidebar">
+      <nav class="nav flex-column">
+        <div class="sidebar-heading">Main</div>
+        <a class="nav-link" href="/adminp/"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a class="nav-link active" href="/admin_products/"><i class="fas fa-pills"></i> Products</a>
+        <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i> Orders</a>
+        <a class="nav-link" href="/customer/"><i class="fas fa-users"></i> Customers</a>
+        <a class="nav-link" href="/pharmacists/"><i class="fas fa-user-md"></i> Pharmacists</a>
+        <a class="nav-link" href="/pharmacies/"><i class="fas fa-clinic-medical"></i> Pharmacies</a>
+        <a class="nav-link" id="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </div>
+
+    <div class="main-content">
+      <header class="admin-navbar">
+        <div class="logo"><a href="#">CureVia</a></div>
+        <div class="admin-profile"><i class="fas fa-user-shield"></i><span>Administrator</span></div>
+      </header>
+
+      <main class="page-content">
+        <div class="container-fluid">
+
+          <div class="page-header">
+            <h1 class="page-title">Global Inventory</h1>
+          </div>
+
+          <!-- FILTERS CARD -->
+          <div class="card mb-4">
+            <div class="card-body p-3 bg-light">
+                <div class="row">
+                    <!-- Search -->
+                    <div class="col-md-4 mb-2">
+                        <input type="text" id="filter-search" class="form-control" placeholder="Search by Name...">
+                    </div>
+                    <!-- Category -->
+                    <div class="col-md-2 mb-2">
+                        <select id="filter-category" class="form-control">
+                            <option value="all">All Categories</option>
+                            {% for c in categories %}
+                                <option value="{{ c.name }}">{{ c.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                     <!-- Search Purpose -->
+                    <div class="col-md-3 mb-2">
+                        <input type="text" id="filter-purpose" class="form-control" placeholder="Search Purpose...">
+                    </div>
+                    <!-- Pharmacy -->
+                    <div class="col-md-2 mb-2">
+                        <select id="filter-pharmacy" class="form-control">
+                            <option value="all">All Pharmacies</option>
+                            {% for ph in pharmacies %}
+                                <option value="{{ ph.name }}">{{ ph.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <!-- Pharmacist -->
+                    <div class="col-md-2 mb-2">
+                        <select id="filter-pharmacist" class="form-control">
+                            <option value="all">All Pharmacists</option>
+                            {% for phar in pharmacists %}
+                                <option value="{{ phar.fname }}">{{ phar.fname }} {{ phar.lname }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+          </div>
+
+          <!-- TABLE CARD -->
+          <div class="card">
+            <div class="card-header">All Medicines</div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th>Image</th>
+                      <th>Name</th>
+                      <th>Category</th>
+                      <th>Purpose</th>
+                      <th>Price</th>
+                      <th>Stock</th>
+                      <th>Pharmacy / Pharmacist</th>
+                      <th class="text-center">Details</th>
+                    </tr>
+                  </thead>
+                  <tbody id="product-table-body">
+                    {% for p in products %}
+                    <!-- ADD DATA ATTRIBUTES FOR EASY JS FILTERING -->
+                    <tr
+                        data-name="{{ p.name|lower }}"
+                        data-category="{{ p.category.name|lower }}"
+                        data-purpose="{{ p.purpose|lower }}"
+                        data-pharmacy="{{ p.added_by.pharmacy.name|lower|default:'head office' }}"
+                        data-pharmacist="{{ p.added_by.fname|lower }}"
+                    >
+                      <td>
+                        {% if p.image %}
+                            <img src="{{ p.image.url }}" alt="{{ p.name }}" class="product-img">
+                        {% else %}
+                            <div class="product-img bg-light d-flex align-items-center justify-content-center text-muted"><i class="fas fa-image"></i></div>
+                        {% endif %}
+                      </td>
+                      <td>
+                          <strong>{{ p.name }}</strong>
+                          {% if p.rx_required %} <span class="badge badge-warning">Rx</span>{% endif %}
+                      </td>
+                      <td>{{ p.category.name }}</td>
+                      <td>{{ p.purpose }}</td>
+                      <td>₹{{ p.price }}</td>
+                      <td>
+                        {% if p.quantity == 0 %} <span class="badge badge-stock-out">Out of Stock</span>
+                        {% elif p.quantity < 10 %} <span class="badge badge-stock-low">{{ p.quantity }} Low</span>
+                        {% else %} <span class="badge badge-stock-ok">{{ p.quantity }}</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                          <strong>{{ p.added_by.pharmacy.name|default:"Head Office" }}</strong><br>
+                          <small class="text-muted">By: {{ p.added_by.fname }}</small>
+                      </td>
+                      <td class="text-center">
+                        <button class="btn btn-info btn-sm btn-view-product"
+                            data-name="{{ p.name }}"
+                            data-desc="{{ p.description }}"
+                            data-expiry="{{ p.expiry_date }}"
+                            title="View Full Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    {% empty %}
+                      <tr><td colspan="8" class="text-center">No medicines found.</td></tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div id="product-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Product Details</h2>
+        <span class="close-button">&times;</span>
+      </div>
+      <div class="modal-body">
+        <h4 id="m-name" class="text-primary"></h4>
+        <p><strong>Expiry Date:</strong> <span id="m-expiry"></span></p>
+        <hr>
+        <p><strong>Description:</strong></p>
+        <p id="m-desc" class="text-muted"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTER LOGIC -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // 1. Get Elements
+        const fSearch = document.getElementById('filter-search');
+        const fPurpose = document.getElementById('filter-purpose'); // Now an Input
+        const fCategory = document.getElementById('filter-category');
+        const fPharmacy = document.getElementById('filter-pharmacy');
+        const fPharmacist = document.getElementById('filter-pharmacist');
+        const rows = document.querySelectorAll('#product-table-body tr');
+
+        // 2. Filter Function
+        function filterTable() {
+            const searchVal = fSearch.value.toLowerCase();
+            const purVal = fPurpose.value.toLowerCase(); // Text input value
+            const catVal = fCategory.value.toLowerCase();
+            const pharVal = fPharmacy.value.toLowerCase();
+            const userVal = fPharmacist.value.toLowerCase();
+
+            rows.forEach(row => {
+                // Get data from data attributes
+                const name = row.getAttribute('data-name');
+                const purpose = row.getAttribute('data-purpose');
+                const category = row.getAttribute('data-category');
+                const pharmacy = row.getAttribute('data-pharmacy');
+                const pharmacist = row.getAttribute('data-pharmacist');
+
+                // Check Matches
+                // For Purpose: We now use .includes() for partial search instead of exact match
+                const matchSearch = name.includes(searchVal);
+                const matchPur = purpose.includes(purVal);
+
+                const matchCat = (catVal === 'all') || (category === catVal);
+                const matchPhar = (pharVal === 'all') || (pharmacy === pharVal);
+                const matchUser = (userVal === 'all') || (pharmacist === userVal);
+
+                // Show or Hide
+                if (matchSearch && matchPur && matchCat && matchPhar && matchUser) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // 3. Attach Listeners
+        fSearch.addEventListener('keyup', filterTable);
+        fPurpose.addEventListener('keyup', filterTable); // Changed 'change' to 'keyup' for instant typing
+        fCategory.addEventListener('change', filterTable);
+        fPharmacy.addEventListener('change', filterTable);
+        fPharmacist.addEventListener('change', filterTable);
+
+        // Modal Logic (No changes needed here)
+        const modal = document.getElementById('product-modal');
+        const closeBtn = modal.querySelector('.close-button');
+        document.querySelectorAll('.btn-view-product').forEach(btn => {
+            btn.addEventListener('click', function() {
+                modal.querySelector('#m-name').textContent = this.getAttribute('data-name');
+                modal.querySelector('#m-expiry').textContent = this.getAttribute('data-expiry');
+                modal.querySelector('#m-desc').textContent = this.getAttribute('data-desc');
+                modal.style.display = 'block';
+            });
+        });
+        closeBtn.onclick = function() { modal.style.display = 'none'; }
+        window.onclick = function(e) { if(e.target == modal) modal.style.display = 'none'; }
+    });
+  </script>
+</body>
+</html>

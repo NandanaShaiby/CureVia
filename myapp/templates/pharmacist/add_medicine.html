@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CureVia - Add Medicine</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link href="https://fonts.googleapis.com/css?family=Rubik:400,500,700|Crimson+Text:400,400i" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <style>
+    /* --- Dark Mode Palette --- */
+    :root {
+      --bg-dark: #1a202c;
+      --bg-light: #2d3748;
+      --border-color: #4a5568;
+      --text-primary: #e2e8f0;
+      --text-secondary: #a0aec0;
+      --accent: #51eaea;
+      --accent-hover: #43c4c4;
+    }
+
+    /* --- Base Styles --- */
+    body {
+      line-height: 1.7;
+      color: var(--text-secondary);
+      font-weight: 400;
+      font-size: 16px;
+      font-family: 'Rubik', sans-serif;
+      background-color: var(--bg-dark);
+    }
+
+    a {
+      color: var(--accent);
+      transition: .3s all ease;
+    }
+    a:hover {
+      color: var(--accent-hover);
+      text-decoration: none;
+    }
+
+    /* --- Typography --- */
+    h1, h2, h3, h4, h5, h6, .text-black {
+      color: var(--text-primary);
+    }
+    .site-logo a {
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      font-size: 22px;
+      color: var(--text-primary) !important;
+      font-weight: 700;
+    }
+    .section-title {
+       font-size: 1.5rem;
+       color: var(--text-primary);
+       font-weight: 500;
+       border-bottom: 1px solid var(--border-color);
+       padding-bottom: 15px;
+       margin-bottom: 25px;
+    }
+
+    /* --- Navbar --- */
+    .site-navbar {
+      background-color: rgba(26, 32, 44, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.5rem 0;
+    }
+    .site-navbar .site-menu > li > a {
+      padding: 10px 15px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      display: block;
+    }
+    .site-navbar .site-menu > li > a:hover { color: var(--text-primary); }
+    .site-navbar .site-menu .active > a { color: var(--accent); }
+    .welcome-text strong { color: var(--text-primary); }
+
+    /* --- Content Panels & Forms --- */
+    .content-panel {
+        background-color: var(--bg-light);
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+    }
+    .form-group label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+    .form-control, .form-control-file {
+        background-color: var(--bg-dark);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        border-radius: 8px;
+        padding: 10px 15px;
+    }
+    .form-control:focus {
+        background-color: var(--bg-dark);
+        color: var(--text-primary);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 0.2rem rgba(81, 234, 234, 0.25);
+    }
+    .form-control::placeholder {
+        color: #718096;
+    }
+    .form-check-input {
+      margin-top: 0.4rem;
+    }
+    .form-check-label {
+      margin-left: 0.5rem;
+    }
+
+    /* --- Buttons --- */
+    .btn {
+        border-radius: 20px;
+        font-weight: 500;
+        padding: 10px 25px;
+        font-size: 15px;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+    .btn-primary {
+      color: #000;
+      background-color: var(--accent);
+      border-color: var(--accent);
+    }
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+      border-color: var(--accent-hover);
+      box-shadow: 0 0 15px rgba(81, 234, 234, 0.4);
+    }
+    .btn-outline-danger {
+      color: #e53e3e;
+      border-color: #e53e3e;
+    }
+    .btn-outline-danger:hover {
+      color: #fff;
+      background-color: #e53e3e;
+    }
+
+    /* --- Footer --- */
+    .site-footer {
+      padding: 3em 0;
+      background: #151a23;
+      border-top: 1px solid var(--border-color);
+      margin-top: 50px;
+    }
+  </style>
+
+</head>
+<body>
+
+  <div class="site-wrap">
+    <!-- Header -->
+    <div class="site-navbar py-2">
+      <div class="container">
+        <div class="d-flex align-items-center">
+            <!-- Left: Logo -->
+            <div class="logo-area flex-shrink-0">
+                <div class="site-logo">
+                    <a href="#">CureVia</a>
+                </div>
+            </div>
+
+            <!-- Center: Navigation -->
+            <div class="nav-area flex-grow-1 d-none d-lg-block">
+                <nav class="site-navigation" role="navigation">
+                    <ul class="site-menu d-flex justify-content-center">
+                        <li><a href="#">Dashboard</a></li>
+                        <li><a href="#">Prescriptions</a></li>
+                        <li><a href="#">Inventory</a></li>
+                        <li class="active"><a href="#">Add</a></li>
+                        <li><a href="#">Orders</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Right: User Actions -->
+            <div class="user-area flex-shrink-0 ml-auto">
+                <div class="d-flex align-items-center">
+                    <div class="welcome-text d-none d-xl-block">Welcome, <strong>Dr. Reed</strong></div>
+                    <a href="#" class="btn btn-sm btn-outline-danger ml-4">
+                        <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="site-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <div class="content-panel">
+              <h3 class="section-title">Add New Medicine to Inventory</h3>
+
+              <!-- Add Medicine Form -->
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %} <!-- Django security token -->
+
+                <!-- Display non-field errors if any -->
+                {% if form.non_field_errors %}
+                  <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+                <div class="form-group">
+
+                        <label for="name">Medicine</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter medicine name" required>
+
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="category">Category</label>
+                        <select name="category" id="category" class="form-control" required>
+                            {% for cat in addmed %}
+                            <option value="{{ cat.id }}">{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="purpose">Purpose</label>
+                        <input type="text" class="form-control" id="purpose" name="purpose" placeholder="Enter medicine purpose" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                 <label for="des">Description</label>
+                    <input type="text" class="form-control" id="des" name="description" placeholder="Enter description" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="price">Price</label>
+                        <input type="text" class="form-control" id="price" name="price" placeholder="Enter medicine price" required>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="quantity">Quantity</label>
+                        <input type="text" class="form-control" id="quantity" name="quantity" placeholder="Enter medicine quantity" required>
+                    </div>
+                     <div class="form-group col-md-4">
+                        <label>Rx Required:</label><br>
+
+                        <input type="radio" id="rx_yes" name="rx" value="1">
+                        <label for="rx_yes">Yes</label><br>
+
+                        <input type="radio" id="rx_no" name="rx" value="0">
+                        <label for="rx_no">No</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="expiry">Expiry</label>
+                    <input type="date" class="form-control" id="expiry" name="expiry" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="image">Image</label>
+                    <input type="file" id="image" name="image" required>
+                </div>
+
+                <hr style="border-top: 1px solid var(--border-color); margin: 25px 0;">
+
+                <div class="text-right">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle mr-2"></i>Add Medicine</button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container text-center">
+        <p class="mb-0 text-secondary">
+          Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | CureVia Pharmacist Portal
+        </p>
+      </div>
+    </footer>
+  </div>
+
+</body>
+</html>

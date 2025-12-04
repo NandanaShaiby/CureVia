@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <title>General Rx Requests</title>
+  <!-- Include same HEAD as your other pharmacist pages -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+      /* Copy the CSS from your view_prescriptions.html or include a base.css */
+      body { background-color: #1a202c; color: #a0aec0; font-family: sans-serif; }
+      .content-panel { background-color: #2d3748; padding: 30px; border-radius: 12px; margin-top: 50px; }
+      .table { color: #e2e8f0; }
+      .btn-approve { border: 1px solid #48bb78; color: #48bb78; background: transparent; }
+      .btn-approve:hover { background: #48bb78; color: white; }
+      .btn-reject { border: 1px solid #f56565; color: #f56565; background: transparent; }
+      .btn-reject:hover { background: #f56565; color: white; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="content-panel">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="text-white">General Prescription Uploads</h3>
+            <a href="/pharmacist/" class="btn btn-secondary btn-sm">Back to Dashboard</a>
+        </div>
+
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> These users have uploaded a list. Please check the image, call the user, or manually add items to their cart.
+        </div>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Phone Number</th>
+                    <th>Uploaded Image</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in pres_list %}
+                <tr>
+                    <td>{{ p.user.fname }} {{ p.user.lname }}</td>
+                    <td><a href="tel:{{ p.user.phone }}" class="text-info">{{ p.user.phone }}</a></td>
+                    <td>
+                        <a href="{{ p.image.url }}" target="_blank">
+                            <img src="{{ p.image.url }}" style="height: 80px; width: 80px; object-fit: cover; border-radius: 5px;">
+                        </a>
+                    </td>
+                    <td>{{ p.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        <!-- You can reuse the same approve/reject logic, or make new functions if you want specific behavior -->
+                        <a href="{% url 'approve_prescription' p.id %}" class="btn btn-approve btn-sm">
+                            <i class="fas fa-check"></i> Processed
+                        </a>
+                        <a href="{% url 'reject_prescription' p.id %}" class="btn btn-reject btn-sm">
+                            <i class="fas fa-times"></i> Reject
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No general requests pending.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CureVia Admin Dashboard</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Google Fonts: Rubik and Crimson Text -->
+  <link href="https://fonts.googleapis.com/css?family=Rubik:400,700,900|Crimson+Text:400,400i" rel="stylesheet">
+
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <style>
+    /* --------------------------------------------------- */
+    /* Base & Typography */
+    /* --------------------------------------------------- */
+    body {
+      font-family: 'Rubik', sans-serif;
+      background-color: #f8f9fa;
+      color: #343a40;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1, h2, h3, h4, h5 {
+        font-family: 'Rubik', sans-serif;
+        font-weight: 700;
+    }
+
+    /* MODIFIED: Changed font to Rubik for consistency */
+    .page-title {
+        font-family: 'Rubik', sans-serif;
+        font-weight: 700;
+        font-size: 2.5rem;
+        color: #333;
+    }
+
+    /* --------------------------------------------------- */
+    /* Main Layout: Sidebar + Content */
+    /* --------------------------------------------------- */
+    .site-wrap {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      padding: 0;
+      transition: margin-left 0.3s ease;
+    }
+
+    /* --------------------------------------------------- */
+    /* Sidebar Styles */
+    /* --------------------------------------------------- */
+    .sidebar {
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background-color: #343a40;
+      /* MODIFIED: Removed top padding to move items up */
+      z-index: 1000;
+    }
+
+    /* NEW: Added padding to the nav container itself */
+    .sidebar .nav {
+        padding-top: 1.5rem;
+    }
+
+    .sidebar a.nav-link {
+      padding: 15px 25px;
+      text-decoration: none;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #adb5bd;
+      display: flex;
+      align-items: center;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .sidebar a.nav-link i {
+        margin-right: 15px;
+        width: 20px;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    .sidebar a.nav-link:hover {
+      background-color: #495057;
+      color: #ffffff;
+    }
+
+    .sidebar a.nav-link.active {
+      background-color: #8e44ad;
+      color: #ffffff;
+      border-right: 4px solid #c39bd3; /* Softer violet accent */
+    }
+
+    .sidebar .sidebar-heading {
+      padding: 10px 25px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    /* --------------------------------------------------- */
+    /* Top Navigation Bar */
+    /* --------------------------------------------------- */
+    .admin-navbar {
+      background-color: #fff;
+      border-bottom: 1px solid #dee2e6;
+      padding: 1rem 2rem;
+      display: flex;
+      /* MODIFIED: Justify content to space items apart */
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* NEW: Style for the logo now in the navbar */
+    .admin-navbar .logo a {
+      font-family: 'Rubik', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      font-size: 22px;
+      font-weight: 900;
+      color: #000000; /* Black color as requested */
+      text-decoration: none;
+    }
+    .admin-navbar .logo a:hover {
+        opacity: 0.8;
+    }
+
+    .admin-navbar .admin-profile {
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+      color: #343a40;
+    }
+
+    .admin-navbar .admin-profile i {
+      font-size: 1.5rem;
+      color: #8e44ad;
+      margin-right: 12px;
+      background-color: #e9ecef;
+      padding: 8px;
+      border-radius: 50%;
+    }
+
+    /* --------------------------------------------------- */
+    /* Page Content & Cards */
+    /* --------------------------------------------------- */
+    .page-content {
+        padding: 2.5rem;
+    }
+
+    .card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      margin-bottom: 1.5rem;
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+        transform: translateY(-3px);
+    }
+
+    .card-header {
+      background-color: #8e44ad;
+      color: #fff;
+      font-weight: 500;
+      font-family: 'Rubik', sans-serif;
+      font-size: 1.25rem;
+      padding: 1rem 1.5rem;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      border-bottom: 0;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    .stat-card {
+      display: flex;
+      align-items: center;
+    }
+
+    .stat-card .icon {
+      font-size: 2.8rem;
+      margin-right: 1.5rem;
+      color: #8e44ad;
+      opacity: 0.8;
+    }
+
+    .stat-card .stat-info h5 {
+      margin-bottom: 0.5rem;
+      color: #6c757d;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .stat-card .stat-info h2 {
+      margin-bottom: 0;
+      font-weight: 700;
+      color: #343a40;
+    }
+
+    /* --------------------------------------------------- */
+    /* Table & Buttons */
+    /* --------------------------------------------------- */
+    .table-responsive {
+      margin-top: 1rem;
+    }
+    .table th {
+        font-weight: 600;
+        border-top: none;
+    }
+    .table td, .table th {
+      vertical-align: middle;
+    }
+
+    .btn-primary {
+      background-color: #8e44ad;
+      border-color: #8e44ad;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+
+    .btn-primary:hover {
+      background-color: #7d3c98;
+      border-color: #7d3c98;
+      transform: translateY(-2px);
+    }
+
+    .badge {
+        font-size: 0.8rem;
+        padding: 0.5em 0.8em;
+        font-weight: 500;
+        border-radius: 15px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="site-wrap">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Logo is now removed from here -->
+      <nav class="nav flex-column">
+        <div class="sidebar-heading">Main</div>
+        <a href="#" class="nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="/admin_products/" class="nav-link"><i class="fas fa-pills"></i> Products</a>
+        <a href="#" class="nav-link"><i class="fas fa-shopping-cart"></i> Orders</a>
+        <a href="/customer/" class="nav-link"><i class="fas fa-users"></i> Customers</a>
+          <a href="/pharmacies/" class="nav-link"><i class="fas fa-prescription-bottle-alt"></i> Pharmacies</a>
+          <a href="/pharmacists/" class="nav-link"><i class="fas fa-user-md"></i> Pharmacists</a>
+          <a href="#" class="nav-link"><i class="fas fa-shipping-fast"></i>Delivery Agents</a>
+          <a href="#" class="nav-link"><i class="fas fa-chart-bar"></i> Reports</a>
+        <div class="sidebar-heading">Settings</div>
+        <a href="#" class="nav-link"><i class="fas fa-cog"></i> Site Settings</a>
+        <a href="#" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <header class="admin-navbar">
+        <!-- Logo is now here -->
+        <div class="logo">
+          <a href="#">CureVia</a>
+        </div>
+        <div class="admin-profile">
+          <i class="fas fa-user-shield"></i>
+          <span>Administrator</span>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div class="container-fluid">
+          <h1 class="page-title mb-4">Dashboard</h1>
+
+          <div class="row">
+            <div class="col-lg-4">
+              <div class="card">
+                <div class="card-body stat-card">
+                  <div class="icon"><i class="fas fa-shopping-cart"></i></div>
+                  <div class="stat-info">
+                    <h5>Total Orders</h5>
+                    <h2>1,250</h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card">
+                <div class="card-body stat-card">
+                  <div class="icon"><i class="fas fa-dollar-sign"></i></div>
+                  <div class="stat-info">
+                    <h5>Total Revenue</h5>
+                    <h2>$85,350</h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card">
+                <div class="card-body stat-card">
+                  <div class="icon"><i class="fas fa-users"></i></div>
+                  <div class="stat-info">
+                    <h5>New Customers</h5>
+                    <h2>320</h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              Recent Orders
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Order ID</th>
+                      <th>Customer</th>
+                      <th>Date</th>
+                      <th>Total</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>#1256</td>
+                      <td>John Doe</td>
+                      <td>2025-11-08</td>
+                      <td>$120.50</td>
+                      <td><span class="badge badge-success">Shipped</span></td>
+                      <td><a href="#" class="btn btn-sm btn-primary">View</a></td>
+                    </tr>
+                    <tr>
+                      <td>#1255</td>
+                      <td>Jane Smith</td>
+                      <td>2025-11-08</td>
+                      <td>$75.00</td>
+                      <td><span class="badge badge-warning text-dark">Processing</span></td>
+                      <td><a href="#" class="btn btn-sm btn-primary">View</a></td>
+                    </tr>
+                    <tr>
+                        <td>#1254</td>
+                        <td>Mike Johnson</td>
+                        <td>2025-11-07</td>
+                        <td>$250.00</td>
+                        <td><span class="badge badge-success">Delivered</span></td>
+                        <td><a href="#" class="btn btn-sm btn-primary">View</a></td>
+                    </tr>
+                    <tr>
+                        <td>#1253</td>
+                        <td>Emily Williams</td>
+                        <td>2025-11-07</td>
+                        <td>$45.25</td>
+                        <td><span class="badge badge-danger">Cancelled</span></td>
+                        <td><a href="#" class="btn btn-sm btn-primary">View</a></td>
+                    </tr>
+                     <tr>
+                      <td>#1252</td>
+                      <td>Chris Brown</td>
+                      <td>2025-11-06</td>
+                      <td>$88.00</td>
+                      <td><span class="badge badge-success">Delivered</span></td>
+                      <td><a href="#" class="btn btn-sm btn-primary">View</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CureVia Admin - Add Pharmacy</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://fonts.googleapis.com/css?family=Rubik:400,700,900|Crimson+Text:400,400i" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <style>
+    /* Exact same styles */
+    body { font-family: 'Rubik', sans-serif; background-color: #f8f9fa; color: #343a40; }
+    h1, h2, h3, h4, h5 { font-family: 'Rubik', sans-serif; font-weight: 700; }
+    .page-title { font-size: 2.5rem; color: #333; }
+    .site-wrap { display: flex; min-height: 100vh; }
+    .main-content { margin-left: 250px; width: calc(100% - 250px); padding: 0; }
+    .sidebar { width: 250px; position: fixed; top: 0; left: 0; height: 100%; background-color: #343a40; z-index: 1000; }
+    .sidebar .nav { padding-top: 1.5rem; }
+    .sidebar a.nav-link { padding: 15px 25px; text-decoration: none; font-size: 1.05rem; font-weight: 500; color: #adb5bd; display: flex; align-items: center; }
+    .sidebar a.nav-link i { margin-right: 15px; width: 20px; text-align: center; }
+    .sidebar a.nav-link:hover { background-color: #495057; color: #ffffff; }
+    .sidebar a.nav-link.active { background-color: #8e44ad; color: #ffffff; border-right: 4px solid #c39bd3; }
+    .sidebar .sidebar-heading { padding: 10px 25px; font-size: 0.8rem; font-weight: 700; color: #6c757d; text-transform: uppercase; letter-spacing: .08em; }
+    .admin-navbar { background-color: #fff; border-bottom: 1px solid #dee2e6; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .admin-navbar .logo a {
+        font-family: 'Rubik', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: .2em;
+        font-size: 22px;
+        font-weight: 900;
+        color: #000000; /* This makes it BLACK */
+        text-decoration: none;
+    .page-content { padding: 2.5rem; }
+    .card { border: none; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
+    .card-header { background-color: #8e44ad; color: #fff; font-weight: 500; font-size: 1.25rem; padding: 1rem 1.5rem; border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom: 0; }
+    .card-body { padding: 1.5rem 2rem; }
+    .btn-primary { background-color: #8e44ad; border-color: #8e44ad; }
+    .btn-primary:hover { background-color: #7d3c98; border-color: #7d3c98; }
+    .form-control:focus { border-color: #c39bd3; box-shadow: 0 0 0 0.2rem rgba(142, 68, 173, 0.25); }
+  </style>
+</head>
+<body>
+
+  <div class="site-wrap">
+    <div class="sidebar">
+      <nav class="nav flex-column">
+        <div class="sidebar-heading">Main</div>
+        <a class="nav-link" href="/adminp/"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a class="nav-link" href="#"><i class="fas fa-pills"></i> Products</a>
+        <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i> Orders</a>
+        <a class="nav-link" href="/customer/"><i class="fas fa-users"></i> Customers</a>
+        <a href="/pharmacies/" class="nav-link active"><i class="fas fa-prescription-bottle-alt"></i> Pharmacies</a>
+          <a href="/pharmacists/" class="nav-link"><i class="fas fa-user-md"></i> Pharmacists</a>
+          <a href="#" class="nav-link"><i class="fas fa-shipping-fast"></i>Delivery Agents</a>
+        <a class="nav-link" id="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </div>
+
+    <div class="main-content">
+      <header class="admin-navbar">
+        <div class="logo"><a href="#">CureVia</a></div>
+        <div class="admin-profile"><i class="fas fa-user-shield"></i><span>Administrator</span></div>
+      </header>
+
+      <main class="page-content">
+        <div class="container-fluid">
+          <div class="page-header">
+            <h1 class="page-title">Add New Pharmacy</h1>
+          </div>
+
+          <div class="card">
+            <div class="card-header">New Pharmacy Details</div>
+            <div class="card-body">
+              <form method="post">
+                {% csrf_token %}
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="name">Pharmacy Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="e.g. City Meds" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="location">Location (City/Zone)</label>
+                        <input type="text" class="form-control" id="location" name="location" placeholder="e.g. Kochi" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="branch@example.com" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="contact">Contact Number</label>
+                        <input type="text" class="form-control" id="contact" name="contact" placeholder="Phone Number" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="service">Service Pincodes</label>
+                    <input type="text" class="form-control" id="service" name="service" placeholder="e.g. 682001, 682002, 682003" required>
+                    <small class="form-text text-muted">Separate multiple pincodes with commas. These determine where this branch delivers.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Full Address</label>
+                    <textarea class="form-control" id="address" name="address" rows="3" placeholder="Building, Street, Landmark..." required></textarea>
+                </div>
+
+                <hr class="my-4">
+                <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-plus-circle mr-2"></i>Add Pharmacy</button>
+                <a href="/pharmacies/" class="btn btn-secondary btn-lg">Cancel</a>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CureVia Pharmacy</title>
+
+    <!-- Fonts: Rubik (Headings) & Open Sans (Body - Clean & Modern) -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Reset and Base Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #10847e;   /* CureVia Teal */
+            --primary-dark: #0a6b66;
+            --light: #f2f7fb;
+            --dark: #30363c;
+            --gray: #8897a2;
+            --error: #dc2626;
+            --success: #16a34a;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            /* CHANGED: Open Sans removes the "Times New Roman" look */
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-size: 1rem;
+        }
+
+        /* Rubik Font for Headings, Buttons, Logo */
+        h1, h2, h3, h4, h5, h6, .btn, label, .brand-logo, .divider span {
+            font-family: 'Rubik', sans-serif;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            transform: translateX(50px);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: 1px solid var(--primary);
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        /* Google Button Style */
+        .btn-google {
+            background-color: white;
+            color: #333;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-transform: none;
+            font-weight: 600;
+            font-family: 'Open Sans', sans-serif;
+        }
+        .btn-google:hover {
+            background-color: #f8f9fa;
+            border-color: #ccc;
+            transform: translateY(-1px);
+        }
+
+        .btn-full { width: 100%; margin-top: 10px; }
+
+        /* Header */
+        header { background-color: transparent; padding: 20px 0; }
+
+        .brand-logo {
+            font-family: 'Rubik', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+            text-align: center;
+        }
+
+        /* Login Section */
+        .login-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        .login-container {
+            display: flex;
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Left Side Image */
+        .login-image {
+            flex: 1;
+            background: linear-gradient(rgba(16, 132, 126, 0.85), rgba(10, 107, 102, 0.9)), url('https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') no-repeat center center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 50px;
+            color: white;
+        }
+        .login-image h2 { font-size: 2.2rem; margin-bottom: 15px; font-weight: 700; }
+        .benefits-list li { margin-bottom: 15px; display: flex; align-items: center; font-size: 1.05rem; }
+        .benefits-list i { margin-right: 15px; color: #a5f3fc; }
+
+        /* Right Side Form */
+        .login-form-container { flex: 1; padding: 50px; }
+        .form-header { text-align: center; margin-bottom: 30px; }
+        .form-header h2 { color: var(--dark); font-weight: 700; margin-bottom: 5px; }
+        .form-header p { color: var(--gray); font-size: 1rem; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--dark); font-size: 0.9rem; }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            /* Ensure Input font is also Clean */
+            font-family: 'Open Sans', sans-serif;
+            transition: border-color 0.3s;
+        }
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(16, 132, 126, 0.1);
+        }
+
+        /* Validation Styles */
+        .validation-msg {
+            font-size: 0.85rem;
+            margin-top: 6px;
+            display: none; /* Hidden by default */
+            font-weight: 600;
+        }
+        .validation-msg.invalid { color: var(--error); display: block; }
+        .validation-msg.valid { color: var(--success); display: block; }
+
+        .form-control.invalid-border { border-color: var(--error); }
+        .form-control.valid-border { border-color: var(--success); }
+
+        .form-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; font-size: 0.9rem; }
+        .forgot-password { color: var(--primary); font-weight: 600; }
+        .forgot-password:hover { text-decoration: underline; }
+
+        /* Divider */
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+        .divider::before {
+            content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background-color: #eee; z-index: 1;
+        }
+        .divider span { background: white; padding: 0 15px; position: relative; z-index: 2; }
+
+        .register-link { margin-top: 25px; text-align: center; color: var(--gray); font-size: 0.95rem; }
+        .register-link a { color: var(--primary); font-weight: 700; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-container { flex-direction: column; }
+            .login-image { display: none; }
+            .login-form-container { padding: 30px; }
+        }
+        @media (min-width: 769px) {
+            .login-image { display: flex; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header (Logo Only) -->
+    <header>
+        <div class="container">
+            <a href="/" class="brand-logo">CUREVIA</a>
+        </div>
+    </header>
+
+    <!-- Login Section -->
+    <section class="login-section">
+        <div class="container">
+            <div class="login-container">
+
+                <!-- Left Image -->
+                <div class="login-image">
+                    <h2>Welcome Back</h2>
+                    <p class="mb-4">Sign in to manage your prescriptions and track your orders.</p>
+
+                    <ul class="benefits-list">
+                        <li><i class="fas fa-check-circle"></i> Secure Order History</li>
+                        <li><i class="fas fa-check-circle"></i> Fast Prescription Refills</li>
+                        <li><i class="fas fa-check-circle"></i> Live Delivery Tracking</li>
+                    </ul>
+                </div>
+
+                <!-- Right Form -->
+                <div class="login-form-container">
+                    <div class="form-header">
+                        <h2>Sign In</h2>
+                        <p>Access your CureVia account</p>
+                    </div>
+
+                    <!-- ERROR MESSAGE (Django) -->
+                    {% if msg %}
+                    <div style="background-color: #fee2e2; color: #dc2626; padding: 10px; border-radius: 4px; margin-bottom: 20px; text-align: center; border: 1px solid #fecaca; font-family: 'Open Sans', sans-serif; font-size: 0.9rem;">
+                        <i class="fas fa-exclamation-circle"></i> Invalid Email or Password
+                    </div>
+                    {% endif %}
+
+                    <form action="/login/" method="POST" id="loginForm">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" id="email" name="email" class="form-control" placeholder="name@example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+
+                            <!-- REAL TIME VALIDATION MESSAGE -->
+                            <div id="passMsg" class="validation-msg">
+                                <i class="fas fa-circle-xmark"></i> Password must be at least 8 characters
+                            </div>
+                        </div>
+
+                        <div class="form-options">
+                            <div class="remember-me">
+                                <input type="checkbox" id="rememberMe">
+                                <label for="rememberMe" style="cursor: pointer;">Remember me</label>
+                            </div>
+                            <a href="/forgotpass/" class="forgot-password">Forgot Password?</a>
+                        </div>
+
+                        <!-- Login Button -->
+                        <button type="submit" class="btn btn-primary btn-full" id="submitBtn">Sign In</button>
+
+                        <!-- Google Sign In -->
+                        <div class="divider">
+                            <span>Or continue with</span>
+                        </div>
+
+                        <button type="button" class="btn btn-google btn-full">
+                            <i class="fab fa-google" style="color: #DB4437;"></i> Sign in with Google
+                        </button>
+
+                        <p class="register-link">
+                            New to CureVia? <a href="/reg/">Create Account</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real-Time Validation Script -->
+    <script>
+        const passwordInput = document.getElementById('password');
+        const passMsg = document.getElementById('passMsg');
+
+        // Listen for typing
+        passwordInput.addEventListener('input', function() {
+            const val = passwordInput.value;
+
+            if (val.length === 0) {
+                // Hide if empty
+                passMsg.style.display = 'none';
+                passwordInput.classList.remove('invalid-border', 'valid-border');
+            }
+            else if (val.length < 8) {
+                // Invalid state
+                passMsg.className = 'validation-msg invalid';
+                passMsg.innerHTML = '<i class="fas fa-circle-xmark"></i> Password must be at least 8 characters';
+                passwordInput.classList.add('invalid-border');
+                passwordInput.classList.remove('valid-border');
+            }
+            else {
+                // Valid state
+                passMsg.className = 'validation-msg valid';
+                passMsg.innerHTML = '<i class="fas fa-circle-check"></i> Password length looks good';
+                passwordInput.classList.remove('invalid-border');
+                passwordInput.classList.add('valid-border');
+            }
+        });
+    </script>
+
+</body>
+</html>

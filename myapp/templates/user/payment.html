@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+  <title>Pharma &mdash; Colorlib Template</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'index/fonts/icomoon/style.css' %}">
+
+  <link rel="stylesheet" href="{% static 'index/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'index/css/magnific-popup.css' %}">
+  <link rel="stylesheet" href="{% static 'index/css/jquery-ui.css' %}">
+  <link rel="stylesheet" href="{% static 'index/css/owl.carousel.min.css' %}">
+  <link rel="stylesheet" href="{% static 'index/css/owl.theme.default.min.css' %}">
+
+
+  <link rel="stylesheet" href="{% static 'index/css/aos.css' %}">
+
+  <link rel="stylesheet" href="{% static 'index/css/style.css' %}">
+
+</head>
+
+<body>
+
+  <div class="site-wrap">
+
+
+    <div class="site-navbar py-2">
+
+      <div class="search-wrap">
+        <div class="container">
+          <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
+          <form action="#" method="post">
+            <input type="text" class="form-control" placeholder="Search keyword and hit enter...">
+          </form>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="logo">
+            <div class="site-logo">
+              <a href="index.html" class="js-logo-clone">Pharma</a>
+            </div>
+          </div>
+          <div class="main-nav d-none d-lg-block">
+            <nav class="site-navigation text-right text-md-center" role="navigation">
+              <ul class="site-menu js-clone-nav d-none d-lg-block">
+                <li><a href="index.html">Home</a></li>
+                <li class="active"><a href="shop.html">Store</a></li>
+                <li class="has-children">
+                  <a href="#">Dropdown</a>
+                  <ul class="dropdown">
+                    <li><a href="#">Supplements</a></li>
+                    <li class="has-children">
+                      <a href="#">Vitamins</a>
+                      <ul class="dropdown">
+                        <li><a href="#">Supplements</a></li>
+                        <li><a href="#">Vitamins</a></li>
+                        <li><a href="#">Diet &amp; Nutrition</a></li>
+                        <li><a href="#">Tea &amp; Coffee</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="#">Diet &amp; Nutrition</a></li>
+                    <li><a href="#">Tea &amp; Coffee</a></li>
+
+                  </ul>
+                </li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+              </ul>
+            </nav>
+          </div>
+          <div class="icons">
+            <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
+            <a href="cart.html" class="icons-btn d-inline-block bag">
+              <span class="icon-shopping-bag"></span>
+              <span class="number">2</span>
+            </a>
+            <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span
+                class="icon-menu"></span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-light py-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 mb-0">
+            <a href="index.html">Home</a> <span class="mx-2 mb-0">/</span>
+            <a href="checkout.html">Checkout</a> <span class="mx-2 mb-0">/</span>
+            <strong class="text-black">Payment</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-section">
+      <div class="container">
+        <div class="row">
+
+          <!-- Payment Forms Column -->
+          <div class="col-md-7 mb-5 mb-md-0">
+            <h2 class="h3 mb-3 text-black">Payment Method</h2>
+
+            <div class="p-3 p-lg-5 border">
+
+              <!-- Payment Selection -->
+              <div class="form-group mb-4">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="paymentOption" id="creditCard" value="card" checked>
+                    <label class="form-check-label text-black" for="creditCard">Credit Card</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="paymentOption" id="paypal" value="paypal">
+                    <label class="form-check-label text-black" for="paypal">PayPal</label>
+                </div>
+              </div>
+
+              <!-- Credit Card Details -->
+              <div class="form-group row">
+                <div class="col-md-12">
+                  <label for="c_cardname" class="text-black">Name on Card <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="c_cardname" name="c_cardname" placeholder="John Doe">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-md-12">
+                  <label for="c_cardnumber" class="text-black">Card Number <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="c_cardnumber" name="c_cardnumber" placeholder="0000 0000 0000 0000">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-md-6">
+                  <label for="c_expdate" class="text-black">Expiration Date <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="c_expdate" name="c_expdate" placeholder="MM / YY">
+                </div>
+                <div class="col-md-6">
+                  <label for="c_cvv" class="text-black">CVV <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="c_cvv" name="c_cvv" placeholder="123">
+                </div>
+              </div>
+
+              <div class="form-group mt-4">
+                  <div class="d-flex align-items-center">
+                    <span class="icon-lock text-primary mr-2"></span>
+                    <span class="text-black"><small>Your transaction is secured with SSL encryption.</small></span>
+                  </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Order Summary Column -->
+          <div class="col-md-5">
+            <div class="row mb-5">
+              <div class="col-md-12">
+                <h2 class="h3 mb-3 text-black">Order Summary</h2>
+                <div class="p-3 p-lg-5 border">
+
+                  <table class="table site-block-order-table mb-5">
+                    <tbody>
+                      <tr>
+                        <td class="text-black font-weight-bold"><strong>Subtotal</strong></td>
+                        <td class="text-black">$350.00</td>
+                      </tr>
+                      <tr>
+                        <td class="text-black font-weight-bold"><strong>Shipping</strong></td>
+                        <td class="text-black">$0.00</td>
+                      </tr>
+                      <tr>
+                        <td class="text-black font-weight-bold"><strong>Total to Pay</strong></td>
+                        <td class="text-black font-weight-bold"><strong>$350.00</strong></td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="form-group">
+                    <button class="btn btn-primary btn-lg btn-block" onclick="window.location='/confirmpayment/'">Pay Now</button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+
+            <div class="block-7">
+              <h3 class="footer-heading mb-4">About Us</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quae reiciendis distinctio voluptates
+                sed dolorum excepturi iure eaque, aut unde.</p>
+            </div>
+
+          </div>
+          <div class="col-lg-3 mx-auto mb-5 mb-lg-0">
+            <h3 class="footer-heading mb-4">Quick Links</h3>
+            <ul class="list-unstyled">
+              <li><a href="#">Supplements</a></li>
+              <li><a href="#">Vitamins</a></li>
+              <li><a href="#">Diet &amp; Nutrition</a></li>
+              <li><a href="#">Tea &amp; Coffee</a></li>
+            </ul>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="block-5 mb-5">
+              <h3 class="footer-heading mb-4">Contact Info</h3>
+              <ul class="list-unstyled">
+                <li class="address">203 Fake St. Mountain View, San Francisco, California, USA</li>
+                <li class="phone"><a href="tel://23923929210">+2 392 3929 210</a></li>
+                <li class="email">emailaddress@domain.com</li>
+              </ul>
+            </div>
+
+
+          </div>
+        </div>
+        <div class="row pt-5 mt-5 text-center">
+          <div class="col-md-12">
+            <p>
+              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+              Copyright &copy;
+              <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made
+              with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank"
+                class="text-primary">Colorlib</a>
+              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="{% static 'index/js/jquery-3.3.1.min.js' %}"></script>
+  <script src="{% static 'index/js/jquery-ui.js' %}"></script>
+  <script src="{% static 'index/js/popper.min.js' %}"></script>
+  <script src="{% static 'index/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'index/js/owl.carousel.min.js' %}"></script>
+  <script src="{% static 'index/js/jquery.magnific-popup.min.js' %}"></script>
+  <script src="{% static 'index/js/aos.js' %}"></script>
+
+  <script src="{% static 'index/js/main.js' %}"></script>
+
+</body>
+
+</html>

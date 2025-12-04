@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CureVia Admin - Pharmacies</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://fonts.googleapis.com/css?family=Rubik:400,700,900|Crimson+Text:400,400i" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <style>
+    /* Exact same styles as your Pharmacist page */
+    body { font-family: 'Rubik', sans-serif; background-color: #f8f9fa; color: #343a40; }
+    h1, h2, h3, h4, h5 { font-family: 'Rubik', sans-serif; font-weight: 700; }
+    .page-title { font-size: 2.5rem; color: #333; }
+    .site-wrap { display: flex; min-height: 100vh; }
+    .main-content { margin-left: 250px; width: calc(100% - 250px); padding: 0; }
+    .sidebar { width: 250px; position: fixed; top: 0; left: 0; height: 100%; background-color: #343a40; z-index: 1000; }
+    .sidebar .nav { padding-top: 1.5rem; }
+    .sidebar a.nav-link { padding: 15px 25px; text-decoration: none; font-size: 1.05rem; font-weight: 500; color: #adb5bd; display: flex; align-items: center; }
+    .sidebar a.nav-link i { margin-right: 15px; width: 20px; text-align: center; }
+    .sidebar a.nav-link:hover { background-color: #495057; color: #ffffff; }
+    .sidebar a.nav-link.active { background-color: #8e44ad; color: #ffffff; border-right: 4px solid #c39bd3; }
+    .sidebar .sidebar-heading { padding: 10px 25px; font-size: 0.8rem; font-weight: 700; color: #6c757d; text-transform: uppercase; letter-spacing: .08em; }
+    .admin-navbar { background-color: #fff; border-bottom: 1px solid #dee2e6; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .admin-navbar .logo a { font-family: 'Rubik', sans-serif; text-transform: uppercase; letter-spacing: .2em; font-size: 22px; font-weight: 900; color: #000000; text-decoration: none; }
+    .admin-navbar .admin-profile { display: flex; align-items: center; font-weight: 500; }
+    .admin-navbar .admin-profile i { font-size: 1.5rem; color: #8e44ad; margin-right: 12px; background-color: #e9ecef; padding: 8px; border-radius: 50%; }
+    .page-content { padding: 2.5rem; }
+    .page-header { margin-bottom: 1.5rem; }
+    .card { border: none; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
+    .card-header { background-color: #8e44ad; color: #fff; font-weight: 500; font-size: 1.25rem; padding: 1rem 1.5rem; border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom: 0; }
+    .card-body { padding: 1.5rem; }
+    .table-responsive { margin-top: 1rem; }
+    .table th { font-weight: 600; border-top: none; }
+    .table td, .table th { vertical-align: middle; }
+    .badge { font-size: 90%; font-weight: 500; }
+    .btn-primary { background-color: #8e44ad; border-color: #8e44ad; }
+    .btn-primary:hover { background-color: #7d3c98; border-color: #7d3c98; }
+
+    /* Modal Styles */
+    .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); padding-top: 60px; }
+    .modal-content { background-color: #fefefe; margin: 5% auto; padding: 0; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: animatetop 0.4s; }
+    @keyframes animatetop { from {top: -300px; opacity: 0} to {top: 0; opacity: 1} }
+    .modal-header { padding: 1rem 1.5rem; background-color: #8e44ad; color: white; border-top-left-radius: 12px; border-top-right-radius: 12px; }
+    .close-button { color: #fff; float: right; font-size: 28px; font-weight: bold; }
+    .close-button:hover { color: #ddd; cursor: pointer; }
+    .modal-body { padding: 1.5rem; }
+  </style>
+</head>
+<body>
+
+  <div class="site-wrap">
+    <div class="sidebar">
+      <nav class="nav flex-column">
+        <div class="sidebar-heading">Main</div>
+        <a class="nav-link" href="/adminp/"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a class="nav-link" href="#"><i class="fas fa-pills"></i> Products</a>
+        <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i> Orders</a>
+        <a class="nav-link" href="/customer/"><i class="fas fa-users"></i> Customers</a>
+         <a href="/pharmacies/" class="nav-link active"><i class="fas fa-prescription-bottle-alt"></i> Pharmacies</a>
+          <a href="/pharmacists/" class="nav-link"><i class="fas fa-user-md"></i> Pharmacists</a>
+          <a href="#" class="nav-link"><i class="fas fa-shipping-fast"></i>Delivery Agents</a>
+        <a class="nav-link" href="#"><i class="fas fa-chart-bar"></i> Reports</a>
+        <div class="sidebar-heading">Settings</div>
+        <a class="nav-link" id="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </div>
+
+    <div class="main-content">
+      <header class="admin-navbar">
+        <div class="logo"><a href="#">CureVia</a></div>
+        <div class="admin-profile"><i class="fas fa-user-shield"></i><span>Administrator</span></div>
+      </header>
+
+      <main class="page-content">
+        <div class="container-fluid">
+
+          <div class="page-header">
+            <h1 class="page-title">Manage Pharmacies</h1>
+            <div class="d-flex align-items-center">
+                <input type="text" id="pharmacy-search" class="form-control mr-3" placeholder="Search pharmacies...">
+                <a href="{% url 'add_pharmacy' %}" class="btn btn-primary">
+                    <i class="fas fa-plus mr-2"></i>Add New
+                </a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">All Pharmacy Branches</div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Location</th>
+                      <th>Contact</th>
+                      <th>Pincodes</th>
+                      <th>Status</th>
+                      <th class="text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pharmacy-table-body">
+                    {% for i in us %}
+                    <tr>
+                      <td>{{ i.id }}</td>
+                      <td>{{ i.name }}</td>
+                      <td>{{ i.location }}</td>
+                      <td>{{ i.contact }}</td>
+                      <td>{{ i.service_pincodes }}</td>
+                      <td>
+                        {% if i.is_active %}
+                          <span class="badge badge-success">Active</span>
+                        {% else %}
+                          <span class="badge badge-danger">Blocked</span>
+                        {% endif %}
+                      </td>
+                      <td class="text-center action-buttons">
+                        <!-- View Details -->
+                        <button class="btn btn-info btn-sm btn-view-pharmacy"
+                            data-address="{{ i.address }}"
+                            data-email="{{ i.email }}"
+                            title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+
+                        <!-- Edit -->
+                        <a href="{% url 'edit_pharmacy' i.id %}" class="btn btn-warning btn-sm" title="Edit">
+                            <i class="fas fa-pencil-alt"></i>
+                        </a>
+
+                        <!-- Block/Unblock -->
+                        {% if i.is_active %}
+                          <a href="{% url 'block_pharmacy' i.id %}" class="btn btn-danger btn-sm" title="Block" onclick="return confirm('Block this pharmacy? Orders will stop.');">
+                            <i class="fas fa-ban"></i>
+                          </a>
+                        {% else %}
+                          <a href="{% url 'unblock_pharmacy' i.id %}" class="btn btn-success btn-sm" title="Unblock" onclick="return confirm('Activate this pharmacy?');">
+                            <i class="fas fa-check-circle"></i>
+                          </a>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% empty %}
+                      <tr><td colspan="7" class="text-center">No pharmacies added yet.</td></tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- POP-UP MODAL -->
+  <div id="pharmacy-details-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Pharmacy Details</h2>
+        <span class="close-button">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p><strong>ID:</strong> <span id="modal-id"></span></p>
+        <p><strong>Name:</strong> <span id="modal-name"></span></p>
+        <p><strong>Location:</strong> <span id="modal-location"></span></p>
+        <p><strong>Full Address:</strong> <span id="modal-address"></span></p>
+        <p><strong>Email:</strong> <span id="modal-email"></span></p>
+        <p><strong>Contact:</strong> <span id="modal-contact"></span></p>
+        <p><strong>Service Pincodes:</strong> <span id="modal-pincodes"></span></p>
+        <p><strong>Status:</strong> <span id="modal-status"></span></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search
+        const searchInput = document.getElementById('pharmacy-search');
+        const tableRows = document.getElementById('pharmacy-table-body').getElementsByTagName('tr');
+
+        searchInput.addEventListener('keyup', function() {
+            const term = searchInput.value.toLowerCase();
+            for (let i = 0; i < tableRows.length; i++) {
+                const row = tableRows[i];
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(term) ? '' : 'none';
+            }
+        });
+
+        // View Modal
+        const modal = document.getElementById('pharmacy-details-modal');
+        const closeBtn = modal.querySelector('.close-button');
+
+        document.querySelectorAll('.btn-view-pharmacy').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const address = this.getAttribute('data-address');
+                const email = this.getAttribute('data-email');
+
+                modal.querySelector('#modal-id').textContent = row.cells[0].textContent;
+                modal.querySelector('#modal-name').textContent = row.cells[1].textContent;
+                modal.querySelector('#modal-location').textContent = row.cells[2].textContent;
+                modal.querySelector('#modal-contact').textContent = row.cells[3].textContent;
+                modal.querySelector('#modal-pincodes').textContent = row.cells[4].textContent;
+                modal.querySelector('#modal-status').textContent = row.cells[5].textContent.trim();
+
+                modal.querySelector('#modal-address').textContent = address;
+                modal.querySelector('#modal-email').textContent = email;
+
+                modal.style.display = 'block';
+            });
+        });
+
+        closeBtn.onclick = function() { modal.style.display = 'none'; }
+        window.onclick = function(e) { if(e.target == modal) modal.style.display = 'none'; }
+    });
+  </script>
+</body>
+</html>

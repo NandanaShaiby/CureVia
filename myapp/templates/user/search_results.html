@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <!-- We include the same head as your index.html for styling -->
+    <title>Search Results</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'index/fonts/icomoon/style.css' %}">
+    <link rel="stylesheet" href="{% static 'index/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'index/css/style.css' %}">
+</head>
+<body>
+
+<div class="site-wrap">
+    <!-- Navbar (You might want to include your navbar here so user can navigate back) -->
+    <div class="site-navbar py-2">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="logo">
+                    <div class="site-logo">
+                        <a href="/user/" class="js-logo-clone">CureVia</a>
+                    </div>
+                </div>
+                <div class="main-nav d-none d-lg-block">
+                    <nav class="site-navigation text-right text-md-center" role="navigation">
+                        <ul class="site-menu js-clone-nav d-none d-lg-block">
+                            <li><a href="/user/">Home</a></li>
+                            <li><a href="/shop/">Store</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-light py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mb-0"><a href="/user/">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Search</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="site-section">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <h2 class="text-uppercase">Search Results for: "{{ query }}"</h2>
+                </div>
+            </div>
+
+            <div class="row">
+                {% if products %}
+                    {% for product in products %}
+                    <div class="col-sm-6 col-lg-4 text-center item mb-4">
+                        <a href="{% url 'single_product' product.id %}">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" style="height: 250px; width: 100%; object-fit: cover;" alt="{{ product.name }}">
+                            {% else %}
+                                <img src="{% static 'index/images/product_01.png' %}" alt="Image">
+                            {% endif %}
+                        </a>
+                        <h3 class="text-dark"><a href="{% url 'single_product' product.id %}">{{ product.name }}</a></h3>
+                        <p class="price">₹{{ product.price }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12 text-center">
+                        <h3 class="text-danger">No products found.</h3>
+                        <p>Try searching for a different medicine or category.</p>
+                        <p><a href="/shop/" class="btn btn-primary px-5 py-3">View All Products</a></p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="row pt-5 mt-5 text-center">
+          <div class="col-md-12">
+            <p>Copyright &copy; CureVia</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+</div>
+
+</body>
+</html>

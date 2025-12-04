@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <title>CureVia - Verify Prescriptions</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link href="https://fonts.googleapis.com/css?family=Rubik:400,500,700|Crimson+Text:400,400i" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <style>
+    /* --- Dark Mode Palette (Same as Home) --- */
+    :root {
+      --bg-dark: #1a202c;
+      --bg-light: #2d3748;
+      --border-color: #4a5568;
+      --text-primary: #e2e8f0;
+      --text-secondary: #a0aec0;
+      --accent: #51eaea;
+      --accent-hover: #43c4c4;
+      --success: #48bb78;
+      --danger: #f56565;
+    }
+
+    /* --- Base Styles --- */
+    body {
+      line-height: 1.7;
+      color: var(--text-secondary);
+      font-family: 'Rubik', sans-serif;
+      background-color: var(--bg-dark);
+    }
+
+    a { color: var(--accent); transition: .3s all ease; }
+    a:hover { color: var(--accent-hover); text-decoration: none; }
+
+    /* --- Navbar --- */
+    .site-navbar {
+      background-color: rgba(26, 32, 44, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.5rem 0;
+    }
+    .site-navbar .site-menu { margin: 0; padding: 0; list-style: none; }
+    .site-navbar .site-menu > li > a {
+      padding: 10px 15px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      display: block;
+    }
+    .site-navbar .site-menu > li > a:hover { color: var(--text-primary); }
+    .site-navbar .site-menu .active > a { color: var(--accent); }
+    .site-logo a {
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      font-size: 22px;
+      color: var(--text-primary) !important;
+      font-weight: 700;
+    }
+
+    /* --- Header/Hero (Smaller for internal pages) --- */
+    .inner-page-cover {
+      background-size: cover;
+      background-position: center;
+      padding: 4em 0;
+      background-color: #111;
+      position: relative;
+    }
+    .inner-page-cover:before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+    }
+    .inner-page-cover h1 {
+      position: relative;
+      color: #fff;
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      z-index: 2;
+    }
+
+    /* --- Content Panel --- */
+    .content-panel {
+        background-color: var(--bg-light);
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 50px;
+    }
+
+    /* --- Table Styles --- */
+    .site-blocks-table thead th {
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 1px;
+      border-bottom: 2px solid var(--border-color);
+      padding: 15px;
+      background-color: rgba(0,0,0,0.2);
+    }
+    .site-blocks-table tbody td {
+      color: var(--text-primary);
+      padding: 15px;
+      vertical-align: middle;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .site-blocks-table tbody tr:hover {
+        background-color: rgba(74, 85, 104, 0.3);
+    }
+
+    /* --- Buttons & Images --- */
+    .btn { border-radius: 20px; font-weight: 500; font-size: 14px; padding: 6px 16px;}
+
+    .btn-approve {
+        background-color: transparent;
+        border: 1px solid var(--success);
+        color: var(--success);
+    }
+    .btn-approve:hover { background-color: var(--success); color: #fff; }
+
+    .btn-reject {
+        background-color: transparent;
+        border: 1px solid var(--danger);
+        color: var(--danger);
+    }
+    .btn-reject:hover { background-color: var(--danger); color: #fff; }
+
+    .pres-img-thumb {
+        height: 60px;
+        width: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        transition: transform 0.2s;
+    }
+    .pres-img-thumb:hover { transform: scale(1.5); border-color: var(--accent); }
+
+    /* --- Footer --- */
+    .site-footer {
+      padding: 3em 0;
+      background: #151a23;
+      border-top: 1px solid var(--border-color);
+    }
+  </style>
+
+</head>
+<body>
+
+  <div class="site-wrap">
+
+    <!-- Navbar -->
+    <div class="site-navbar py-2">
+      <div class="container">
+        <div class="d-flex align-items-center">
+            <div class="logo-area flex-shrink-0">
+                <div class="site-logo">
+                    <a href="/pharmacist/">CureVia</a>
+                </div>
+            </div>
+            <div class="nav-area flex-grow-1 d-none d-lg-block">
+                <nav class="site-navigation" role="navigation">
+                    <ul class="site-menu d-flex justify-content-center">
+                        <li><a href="/pharmacist/">Dashboard</a></li>
+                        <li class="active"><a href="#">Prescriptions</a></li>
+                        <li><a href="#">Inventory</a></li>
+                        <li><a href="/addmed/">Add Medicine</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="user-area flex-shrink-0 ml-auto">
+                 <a href="/login/" class="btn btn-sm btn-outline-danger">Logout</a>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Section -->
+    <div class="inner-page-cover d-flex align-items-center" style="background-image: url('{% static 'index/images/hero_1.jpg' %}');">
+      <div class="container">
+        <div class="row justify-content-center text-center">
+          <div class="col-lg-7">
+            <h1>Verification Queue</h1>
+            <p class="text-white-50">Review patient uploads before approving sales.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="site-section">
+      <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="content-panel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="section-title mb-0" style="border:none;">Pending Requests</h3>
+                        <span class="badge badge-info">{{ pres_list.count }} Pending</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table site-blocks-table">
+                            <thead>
+                                <tr>
+                                    <th>Patient Name</th>
+                                    <th>Medicine</th>
+                                    <th>Prescription</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in pres_list %}
+                                <tr>
+                                    <td>
+                                        <strong class="text-white">{{ p.user.fname }} {{ p.user.lname }}</strong><br>
+                                        <small>{{ p.user.email }}</small>
+                                    </td>
+                                    <td>{{ p.medicine.name }}</td>
+                                    <td>
+                                        {% if p.image %}
+                                        <a href="{{ p.image.url }}" target="_blank">
+                                            <img src="{{ p.image.url }}" class="pres-img-thumb" alt="Rx">
+                                        </a>
+                                        {% else %}
+                                        <span class="text-muted">No Image</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ p.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'approve_prescription' p.id %}" class="btn btn-approve mr-2">
+                                            <i class="fas fa-check"></i> Approve
+                                        </a>
+                                        <a href="{% url 'reject_prescription' p.id %}" class="btn btn-reject">
+                                            <i class="fas fa-times"></i> Reject
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-5">
+                                        <i class="fas fa-clipboard-check fa-3x mb-3 text-secondary"></i>
+                                        <h4 class="text-white">All caught up!</h4>
+                                        <p>No pending prescriptions to review.</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container text-center">
+        <p class="mb-0 text-secondary">
+          Copyright &copy;<script>document.write(new Date().getFullYear());</script> CureVia Pharmacist Portal
+        </p>
+      </div>
+    </footer>
+  </div>
+
+</body>
+</html>

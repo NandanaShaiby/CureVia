@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+  <title>{{ product.name }} &mdash; CureVia</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'index/fonts/icomoon/style.css' %}">
+
+  <link rel="stylesheet" href="{% static 'index/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'index/css/magnific-popup.css' %}">
+  <link rel="stylesheet" href="{% static 'index/css/jquery-ui.css' %}">
+  <link rel="stylesheet" href="{% static 'index/css/owl.carousel.min.css' %}">
+  <link rel="stylesheet" href="{% static 'index/css/owl.theme.default.min.css' %}">
+
+  <link rel="stylesheet" href="{% static 'index/css/aos.css' %}">
+  <link rel="stylesheet" href="{% static 'index/css/style.css' %}">
+</head>
+
+<body>
+
+  <div class="site-wrap">
+
+    <!-- NAVBAR -->
+    <div class="site-navbar py-2">
+      <div class="search-wrap">
+        <div class="container">
+          <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
+          <form action="{% url 'search' %}" method="get">
+            <input type="text" name="q" class="form-control" placeholder="Search keyword and hit enter...">
+          </form>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="logo">
+            <div class="site-logo">
+              <a href="/user/" class="js-logo-clone">CureVia</a>
+            </div>
+          </div>
+          <div class="main-nav d-none d-lg-block">
+            <nav class="site-navigation text-right text-md-center" role="navigation">
+              <ul class="site-menu js-clone-nav d-none d-lg-block">
+                <li><a href="/user/">Home</a></li>
+                <li class="active"><a href="/shop/">Store</a></li>
+                <li><a href="/about/">About</a></li>
+                <li><a href="/contact/">Contact</a></li>
+                {% if request.session.uid %}
+                  <li><a href="{% url 'userprofile' request.session.uid %}">Profile</a></li>
+                {% else %}
+                  <li><a href="/login/">Login</a></li>
+                {% endif %}
+              </ul>
+            </nav>
+          </div>
+          <div class="icons">
+            <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
+            <a href="/cart/" class="icons-btn d-inline-block bag">
+              <span class="icon-shopping-bag"></span>
+            </a>
+            <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span
+                class="icon-menu"></span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BREADCRUMBS -->
+    <div class="bg-light py-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 mb-0">
+              <a href="/user/">Home</a> <span class="mx-2 mb-0">/</span>
+              <a href="/shop/">Store</a> <span class="mx-2 mb-0">/</span>
+              <strong class="text-black">{{ product.name }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCT DETAILS SECTION -->
+    <div class="site-section">
+      <div class="container">
+        <div class="row">
+
+          <!-- Product Image -->
+          <div class="col-md-5 mr-auto">
+            <div class="border text-center">
+              {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid p-5">
+              {% else %}
+                <img src="{% static 'index/images/product_01.png' %}" alt="Default Image" class="img-fluid p-5">
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Product Info & Actions -->
+          <div class="col-md-6">
+            <h2 class="text-black">{{ product.name }}</h2>
+            <p>{{ product.purpose }}</p>
+            <p class="mb-4">{{ product.description }}</p>
+
+            <p>
+                <strong id="final-price" class="text-primary h4">₹{{ product.price }}</strong>
+            </p>
+
+            <hr>
+
+            <!-- ============================================== -->
+            <!--        PRESCRIPTION CHECK LOGIC START          -->
+            <!-- ============================================== -->
+
+            <!-- CASE 1: Prescription IS Required -->
+            {% if product.rx_required %}
+
+                <div class="mb-4">
+                    <span class="badge badge-warning p-2">
+                        <i class="icon-file-text mr-1"></i> Prescription Required
+                    </span>
+                </div>
+
+                <!-- Sub-Case A: Approved -->
+                {% if p_status == 'Approved' %}
+                    <div class="alert alert-success">
+                        <i class="icon-check"></i> <strong>Approved!</strong> You can now buy this medicine.
+                    </div>
+
+                    <!-- SHOW ADD TO CART (User allowed to buy) -->
+                    <div class="mb-5">
+                      <div class="input-group mb-3" style="max-width: 220px;">
+                        <div class="input-group-prepend">
+                          <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
+                        </div>
+                        <input type="text" id="quantity-input" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                        <div class="input-group-append">
+                          <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
+                        </div>
+                      </div>
+                    </div>
+                    <p><a href="/addcart/{{product.id}}/" class="buy-now btn btn-sm height-auto px-4 py-3 btn-primary">Add To Cart</a></p>
+
+                <!-- Sub-Case B: Pending -->
+                {% elif p_status == 'Pending' %}
+                    <div class="p-4 border rounded bg-light text-center">
+                        <h4 class="text-info"><i class="icon-clock-o"></i> Verification Pending</h4>
+                        <p>Our pharmacist is currently reviewing your uploaded prescription.</p>
+                        <button class="btn btn-secondary disabled">Add to Cart Locked</button>
+                    </div>
+
+                <!-- Sub-Case C: Rejected -->
+                {% elif p_status == 'Rejected' %}
+                    <div class="alert alert-danger">
+                        <i class="icon-close"></i> <strong>Rejected.</strong> Your previous upload was not valid. Please upload a clear image.
+                    </div>
+                    <!-- Show Upload Form Again -->
+                    <form action="{% url 'upload_prescription' product.id %}" method="post" enctype="multipart/form-data" class="p-3 border rounded">
+                        {% csrf_token %}
+                        <div class="form-group mb-2">
+                            <label>Upload New Prescription</label>
+                            <input type="file" name="image" class="form-control-file" required>
+                        </div>
+
+                        <!-- NEW PINCODE FIELD (For Re-upload) -->
+                        <div class="form-group mb-3">
+                             <input type="text" name="pincode" class="form-control" placeholder="Confirm Pincode (e.g. 682001)" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-block">Re-Upload</button>
+                    </form>
+
+                <!-- Sub-Case D: No Upload Yet -->
+                {% else %}
+                    <div class="p-4 border rounded bg-white shadow-sm">
+                        <p class="mb-3"><strong><i class="icon-upload"></i> Upload Doctor's Note</strong></p>
+                        <form action="{% url 'upload_prescription' product.id %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <!-- 1. Image Input -->
+                            <div class="form-group mb-3">
+                                <label class="small text-muted">Prescription Image</label>
+                                <input type="file" name="image" class="form-control p-1" style="height:45px;" required>
+                            </div>
+
+                            <!-- 2. NEW PINCODE FIELD (Crucial for your Logic) -->
+                            <div class="form-group mb-3">
+                                <label class="small text-muted">Delivery Pincode (For Stock Check)</label>
+                                <input type="text" name="pincode" class="form-control" placeholder="e.g. 682001" required pattern="[0-9]{6}" title="Please enter a 6-digit pincode">
+                            </div>
+
+                            <button type="submit" class="btn btn-info btn-block">Submit for Approval</button>
+                        </form>
+                    </div>
+                {% endif %}
+
+            <!-- CASE 2: Prescription NOT Required (Normal Medicine) -->
+            {% else %}
+
+                <!-- Show Normal Add to Cart -->
+                <div class="mb-5">
+                  <div class="input-group mb-3" style="max-width: 220px;">
+                    <div class="input-group-prepend">
+                      <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
+                    </div>
+                    <input type="text" id="quantity-input" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
+                    </div>
+                  </div>
+                </div>
+                <p><a href="/addcart/{{product.id}}/" class="buy-now btn btn-sm height-auto px-4 py-3 btn-primary">Add To Cart</a></p>
+
+            {% endif %}
+            <!-- ============================================== -->
+            <!--          PRESCRIPTION CHECK LOGIC END          -->
+            <!-- ============================================== -->
+
+            <!-- Tabs for Extra Info -->
+            <div class="mt-5">
+              <ul class="nav nav-pills mb-3 custom-pill" id="pills-tab" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
+                    aria-controls="pills-home" aria-selected="true">Ordering Information</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab"
+                    aria-controls="pills-profile" aria-selected="false">Specifications</a>
+                </li>
+              </ul>
+
+              <div class="tab-content" id="pills-tabContent">
+                <!-- Ordering Info Tab -->
+                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                  <table class="table custom-table">
+                    <thead>
+                      <th>Category</th>
+                      <th>Available Stock</th>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">{{ product.category }}</th>
+                        <td>{{ product.quantity }} units available</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Specifications Tab -->
+                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                  <table class="table custom-table">
+                    <tbody>
+                      <tr>
+                        <td>Medicine Name</td>
+                        <td class="bg-light">{{ product.name }}</td>
+                      </tr>
+                      <tr>
+                        <td>Expiry Date</td>
+                        <td class="bg-light">{{ product.expiry_date }}</td>
+                      </tr>
+                      <tr>
+                        <td>Prescription Required</td>
+                        <td class="bg-light">
+                            {% if product.rx_required %}
+                                <span class="text-danger">Yes</span>
+                            {% else %}
+                                <span class="text-success">No</span>
+                            {% endif %}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM BANNERS -->
+    <div class="site-section bg-secondary bg-image" style="background-image: url('{% static 'index/images/bg_2.jpg' %}');">
+      <div class="container">
+        <div class="row align-items-stretch">
+          <div class="col-lg-6 mb-5 mb-lg-0">
+            <a href="#" class="banner-1 h-100 d-flex" style="background-image: url('{% static 'index/images/bg_1.jpg' %}');">
+              <div class="banner-1-inner align-self-center">
+                <h2>Pharma Products</h2>
+                <p>Top quality medicines for better health.</p>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-6 mb-5 mb-lg-0">
+            <a href="#" class="banner-1 h-100 d-flex" style="background-image: url('{% static 'index/images/bg_2.jpg' %}');">
+              <div class="banner-1-inner ml-auto  align-self-center">
+                <h2>Rated by Experts</h2>
+                <p>Trusted by doctors and pharmacists nationwide.</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+            <div class="block-7">
+              <h3 class="footer-heading mb-4">About Us</h3>
+              <p>CureVia is your trusted online pharmacy, delivering genuine medicines to your doorstep.</p>
+            </div>
+          </div>
+          <div class="col-lg-3 mx-auto mb-5 mb-lg-0">
+            <h3 class="footer-heading mb-4">Quick Links</h3>
+            <ul class="list-unstyled">
+              <li><a href="#">Supplements</a></li>
+              <li><a href="#">Vitamins</a></li>
+              <li><a href="#">Diet &amp; Nutrition</a></li>
+              <li><a href="#">Tea &amp; Coffee</a></li>
+            </ul>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="block-5 mb-5">
+              <h3 class="footer-heading mb-4">Contact Info</h3>
+              <ul class="list-unstyled">
+                <li class="address">203 Fake St. Mountain View, San Francisco, California, USA</li>
+                <li class="phone"><a href="tel://23923929210">+2 392 3929 210</a></li>
+                <li class="email">info@curevia.com</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row pt-5 mt-5 text-center">
+          <div class="col-md-12">
+            <p>
+              Copyright &copy;
+              <script>document.write(new Date().getFullYear());</script> All rights reserved | CureVia
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="{% static 'index/js/jquery-3.3.1.min.js' %}"></script>
+  <script src="{% static 'index/js/jquery-ui.js' %}"></script>
+  <script src="{% static 'index/js/popper.min.js' %}"></script>
+  <script src="{% static 'index/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'index/js/owl.carousel.min.js' %}"></script>
+  <script src="{% static 'index/js/jquery.magnific-popup.min.js' %}"></script>
+  <script src="{% static 'index/js/aos.js' %}"></script>
+  <script src="{% static 'index/js/main.js' %}"></script>
+
+<script>
+  $(document).ready(function() {
+
+    // 1. Get the Unit Price from Django (Normal Price Only)
+    var unitPrice = parseFloat("{{ product.price }}");
+
+    // 2. Function to do the math
+    function updateTotalPrice() {
+        // Get current number from the input box
+        var qty = parseInt($('#quantity-input').val());
+
+        // Safety: If box is empty or 0, assume 1
+        if (isNaN(qty) || qty < 1) {
+            qty = 1;
+        }
+
+        // Calculate Total (Price * Quantity)
+        var total = (unitPrice * qty).toFixed(2);
+
+        // Update the text on the screen
+        $('#final-price').text('₹' + total);
+    }
+
+    // 3. Listen for button clicks (+ and -)
+    $('.js-btn-plus, .js-btn-minus').on('click', function() {
+        setTimeout(updateTotalPrice, 50);
+    });
+
+    // 4. Listen for manual typing
+    $('#quantity-input').on('change keyup', function() {
+        updateTotalPrice();
+    });
+
+  });
+</script>
+</body>
+
+</html>

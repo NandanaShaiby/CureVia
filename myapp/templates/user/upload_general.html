@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <title>Upload Prescription</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="{% static 'index/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'index/css/style.css' %}">
+</head>
+<body class="bg-light">
+
+<div class="site-wrap">
+    <!-- Navbar (Simplified for brevity) -->
+    <div class="site-navbar py-2">
+        <div class="container">
+            <a href="/user/" class="site-logo">CureVia</a>
+        </div>
+    </div>
+
+    <div class="site-section">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-7">
+
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h3 class="mb-0">💊 Upload Prescription</h3>
+                    <p class="small mb-0">We will find the best pharmacy for you.</p>
+                </div>
+
+                <div class="card-body p-5">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- 1. IMAGE UPLOAD -->
+                        <div class="form-group mb-4">
+                            <label class="font-weight-bold">Prescription Photo <span class="text-danger">*</span></label>
+                            <input type="file" name="image" class="form-control-file border p-2" required>
+                            <small class="text-muted">Ensure doctor's name and medicines are visible.</small>
+                        </div>
+
+                        <!-- 2. PINCODE (CRITICAL FOR ASSIGNMENT) -->
+                        <div class="form-group mb-4">
+                            <label class="font-weight-bold">Delivery Pincode <span class="text-danger">*</span></label>
+                            <input type="text" name="pincode" class="form-control" placeholder="e.g. 682001" required pattern="[0-9]{6}" title="Enter valid 6 digit pincode">
+                        </div>
+
+                        <!-- 3. DELIVERY TYPE -->
+                        <div class="form-group mb-4">
+                            <label class="font-weight-bold d-block">How do you want it?</label>
+
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="deliveryHome" name="delivery_type" value="Home" class="custom-control-input" checked>
+                                <label class="custom-control-label" for="deliveryHome">🏠 Home Delivery</label>
+                            </div>
+
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="deliveryPickup" name="delivery_type" value="Pickup" class="custom-control-input">
+                                <label class="custom-control-label" for="deliveryPickup">🏪 Store Pickup</label>
+                            </div>
+                        </div>
+
+                        <!-- 4. NOTES -->
+                        <div class="form-group mb-4">
+                            <label class="font-weight-bold">Notes (Optional)</label>
+                            <textarea name="notes" class="form-control" rows="2" placeholder="e.g. Please send only generic medicines..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block btn-lg">🚀 Submit Prescription</button>
+                    </form>
+                </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+</body>
+</html>

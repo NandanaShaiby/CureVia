@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - CureVia Pharmacy</title>
+
+    <!-- Fonts: Rubik (Headings) & Open Sans (Body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- Base Styles (Same as Login) --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #10847e;
+            --primary-dark: #0a6b66;
+            --light: #f2f7fb;
+            --dark: #30363c;
+            --gray: #8897a2;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            font-family: 'Open Sans', sans-serif; /* Clean Body Font */
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-size: 1rem;
+        }
+
+        /* Rubik Font for Headings & UI */
+        h1, h2, h3, h4, h5, h6, .btn, label, .brand-logo, .divider span {
+            font-family: 'Rubik', sans-serif;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            transform: translateX(20px);
+        }
+
+        /* Header */
+        header { padding: 20px 0; background: transparent; }
+
+        .brand-logo {
+            font-family: 'Rubik', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+            text-align: center;
+        }
+
+        /* --- Registration Section --- */
+        .reg-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        .reg-card {
+            display: flex;
+            max-width: 1100px;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Left Image */
+        .reg-image {
+            flex: 0.8; /* Slightly smaller than form */
+            background: linear-gradient(rgba(16, 132, 126, 0.85), rgba(10, 107, 102, 0.9)), url('https://i.postimg.cc/7L3sv5PF/Adobe-Stock-627493260-888x500.jpg?w=800') no-repeat center center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
+            color: white;
+        }
+        .reg-image h2 { font-size: 2.5rem; margin-bottom: 15px; font-weight: 700; line-height: 1.2; }
+        .reg-image p { font-size: 1.1rem; opacity: 0.9; }
+
+        /* Right Form */
+        .reg-form-container { flex: 1.2; padding: 50px; }
+
+        .form-header { text-align: center; margin-bottom: 30px; }
+        .form-header h2 { color: var(--dark); font-weight: 700; }
+        .form-header p { color: var(--gray); }
+
+        /* Grid for Inputs */
+        .row-grid { display: flex; gap: 20px; }
+        .col-half { flex: 1; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--dark); font-size: 0.9rem; }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: 'Open Sans', sans-serif;
+            transition: border-color 0.3s;
+        }
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(16, 132, 126, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: 'Open Sans', sans-serif;
+            background-color: white;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 6px;
+            width: 100%;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-primary:hover { background-color: var(--primary-dark); }
+
+        /* Google Button */
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+        .divider::before {
+            content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background-color: #eee; z-index: 1;
+        }
+        .divider span { background: white; padding: 0 15px; position: relative; z-index: 2; }
+
+        .btn-google {
+            background-color: white;
+            color: #333;
+            border: 1px solid #ddd;
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            font-family: 'Open Sans', sans-serif;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-google:hover { background-color: #f8f9fa; transform: translateY(-1px); }
+
+        .login-link { margin-top: 25px; text-align: center; color: var(--gray); font-size: 0.95rem; }
+        .login-link a { color: var(--primary); font-weight: 700; }
+
+        /* Success Alert */
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid #a7f3d0;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .reg-card { flex-direction: column; }
+            .reg-image { display: none; } /* Hide image on mobile */
+            .reg-form-container { padding: 30px; }
+            .row-grid { flex-direction: column; gap: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <a href="/" class="brand-logo">CUREVIA</a>
+        </div>
+    </header>
+
+    <!-- Registration Section -->
+    <section class="reg-section">
+        <div class="container">
+            <div class="reg-card">
+
+                <!-- Left Side: Image -->
+                <div class="reg-image">
+                    <h2>Join the<br>CureVia Family</h2>
+                    <p>Experience hassle-free healthcare. Get medicines delivered, track your health, and consult experts—all in one place.</p>
+                </div>
+
+                <!-- Right Side: Form -->
+                <div class="reg-form-container">
+                    <div class="form-header">
+                        <h2>Create Account</h2>
+                        <p>Fill in your details to get started</p>
+                    </div>
+
+                    <!-- SUCCESS MESSAGE LOGIC -->
+                    {% if msg %}
+                        <div class="alert-success">
+                            <i class="fas fa-check-circle me-2"></i> Registration Successful!
+                            <br>
+                            <a href="/login/" style="font-weight: 700; text-decoration: underline;">Click here to Login</a>
+                        </div>
+                    {% endif %}
+
+                    <form action="/reg/" method="POST">
+                        {% csrf_token %}
+
+                        <!-- Row 1: Name -->
+                        <div class="row-grid">
+                            <div class="col-half form-group">
+                                <label class="form-label">First Name</label>
+                                <input type="text" name="fname" class="form-control" placeholder="John" required>
+                            </div>
+                            <div class="col-half form-group">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" name="lname" class="form-control" placeholder="Doe" required>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Contact -->
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email" class="form-control" placeholder="name@example.com" required>
+                        </div>
+
+                        <div class="row-grid">
+                            <div class="col-half form-group">
+                                <label class="form-label">Phone Number</label>
+                                <input type="number" name="phone" class="form-control" placeholder="9876543210" required>
+                            </div>
+                            <div class="col-half form-group">
+                                <label class="form-label">Date of Birth</label>
+                                <input type="date" name="dob" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Gender & Password -->
+                        <div class="row-grid">
+                            <div class="col-half form-group">
+                                <label class="form-label">Gender</label>
+                                <select name="gender" class="form-select" required>
+                                    <option value="" disabled selected>Select...</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-half form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password" class="form-control" placeholder="Create password" required>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn-primary" style="margin-top: 10px;">Create Account</button>
+
+                        <!-- Google Sign Up -->
+                        <div class="divider">
+                            <span>Or sign up with</span>
+                        </div>
+
+                        <button type="button" class="btn-google">
+                            <i class="fab fa-google" style="color: #DB4437;"></i> Sign up with Google
+                        </button>
+
+                        <p class="login-link">
+                            Already have an account? <a href="/login/">Log In</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

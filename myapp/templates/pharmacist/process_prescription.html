@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Process Prescription #{{ pres.id }}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <style>
+    body { background-color: #f4f6f9; }
+    .pres-image { width: 100%; max-height: 600px; object-fit: contain; border: 1px solid #ddd; background: #fff; }
+    .scrollable-inventory { max-height: 350px; overflow-y: auto; }
+    .scrollable-cart { max-height: 200px; overflow-y: auto; background: #fff; }
+  </style>
+</head>
+<body>
+
+<div class="container-fluid mt-3 mb-5">
+    <div class="row">
+
+        <!-- LEFT COLUMN -->
+        <div class="col-md-5">
+            <div class="card shadow-sm mb-3">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <span><strong>Rx #{{ pres.id }}</strong> ({{ pres.delivery_type }})</span>
+                    <a href="/pharmacist/" class="btn btn-sm btn-outline-light">Back</a>
+                </div>
+                <div class="card-body text-center p-2">
+
+                    <!-- IMAGE -->
+                    <a href="{{ pres.image.url }}" target="_blank">
+                        <img src="{{ pres.image.url }}" class="pres-image mb-3">
+                    </a>
+
+                    <!-- USER NOTE (New Fix) -->
+                    {% if pres.user_note %}
+                    <div class="alert alert-warning text-left">
+                        <strong><i class="fas fa-comment"></i> User Note:</strong><br>
+                        {{ pres.user_note }}
+                    </div>
+                    {% endif %}
+
+                    <!-- CUSTOMER INFO -->
+                    <div class="alert alert-secondary text-left py-2">
+                        <h5 class="mb-1"><i class="fas fa-user"></i> {{ customer.fname }} {{ customer.lname }}</h5>
+                        <h4 class="text-primary mb-0"><i class="fas fa-phone-alt"></i> {{ customer.phone }}</h4>
+                    </div>
+
+                    <!-- ACTIONS FORM -->
+                    <hr>
+                    <label><strong>Final Actions:</strong></label>
+
+                    <!-- APPROVE FORM -->
+                    <form action="{% url 'submit_to_user' pres.id %}" method="POST" class="mb-2">
+                        {% csrf_token %}
+
+                        <!-- Pharmacist Note Input (Must be inside this form!) -->
+                        <div class="form-group text-left">
+                            <label>Note to User:</label>
+                            <textarea name="pharmacist_note" class="form-control" rows="2" placeholder="e.g. Added generic Dolo"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-block">
+                            <i class="fas fa-paper-plane"></i> Send Quote to User
+                        </button>
+                    </form>
+
+                    <!-- REJECT FORM -->
+                    <form action="{% url 'mark_processed' pres.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" name="action" value="reject" class="btn btn-danger btn-block" onclick="return confirm('Reject this order?');">
+                            <i class="fas fa-times-circle"></i> Reject
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN (Inventory) -->
+        <div class="col-md-7">
+            <!-- SPECIAL CART -->
+            <div class="card shadow-sm mb-3 border-primary">
+                <div class="card-header bg-primary text-white d-flex justify-content-between">
+                    <span><strong>Current Bill Draft</strong></span>
+                    <span>Total: <strong>₹{{ total_cost }}</strong></span>
+                </div>
+                <div class="card-body p-0 scrollable-cart">
+                    {% if added_items %}
+                        <ul class="list-group list-group-flush">
+                            {% for item in added_items %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-0">{{ item.medicine.name }}</h6>
+                                        <small class="text-muted">Qty: {{ item.quantity }} x ₹{{ item.price_at_time }}</small>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <span class="font-weight-bold mr-3">₹{{ item.total_price }}</span>
+                                        <a href="{% url 'remove_pres_item' item.id %}" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="text-center p-4 text-muted">No medicines added yet.</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- INVENTORY SEARCH -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">Search Inventory</div>
+                <div class="card-body">
+                    <form method="GET" class="mb-3">
+                        <div class="input-group">
+                            <input type="text" name="search_med" class="form-control" placeholder="Medicine Name..." value="{{ request.GET.search_med }}">
+                            <div class="input-group-append">
+                                <button class="btn btn-dark" type="submit">Search</button>
+                                <a href="{% url 'process_prescription' pres.id %}" class="btn btn-outline-secondary">Clear</a>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="scrollable-inventory">
+                        <table class="table table-sm table-hover">
+                            <thead class="thead-light">
+                                <tr><th>Medicine</th><th>Stock</th><th>Price</th><th>Add</th></tr>
+                            </thead>
+                            <tbody>
+                                {% for med in inventory %}
+                                <tr>
+                                    <td>{{ med.name }}</td>
+                                    <td>{{ med.quantity }}</td>
+                                    <td>₹{{ med.price }}</td>
+                                    <td>
+                                        {% if med.quantity > 0 %}
+                                        <form action="{% url 'add_pres_item' pres.id %}" method="POST" class="form-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="medicine_id" value="{{ med.id }}">
+                                            <input type="number" name="quantity" value="1" min="1" max="{{ med.quantity }}" class="form-control form-control-sm mr-2" style="width: 60px;">
+                                            <button type="submit" class="btn btn-sm btn-primary">Add</button>
+                                        </form>
+                                        {% else %}
+                                            <button disabled class="btn btn-sm btn-secondary">Out</button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
