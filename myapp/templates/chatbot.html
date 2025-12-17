@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CureVia AI Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #10847e;
+            --primary-dark: #0a6b66;
+            --light-bg: #f4f6f8;
+            --chat-bg: #ffffff;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Open Sans', sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar for standalone page */
+        .chat-navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 15px 0;
+        }
+        .brand-logo {
+            font-family: 'Rubik', sans-serif;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 1.5rem;
+        }
+
+        /* Chat Container */
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chat-box {
+            width: 100%;
+            max-width: 700px;
+            height: 80vh;
+            background: var(--chat-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+        .chat-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .chat-header h5 { margin: 0; font-family: 'Rubik', sans-serif; font-weight: 500; }
+
+        .chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Message Bubbles */
+        .message-row { display: flex; width: 100%; }
+
+        .msg-bubble {
+            padding: 12px 18px;
+            border-radius: 15px;
+            max-width: 75%;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .bot-row { justify-content: flex-start; }
+        .bot-msg {
+            background: white;
+            color: #333;
+            border-top-left-radius: 2px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .user-row { justify-content: flex-end; }
+        .user-msg {
+            background: var(--primary);
+            color: white;
+            border-top-right-radius: 2px;
+        }
+
+        .chat-footer {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            border-radius: 30px;
+            padding: 12px 20px;
+            border: 1px solid #ced4da;
+            background-color: #f8f9fa;
+        }
+        .chat-input:focus {
+            box-shadow: none;
+            border-color: var(--primary);
+            background-color: white;
+        }
+
+        .btn-send {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            transition: 0.2s;
+        }
+        .btn-send:hover { background-color: var(--primary-dark); transform: scale(1.05); }
+
+    </style>
+</head>
+<body>
+
+    <!-- Simple Navbar -->
+    <nav class="chat-navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="/user/" class="brand-logo">
+                <i class="fas fa-chevron-left me-2" style="font-size: 1rem;"></i> CureVia
+            </a>
+            <span class="text-muted small fw-bold">AI SUPPORT CENTER</span>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="chat-box">
+
+            <!-- Header -->
+            <div class="chat-header">
+                <div class="d-flex align-items-center">
+                    <div class="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div>
+                        <h5>Virtual Assistant</h5>
+                        <small style="opacity: 0.9;">Always here to help</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Area -->
+            <div class="chat-body" id="chatBody">
+
+                <!-- Disclaimer -->
+                <div class="text-center">
+                    <span class="badge bg-warning text-dark fw-normal">
+                        <i class="fas fa-exclamation-triangle me-1"></i> I cannot provide medical advice or diagnosis.
+                    </span>
+                </div>
+
+                <!-- Welcome Message -->
+                <div class="message-row bot-row">
+                    <div class="msg-bubble bot-msg">
+                        Hello! 👋 I am the CureVia AI. <br>
+                        Ask me about your orders, uploading prescriptions, or our delivery process!
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Input Area -->
+            <div class="chat-footer">
+                <input type="text" id="chatInput" class="form-control chat-input" placeholder="Type your question here..." onkeypress="handleEnter(event)" autofocus>
+                <button class="btn-send" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function handleEnter(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            const chatBody = document.getElementById('chatBody');
+
+            if (message !== "") {
+                // 1. Add User Message
+                const userHtml = `
+                    <div class="message-row user-row">
+                        <div class="msg-bubble user-msg">${message}</div>
+                    </div>
+                `;
+                chatBody.insertAdjacentHTML('beforeend', userHtml);
+                input.value = "";
+                chatBody.scrollTop = chatBody.scrollHeight;
+
+                // 2. Add Loading Indicator
+                const loadingId = "loading-" + Date.now();
+                const loadingHtml = `
+                    <div class="message-row bot-row" id="${loadingId}">
+                        <div class="msg-bubble bot-msg text-muted fst-italic">
+                            <i class="fas fa-circle-notch fa-spin me-2"></i> Thinking...
+                        </div>
+                    </div>
+                `;
+                chatBody.insertAdjacentHTML('beforeend', loadingHtml);
+                chatBody.scrollTop = chatBody.scrollHeight;
+
+                // 3. API Call
+                fetch('/chatbot/chat/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById(loadingId).remove();
+
+                    const botHtml = `
+                        <div class="message-row bot-row">
+                            <div class="msg-bubble bot-msg">${data.reply}</div>
+                        </div>
+                    `;
+                    chatBody.insertAdjacentHTML('beforeend', botHtml);
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById(loadingId).remove();
+                    const errorHtml = `
+                        <div class="message-row bot-row">
+                            <div class="msg-bubble bot-msg text-danger">
+                                Network Error. Please try again later.
+                            </div>
+                        </div>
+                    `;
+                    chatBody.insertAdjacentHTML('beforeend', errorHtml);
+                });
+            }
+        }
+    </script>
+
+</body>
+</html>

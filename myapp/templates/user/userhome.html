@@ -100,10 +100,95 @@
             border-radius: 50%;
         }
 
+        /* --- CHATBOT STYLES --- */
+    .chat-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background-color: var(--primary);
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        box-shadow: 0 4px 15px rgba(16, 132, 126, 0.4);
+        cursor: pointer;
+        z-index: 9999;
+        transition: transform 0.3s;
+    }
+    .chat-btn:hover { transform: scale(1.1); background-color: var(--primary-dark); color: white; }
+
+    .chat-window {
+        position: fixed;
+        bottom: 100px;
+        right: 30px;
+        width: 350px;
+        height: 450px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+        z-index: 9999;
+        display: none; /* Hidden by default */
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid #eee;
+    }
+
+    .chat-header {
+        background: var(--primary);
+        color: white;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .chat-header h5 { margin: 0; font-size: 1rem; font-weight: 600; }
+    .chat-header small { font-size: 0.75rem; opacity: 0.9; }
+
+    .chat-body {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background-color: #f8f9fa;
+    }
+
+    .chat-message { margin-bottom: 15px; display: flex; flex-direction: column; }
+    .msg-content { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 0.9rem; word-wrap: break-word;}
+
+    .bot-msg { align-items: flex-start; }
+    .bot-msg .msg-content { background: white; border: 1px solid #eee; border-top-left-radius: 0; color: var(--dark); }
+
+    .user-msg { align-items: flex-end; }
+    .user-msg .msg-content { background: var(--primary); color: white; border-top-right-radius: 0; }
+
+    .chat-footer {
+        padding: 10px;
+        background: white;
+        border-top: 1px solid #eee;
+        display: flex;
+        gap: 10px;
+    }
+    .chat-footer input {
+        border-radius: 20px;
+        font-size: 0.9rem;
+        padding: 10px 15px;
+    }
+    .btn-send {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: flex; align-items: center; justify-content: center;
+        background: var(--primary); border: none; color: white;
+    }
+
         /* --- Hero Section --- */
         .hero-wrap {
             background: linear-gradient(to right, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%),
-                        url('https://images.unsplash.com/photo-1576602976047-174e57a47881?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+                        url('https://i.postimg.cc/XY06k9HP/file-00000000fe787206919b9606bb446908.png');
             background-size: cover;
             background-position: center;
             padding: 80px 0;
@@ -638,6 +723,60 @@
             </div>
         </div>
     </div>
+    <!-- CHATBOT BUTTON -->
+    <div class="chat-btn" onclick="toggleChat()">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <!-- CHAT WINDOW -->
+    <div class="chat-window" id="chatWindow">
+        <!-- Header -->
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-robot me-2"></i>
+                <div>
+                    <h5 class="mb-0">Assistant</h5>
+                    <small style="font-size: 0.7rem;">Online</small>
+                </div>
+            </div>
+
+            <!-- CONTROLS CONTAINER -->
+            <div class="d-flex align-items-center gap-3">
+
+                <!-- 1. NEW EXPAND ICON (Goes to Full Page) -->
+                <a href="{% url 'chatbot_ui' %}" class="text-white text-decoration-none" title="Open Full Screen">
+                    <i class="fas fa-expand-alt"></i>
+                </a>
+
+                <!-- 2. CLOSE BUTTON -->
+                <button type="button" class="btn-close btn-close-white" onclick="toggleChat()"></button>
+            </div>
+        </div>
+
+        <!-- Body (Messages) -->
+        <div class="chat-body" id="chatBody">
+            <!-- Disclaimer -->
+            <div class="text-center mb-3">
+                <span class="badge bg-light text-muted border fw-normal" style="font-size: 0.7rem;">
+                    ⚠️ I cannot provide medical advice.
+                </span>
+            </div>
+
+            <!-- Welcome Message -->
+            <div class="chat-message bot-msg">
+                <div class="msg-content">
+                    Hello! 👋 I can help you track orders, find medicines, or check service availability. How can I help?
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer (Input) -->
+        <div class="chat-footer">
+            <input type="text" id="chatInput" class="form-control" placeholder="Type a message..." onkeypress="handleEnter(event)">
+            <button class="btn btn-send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -684,6 +823,87 @@
                 1024: { slidesPerView: 3, spaceBetween: 30 },
             },
         });
+
+        // --- CHATBOT LOGIC ---
+    function toggleChat() {
+        var chatWindow = document.getElementById('chatWindow');
+        if (chatWindow.style.display === 'none' || chatWindow.style.display === '') {
+            chatWindow.style.display = 'flex';
+        } else {
+            chatWindow.style.display = 'none';
+        }
+    }
+
+    function handleEnter(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    }
+
+    function sendMessage() {
+        var input = document.getElementById('chatInput');
+        var message = input.value.trim();
+        var chatBody = document.getElementById('chatBody');
+
+        if (message !== "") {
+            // 1. Add User Message to UI
+            var userHtml = `
+                <div class="chat-message user-msg">
+                    <div class="msg-content">${message}</div>
+                </div>
+            `;
+            chatBody.insertAdjacentHTML('beforeend', userHtml);
+            input.value = ""; // Clear input
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            // 2. Add a "Typing..." indicator (Optional, looks professional)
+            var loadingId = "loading-" + Date.now();
+            var loadingHtml = `
+                <div class="chat-message bot-msg" id="${loadingId}">
+                    <div class="msg-content">
+                        <i class="fas fa-ellipsis-h"></i> Thinking...
+                    </div>
+                </div>
+            `;
+            chatBody.insertAdjacentHTML('beforeend', loadingHtml);
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            // 3. Send to Django Backend API
+            fetch('/chatbot/chat/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Since you used @csrf_exempt in views.py, we don't strictly need the token here,
+                    // but it is good practice to keep it if you remove exemption later.
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Remove Loading Indicator
+                document.getElementById(loadingId).remove();
+
+                // 4. Display Bot Response
+                var botHtml = `
+                    <div class="chat-message bot-msg">
+                        <div class="msg-content">${data.reply}</div>
+                    </div>
+                `;
+                chatBody.insertAdjacentHTML('beforeend', botHtml);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById(loadingId).remove();
+                var errorHtml = `
+                    <div class="chat-message bot-msg">
+                        <div class="msg-content text-danger">Error connecting to server.</div>
+                    </div>
+                `;
+                chatBody.insertAdjacentHTML('beforeend', errorHtml);
+            });
+        }
+    }
     </script>
 
 </body>

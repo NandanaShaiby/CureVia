@@ -1,5 +1,6 @@
-from django.urls import path
+from django.urls import path, include
 from myapp import views
+
 
 urlpatterns =[
         path('', views.index),
@@ -58,6 +59,7 @@ urlpatterns =[
         path('inventory/', views.pharmacy_inventory, name='pharmacy_inventory'),
         path('update_inventory/<int:id>/', views.update_inventory, name='update_inventory'),
         path('delete_medicine/<int:id>/', views.delete_medicine, name='delete_medicine'),
+        path("chatbot/", include("chatbot.urls")),
 
 
 
