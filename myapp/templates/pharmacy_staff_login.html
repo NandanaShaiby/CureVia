@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <title>Staff Identification</title>
+    <link rel="stylesheet" href="{% static 'index/css/bootstrap.min.css' %}">
+    <style>
+        body { background: #f8f9fa; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .card { width: 100%; max-width: 400px; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); background: #fff; }
+    </style>
+</head>
+<body>
+
+<div class="card text-center">
+    <h4 class="text-primary mb-3">{{ pharmacy.name }}</h4>
+    <p class="text-muted">Authentication Successful.</p>
+    <hr>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group text-left">
+            <label class="font-weight-bold">Who is working this shift?</label>
+            <input type="text" name="staff_name" class="form-control" placeholder="Enter your name (e.g. John)" required autofocus>
+        </div>
+        <button type="submit" class="btn btn-success btn-block">Continue to Dashboard</button>
+    </form>
+</div>
+
+</body>
+</html>

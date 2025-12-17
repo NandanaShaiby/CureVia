@@ -1,189 +1,353 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <title>My Prescriptions &mdash; CureVia</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>My Prescriptions | CureVia Pharmacy</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'index/fonts/icomoon/style.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/magnific-popup.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/jquery-ui.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/owl.carousel.min.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/owl.theme.default.min.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/aos.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/style.css' %}">
+    <!-- Fonts: Rubik & Open Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #10847e;   /* CureVia Teal */
+            --primary-dark: #0a6b66;
+            --light: #f2f7fb;
+            --dark: #30363c;
+            --gray: #8897a2;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: var(--dark);
+            background-color: #f8f9fa;
+        }
+
+        h1, h2, h3, h4, h5, h6, .navbar-brand, .btn, .badge {
+            font-family: 'Rubik', sans-serif;
+        }
+
+        /* --- Navbar (Consistent) --- */
+        .navbar { background-color: white; box-shadow: 0 2px 15px rgba(0,0,0,0.05); padding: 15px 0; }
+        .brand-logo { text-transform: uppercase; letter-spacing: .15em; font-size: 24px; font-weight: 700; color: var(--primary) !important; text-decoration: none; }
+        .nav-link { font-weight: 500; color: var(--dark); margin-left: 15px; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; text-decoration: none; }
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
+        .cart-icon { position: relative; font-size: 1.2rem; color: var(--dark); margin-left: 15px; text-decoration: none; }
+        .cart-badge { position: absolute; top: -8px; right: -8px; background-color: #dc3545; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 50%; }
+
+        /* --- Breadcrumb --- */
+        .breadcrumb-wrap { background-color: white; padding: 15px 0; border-bottom: 1px solid #eee; margin-bottom: 30px; }
+        .breadcrumb a { color: var(--gray); font-size: 0.9rem; text-decoration: none; }
+        .breadcrumb span { margin: 0 10px; color: #ccc; }
+        .breadcrumb strong { color: var(--dark); font-weight: 600; font-size: 0.9rem; }
+
+        /* --- Table Styling --- */
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+        .table thead th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+            color: var(--dark);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            vertical-align: middle;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .pres-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            transition: 0.3s;
+        }
+        .pres-img:hover { transform: scale(1.05); border-color: var(--primary); }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+        .status-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; } /* Action Required */
+        .status-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; } /* Confirmed */
+        .status-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; } /* Processing */
+        .status-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; } /* Rejected */
+
+        /* Action Buttons */
+        .btn-action {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.3s;
+        }
+        .btn-primary-action { background-color: var(--primary); color: white; border: none; }
+        .btn-primary-action:hover { background-color: var(--primary-dark); color: white; box-shadow: 0 4px 10px rgba(16, 132, 126, 0.2); }
+
+        .btn-disabled { background-color: #e9ecef; color: #adb5bd; cursor: not-allowed; border: 1px solid #dee2e6; }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .empty-icon {
+            font-size: 4rem;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        /* --- Footer --- */
+        footer { background-color: white; border-top: 1px solid #eee; padding-top: 60px; margin-top: 60px; }
+        .footer-heading { font-weight: 700; margin-bottom: 20px; font-size: 1.1rem; }
+        .footer-link { color: var(--gray); display: block; margin-bottom: 10px; font-size: 0.95rem; text-decoration: none; }
+        .footer-link:hover { color: var(--primary); }
+    </style>
 </head>
 
 <body>
 
-  <div class="site-wrap">
-
-    <!-- NAVBAR -->
-    <div class="site-navbar py-2">
-      <div class="search-wrap">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-          <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
-          <form action="{% url 'search' %}" method="get">
-            <input type="text" name="q" class="form-control" placeholder="Search keyword and hit enter...">
-          </form>
-        </div>
-      </div>
+            <a class="navbar-brand brand-logo" href="/user/">CureVia</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-      <div class="container">
-        <div class="d-flex align-items-center justify-content-between">
-          <div class="logo">
-            <div class="site-logo">
-              <a href="/user/" class="js-logo-clone">CureVia</a>
-            </div>
-          </div>
-          <div class="main-nav d-none d-lg-block">
-            <nav class="site-navigation text-right text-md-center" role="navigation">
-              <ul class="site-menu js-clone-nav d-none d-lg-block">
-                <li><a href="/user/">Home</a></li>
-                <li><a href="/shop/">Store</a></li>
-                <li><a href="/about/">About</a></li>
-                <li><a href="/contact/">Contact</a></li>
-                <li class="active"><a href="{% url 'my_prescriptions' %}">My Prescriptions</a></li>
-                <li><a href="{% url 'userprofile' request.session.user_id %}">Profile</a></li>
-              </ul>
-            </nav>
-          </div>
-          <div class="icons">
-            <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
-            <a href="/cart/" class="icons-btn d-inline-block bag">
-              <span class="icon-shopping-bag"></span>
-            </a>
-            <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span class="icon-menu"></span></a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- BREADCRUMBS -->
-    <div class="bg-light py-3">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12 mb-0">
-            <a href="/user/">Home</a> <span class="mx-2 mb-0">/</span>
-            <strong class="text-black">My Prescriptions</strong>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div class="site-section">
-      <div class="container">
-        <div class="row mb-5">
-          <div class="col-md-12">
-            <div class="site-blocks-table">
-              <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th class="product-thumbnail">Image</th>
-                    <th class="product-name">Date Uploaded</th>
-                    <th class="product-price">Status</th>
-                    <th class="product-quantity">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for p in pres_list %}
-                  <tr>
-                    <td class="product-thumbnail">
-                      {% if p.image %}
-                        <a href="{{ p.image.url }}" target="_blank">
-                            <img src="{{ p.image.url }}" alt="Image" class="img-fluid" style="max-width: 100px;">
+            <div class="collapse navbar-collapse" id="navContent">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="/user/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/shop/">Store</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#">My Prescriptions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'userprofile' request.session.uid %}">Profile</a></li>
+                    <li class="nav-item">
+                        <a href="/cart/" class="cart-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span class="cart-badge">0</span>
                         </a>
-                      {% else %}
-                        No Image
-                      {% endif %}
-                    </td>
-                    <td class="product-name">
-                      <h2 class="h5 text-black">{{ p.created_at|date:"M d, Y" }}</h2>
-                      <span class="text-muted small">Type: {{ p.delivery_type }}</span>
-                    </td>
-                    <td>
-                        {% if p.status == 'Awaiting User Confirmation' %}
-                            <span class="badge badge-warning text-white p-2">⚠ Action Required</span>
-                        {% elif p.status == 'Confirmed' or p.status == 'Packed' %}
-                            <span class="badge badge-success p-2">✔ {{ p.status }}</span>
-                        {% elif p.status == 'Rejected' %}
-                            <span class="badge badge-danger p-2">✖ Rejected</span>
-                            {% if p.rejection_reason %}
-                                <br><small class="text-danger mt-1 d-block">{{ p.rejection_reason }}</small>
-                            {% endif %}
-                        {% else %}
-                            <span class="badge badge-info p-2">{{ p.status }}</span>
-                        {% endif %}
-                    </td>
-                    <td class="text-center">
-                        {% if p.status == 'Awaiting User Confirmation' %}
-                            <!-- Action Required: Show Review Button -->
-                            <a href="{% url 'review_prescription' p.id %}" class="btn btn-primary btn-sm height-auto px-4 py-3 font-weight-bold">
-                                Review Quote & Pay
-                            </a>
-
-                        {% elif p.status == 'Rejected' or p.status == 'Rejected by User' %}
-                            <!-- Rejected (by Pharmacist or User): Show Closed -->
-                            <button class="btn btn-secondary btn-sm height-auto px-4 py-3" disabled>
-                                Closed
-                            </button>
-
-                        {% elif p.status == 'Confirmed' or p.status == 'Packed' or p.status == 'Delivered' %}
-                             <!-- Done: Show Order Placed -->
-                             <button class="btn btn-success btn-sm height-auto px-4 py-3" disabled>
-                                 Order Placed
-                             </button>
-
-                        {% else %}
-                            <!-- Default (Uploaded, Assigned, Under Review): Show Processing -->
-                            <button class="btn btn-light btn-sm height-auto px-4 py-3 text-muted" disabled>
-                                <span class="icon-hourglass mr-1"></span> Processing...
-                            </button>
-                        {% endif %}
-                    </td>
-                  </tr>
-                  {% empty %}
-                  <tr>
-                      <td colspan="4" class="text-center py-5">
-                          <h4 class="text-black">No prescriptions found.</h4>
-                          <p>Upload a doctor's note to get started.</p>
-                          <a href="{% url 'upload_general' %}" class="btn btn-primary">Upload Now</a>
-                      </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
+                    </li>
+                </ul>
             </div>
-          </div>
         </div>
-      </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/user/">Home</a> <span>/</span>
+                <strong>My Prescriptions</strong>
+            </div>
+        </div>
     </div>
 
-    <!-- FOOTER -->
-    <footer class="site-footer">
-      <div class="container">
-        <div class="row pt-5 mt-5 text-center">
-          <div class="col-md-12">
-            <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script> All rights reserved | CureVia</p>
-          </div>
-        </div>
-      </div>
-    </footer>
-  </div>
+    <!-- Main Content -->
+    <div class="container mb-5">
 
-  <script src="{% static 'index/js/jquery-3.3.1.min.js' %}"></script>
-  <script src="{% static 'index/js/jquery-ui.js' %}"></script>
-  <script src="{% static 'index/js/popper.min.js' %}"></script>
-  <script src="{% static 'index/js/bootstrap.min.js' %}"></script>
-  <script src="{% static 'index/js/owl.carousel.min.js' %}"></script>
-  <script src="{% static 'index/js/jquery.magnific-popup.min.js' %}"></script>
-  <script src="{% static 'index/js/aos.js' %}"></script>
-  <script src="{% static 'index/js/main.js' %}"></script>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h4 mb-0 fw-bold">Prescription History</h2>
+            <a href="{% url 'upload_general' %}" class="btn btn-primary-action">
+                <i class="fas fa-upload me-2"></i>Upload New
+            </a>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="table-card">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th width="15%">Image</th>
+                                    <th width="20%">Date Uploaded</th>
+                                    <th width="35%">Status / Updates</th>
+                                    <th width="30%" class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+    {% for p in pres_list %}
+    <tr>
+        <!-- Image Column -->
+        <td>
+            {% if p.image %}
+                <a href="{{ p.image.url }}" target="_blank">
+                    <img src="{{ p.image.url }}" alt="Rx" class="pres-img">
+                </a>
+            {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center pres-img text-muted">No Img</div>
+            {% endif %}
+        </td>
+
+        <!-- Date Column -->
+        <td>
+            <div class="fw-bold text-dark">{{ p.created_at|date:"M d, Y" }}</div>
+            <div class="text-muted small"><i class="far fa-clock me-1"></i>{{ p.created_at|date:"h:i A" }}</div>
+            <div class="mt-2 badge bg-light text-dark border">{{ p.delivery_type }}</div>
+        </td>
+
+        <!-- Status Column (FIXED HERE) -->
+        <td>
+            {% if p.status == 'Awaiting User Confirmation' %}
+                <div class="status-badge status-warning mb-2">
+                    <i class="fas fa-exclamation-circle me-1"></i> Action Required
+                </div>
+                <div class="small text-muted">
+                    The pharmacist has processed your request. Please review the quote to proceed.
+                </div>
+
+            {% elif p.status == 'Confirmed' or p.status == 'Packed' or p.status == 'Delivered' %}
+                <div class="status-badge status-success mb-2">
+                    <i class="fas fa-check-circle me-1"></i> {{ p.status }}
+                </div>
+                <div class="small text-muted">
+                    Your order is being processed for delivery.
+                </div>
+
+            <!-- FIX: Added 'Rejected by User' here so it shows Red, not Blue -->
+            {% elif p.status == 'Rejected' or p.status == 'Rejected by User' %}
+                <div class="status-badge status-danger mb-2">
+                    <i class="fas fa-times-circle me-1"></i>
+                    {% if p.status == 'Rejected by User' %}Cancelled by You{% else %}Rejected{% endif %}
+                </div>
+
+                {% if p.rejection_reason %}
+                    <div class="small text-danger bg-light p-2 rounded">
+                        <strong>Reason:</strong> {{ p.rejection_reason }}
+                    </div>
+                {% endif %}
+
+            {% else %}
+                <!-- Default: Pending/Assigned/Under Review -->
+                <div class="status-badge status-info mb-2">
+                    <i class="fas fa-spinner fa-spin me-1"></i> {{ p.status }}
+                </div>
+                <div class="small text-muted">
+                    Our team is reviewing your prescription.
+                </div>
+            {% endif %}
+        </td>
+
+        <!-- Action Column -->
+        <td class="text-center">
+            {% if p.status == 'Awaiting User Confirmation' %}
+                <a href="{% url 'review_prescription' p.id %}" class="btn-action btn-primary-action">
+                    Review & Pay <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+
+            {% elif p.status == 'Rejected' or p.status == 'Rejected by User' %}
+                <button class="btn-action btn-disabled" disabled>
+                    Closed
+                </button>
+
+            {% elif p.status == 'Confirmed' or p.status == 'Packed' %}
+                    <button class="btn-action btn-disabled text-success border-success bg-white" disabled style="opacity: 1;">
+                        <i class="fas fa-check me-1"></i> Order Placed
+                    </button>
+
+            {% else %}
+                <button class="btn-action btn-disabled" disabled>
+                    Processing...
+                </button>
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4">
+            <div class="empty-state">
+                <i class="fas fa-file-medical empty-icon"></i>
+                <h5>No Prescriptions Found</h5>
+                <p class="text-muted">You haven't uploaded any prescriptions yet.</p>
+                <a href="{% url 'upload_general' %}" class="btn btn-outline-primary mt-3">
+                    Upload First Prescription
+                </a>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container pb-4">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h3 class="footer-heading">About Us</h3>
+                    <p class="text-muted small">CureVia is your trusted online pharmacy partner. We ensure that every cure finds its way to you with safety, speed, and reliability.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="/shop/" class="footer-link">Medicines</a></li>
+                        <li><a href="/upload_general/" class="footer-link">Upload Prescription</a></li>
+                        <li><a href="/about/" class="footer-link">About Us</a></li>
+                        <li><a href="/contact/" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Contact Info</h3>
+                    <ul class="list-unstyled text-muted small">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i> 123 Health Street, MedCity</li>
+                        <li class="mb-2"><a href="tel:+1234567890" class="text-muted"><i class="fas fa-phone me-2 text-primary"></i> +1 234 567 890</a></li>
+                        <li class="mb-2"><i class="fas fa-envelope me-2 text-primary"></i> support@curevia.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Follow Us</h3>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-twitter fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center pt-4 border-top">
+                <p class="small text-muted mb-0">
+                    &copy; <script>document.write(new Date().getFullYear());</script> CureVia. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

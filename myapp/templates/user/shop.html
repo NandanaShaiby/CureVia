@@ -1,282 +1,560 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <title>curevia &mdash; Colorlib Template</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Store | CureVia Pharmacy</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'index/fonts/icomoon/style.css' %}">
+    <!-- Fonts: Rubik & Open Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="{% static 'index/css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/magnific-popup.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/jquery-ui.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/owl.carousel.min.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/owl.theme.default.min.css' %}">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #10847e;   /* CureVia Teal */
+            --primary-dark: #0a6b66;
+            --light: #f2f7fb;
+            --dark: #30363c;
+            --gray: #8897a2;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: var(--dark);
+            background-color: #f8f9fa;
+        }
+
+        h1, h2, h3, h4, h5, h6, .navbar-brand, .btn {
+            font-family: 'Rubik', sans-serif;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        a:hover { color: var(--primary); }
+
+        /* --- Navbar --- */
+        .navbar { background-color: white; box-shadow: 0 2px 15px rgba(0,0,0,0.05); padding: 15px 0; }
+        .brand-logo { text-transform: uppercase; letter-spacing: .15em; font-size: 24px; font-weight: 700; color: var(--primary) !important; }
+        .nav-link { font-weight: 500; color: var(--dark); margin-left: 15px; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; }
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
+        .cart-icon { position: relative; font-size: 1.2rem; color: var(--dark); margin-left: 15px; }
+        .cart-badge { position: absolute; top: -8px; right: -8px; background-color: #dc3545; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 50%; }
+
+        /* --- Breadcrumb --- */
+        .breadcrumb-wrap { background-color: white; padding: 15px 0; border-bottom: 1px solid #eee; margin-bottom: 30px; }
+        .breadcrumb a { color: var(--gray); font-size: 0.9rem; }
+        .breadcrumb span { margin: 0 10px; color: #ccc; }
+        .breadcrumb strong { color: var(--dark); font-weight: 600; font-size: 0.9rem; }
+
+        /* --- Sidebar Filters --- */
+        .filter-card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .filter-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .category-list { list-style: none; padding: 0; margin: 0; }
+        .category-list li { margin-bottom: 10px; }
+        .category-list a {
+            display: flex; justify-content: space-between;
+            color: var(--dark); font-size: 0.95rem;
+        }
+        .category-list a:hover { color: var(--primary); font-weight: 600; }
+        .category-count { background: var(--light); color: var(--gray); padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; }
 
 
-  <link rel="stylesheet" href="{% static 'index/css/aos.css' %}">
+        /* --- DUAL RANGE SLIDER CSS --- */
+        .wrapper {
+            position: relative;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 0;
+        }
+        .container-slider {
+            position: relative;
+            width: 100%;
+            height: 40px;
+            margin-top: 10px;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 100%;
+            outline: none;
+            position: absolute;
+            margin: auto;
+            top: 0;
+            bottom: 0;
+            background-color: transparent;
+            pointer-events: none;
+        }
+        .slider-track {
+            width: 100%;
+            height: 5px;
+            position: absolute;
+            margin: auto;
+            top: 0;
+            bottom: 0;
+            border-radius: 5px;
+            background-color: #e0e0e0; /* Grey Track */
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            -webkit-appearance: none;
+            height: 5px;
+        }
+        input[type="range"]::-moz-range-track {
+            -moz-appearance: none;
+            height: 5px;
+        }
+        input[type="range"]::-ms-track {
+            appearance: none;
+            height: 5px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            background-color: var(--primary);
+            cursor: pointer;
+            margin-top: -8px;
+            pointer-events: auto;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        input[type="range"]::-moz-range-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            cursor: pointer;
+            border-radius: 50%;
+            background-color: var(--primary);
+            pointer-events: auto;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        input[type="range"]:active::-webkit-slider-thumb {
+            background-color: #ffffff;
+            border: 3px solid var(--primary);
+        }
+        .values {
+            background-color: var(--primary);
+            width: 100%;
+            position: relative;
+            margin: auto;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #ffffff;
+            padding: 8px 0;
+            margin-bottom: 10px;
+        }
 
-  <link rel="stylesheet" href="{% static 'index/css/style.css' %}">
+        .btn-filter {
+            background-color: var(--dark);
+            color: white;
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        .btn-filter:hover { background-color: black; }
 
+
+        /* --- Product Grid --- */
+        .product-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            transition: 0.3s;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .product-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transform: translateY(-3px);
+        }
+
+        .badge-sale {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #dc3545;
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .product-img-wrap {
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            background: #fff;
+        }
+        .product-img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .product-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 44px;
+        }
+
+        .product-meta { font-size: 0.85rem; color: var(--gray); margin-bottom: 10px; }
+
+        .price-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .current-price { color: var(--dark); font-weight: 700; font-size: 1.1rem; }
+
+        .btn-view {
+            width: 100%;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+            padding: 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-view:hover { background-color: var(--primary); color: white; }
+
+        .sort-select {
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+            border-radius: 4px;
+            outline: none;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+
+        /* --- Footer --- */
+        footer { background-color: white; border-top: 1px solid #eee; padding-top: 60px; margin-top: 60px; }
+        .footer-heading { font-weight: 700; margin-bottom: 20px; font-size: 1.1rem; }
+        .footer-link { color: var(--gray); display: block; margin-bottom: 10px; font-size: 0.95rem; }
+        .footer-link:hover { color: var(--primary); }
+    </style>
 </head>
 
 <body>
 
-  <div class="site-wrap">
-
-
-    <div class="site-navbar py-2">
-
-      <div class="search-wrap">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-          <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
-          <form action="#" method="post">
-            <input type="text" class="form-control" placeholder="Search keyword and hit enter...">
-          </form>
-        </div>
-      </div>
-
-      <div class="container">
-        <div class="d-flex align-items-center justify-content-between">
-          <div class="logo">
-            <div class="site-logo">
-              <a href="index.html" class="js-logo-clone">curevia</a>
-            </div>
-          </div>
-          <div class="main-nav d-none d-lg-block">
-            <nav class="site-navigation text-right text-md-center" role="navigation">
-              <ul class="site-menu js-clone-nav d-none d-lg-block">
-                <li><a href="/user/">Home</a></li>
-                <li class="active"><a href="/shop/">Store</a></li>
-                <li><a href="/about/">About</a></li>
-                <li><a href="contact.html">Contact</a></li>
-                  <li><a href="/userprofile/">Profile</a></li>
-              </ul>
-            </nav>
-          </div>
-          <div class="icons">
-            <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
-            <a href="cart.html" class="icons-btn d-inline-block bag">
-              <span class="icon-shopping-bag"></span>
-              <span class="number">2</span>
-            </a>
-            <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span
-                class="icon-menu"></span></a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-light py-3">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12 mb-0"><a href="index.html">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Store</strong></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="site-section">
-      <div class="container">
-        
-        <div class="row">
-        <div class="col-lg-6">
-  <h3 class="mb-3 h6 text-uppercase text-black d-block">Filter by Price</h3>
-
-  <!-- Start Form -->
-  <form method="GET" action="/shop/">
-
-      <!-- The Slider UI -->
-      <div id="slider-range" class="border-primary"></div>
-
-      <!-- Display text (Visible to user) -->
-      <input type="text" name="text" id="amount" class="form-control border-0 pl-0 bg-white" disabled="" />
-
-      <!-- Hidden Inputs (Sent to Django) -->
-      <input type="hidden" name="min_price" id="min_price" value="0">
-      <input type="hidden" name="max_price" id="max_price" value="5000">
-
-      <!-- Filter Button -->
-      <button type="submit" class="btn btn-primary btn-sm mt-2">Filter Results</button>
-  </form>
-</div>
-          <div class="col-lg-6">
-            <h3 class="mb-3 h6 text-uppercase text-black d-block">Filter by Reference</h3>
-            <button type="button" class="btn btn-secondary btn-md dropdown-toggle px-4" id="dropdownMenuReference" data-toggle="dropdown">
-                {% if current_sort == 'price_asc' %} Price: Low to High
-                {% elif current_sort == 'price_desc' %} Price: High to Low
-                {% elif current_sort == 'name_asc' %} Name: A to Z
-                {% elif current_sort == 'name_desc' %} Name: Z to A
-                {% else %} Relevance
-                {% endif %}
+            <a class="navbar-brand brand-logo" href="/user/">CureVia</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+                <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuReference">
-  <!-- Relevance (Default) -->
-  <a class="dropdown-item" href="?sort=relevance{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}">Relevance</a>
 
-  <!-- Name A-Z -->
-  <a class="dropdown-item" href="?sort=name_asc{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}">Name, A to Z</a>
+            <div class="collapse navbar-collapse" id="navContent">
+                <form action="{% url 'search' %}" method="get" class="d-flex mx-auto my-3 my-lg-0">
+                    <input type="text" name="q" class="form-control" style="width: 250px; border-radius: 20px 0 0 20px;" placeholder="Search medicines...">
+                    <button type="submit" class="btn btn-primary" style="border-radius: 0 20px 20px 0;"><i class="fas fa-search"></i></button>
+                </form>
 
-  <!-- Name Z-A -->
-  <a class="dropdown-item" href="?sort=name_desc{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}">Name, Z to A</a>
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link " href="/user/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/shop/">Store</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'my_prescriptions' %}">My Prescriptions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'userprofile' user.id %}">Profile</a></li>
 
-  <div class="dropdown-divider"></div>
+                    <li class="nav-item">
+                        <a href="/cart/" class="cart-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                            {% if cart.count > 0 %}
+                                <span class="cart-badge">{{ cart.count }}</span>
+                            {% else %}
+                                <span class="cart-badge">0</span>
+                            {% endif %}
+                        </a>
+                    </li>
 
-  <!-- Price Low to High -->
-  <a class="dropdown-item" href="?sort=price_asc{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}">Price, low to high</a>
-
-  <!-- Price High to Low -->
-  <a class="dropdown-item" href="?sort=price_desc{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}">Price, high to low</a>
-</div>
-          </div>
+                    <li class="nav-item ms-3">
+                        <a href="/login/" class="btn btn-outline-danger btn-sm" style="font-family: 'Open Sans'; font-size: 0.8rem;">Logout</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    
-        <div class="row mt-5">
-    <!-- START DYNAMIC LOOP -->
-    {% for product in products %}
-    <div class="col-sm-6 col-lg-4 text-center item mb-4">
+    </nav>
 
-        {% if product.discount_price %}
-        <span class="tag">Sale</span>
-        {% endif %}
-
-        <!-- Image -->
-        <a href="{% url 'single_product' product.id %}" >
-            {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" style="height: 300px; width: 100%; object-fit: cover;">
-            {% else %}
-                <img src="{% static 'index/images/product_01.png' %}" alt="Default Image">
-            {% endif %}
-        </a>
-
-        <!-- Name -->
-        <h3 class="text-dark"><a href="#">{{ product.name }}</a></h3>
-
-        <!-- Price -->
-        <p class="price">
-            {% if product.discount_price %}
-                <del>₹{{ product.price }}</del> &mdash; ₹{{ product.discount_price }}
-            {% else %}
-                ₹{{ product.price }}
-            {% endif %}
-        </p>
-    </div>
-    {% empty %}
-    <div class="col-12 text-center">
-        <h3>No products found in the store.</h3>
-    </div>
-    {% endfor %}
-    <!-- END DYNAMIC LOOP -->
-</div>
-        <div class="row mt-5">
-          <div class="col-md-12 text-center">
-            <!--<div class="site-block-27">
-              <ul>
-                <li><a href="#">&lt;</a></li>
-                <li class="active"><span>1</span></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">4</a></li>
-                <li><a href="#">5</a></li>
-                <li><a href="#">&gt;</a></li>
-              </ul>
-            </div>-->
-          </div>
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/user/">Home</a> <span>/</span> <strong>Store</strong>
+            </div>
         </div>
-      </div>
     </div>
 
-    
-    <div class="site-section bg-secondary bg-image" style="background-image: url('{% static 'index/images/bg_2.jpg' %}');">
-      <div class="container">
-        <div class="row align-items-stretch">
-          <div class="col-lg-6 mb-5 mb-lg-0">
-            <a href="#" class="banner-1 h-100 d-flex" style="background-image: url('{% static 'index/images/bg_1.jpg' %}');">
-              <div class="banner-1-inner align-self-center">
-                <h2>Pharma Products</h2>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestiae ex ad minus rem odio voluptatem.
-                </p>
-              </div>
-            </a>
-          </div>
-          <div class="col-lg-6 mb-5 mb-lg-0">
-            <a href="#" class="banner-1 h-100 d-flex" style="background-image: url('{% static 'index/images/bg_2.jpg' %}');">
-              <div class="banner-1-inner ml-auto  align-self-center">
-                <h2>Rated by Experts</h2>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestiae ex ad minus rem odio voluptatem.
-                </p>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <footer class="site-footer">
-      <div class="container">
+    <!-- Main Content -->
+    <div class="container mb-5">
         <div class="row">
-          <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
 
-            <div class="block-7">
-              <h3 class="footer-heading mb-4">About Us</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quae reiciendis distinctio voluptates
-                sed dolorum excepturi iure eaque, aut unde.</p>
+            <!-- SIDEBAR FILTERS -->
+            <div class="col-lg-3">
+
+                <!-- 1. Categories Filter -->
+                <div class="filter-card">
+                    <h5 class="filter-title"><i class="fas fa-list-ul me-2"></i>Categories</h5>
+                    <ul class="category-list">
+                        <li><a href="/shop/">All Products <span class="category-count">100+</span></a></li>
+                        <li><a href="#">Medicines <span class="category-count">85</span></a></li>
+                        <li><a href="#">Supplements <span class="category-count">24</span></a></li>
+                        <li><a href="#">Personal Care <span class="category-count">12</span></a></li>
+                    </ul>
+                </div>
+
+                <!-- 2. Dual Range Price Slider (NEW) -->
+                <div class="filter-card">
+                    <h5 class="filter-title"><i class="fas fa-filter me-2"></i>Price Range</h5>
+
+                    <form method="GET" action="/shop/">
+
+                        <!-- Display Values -->
+                        <div class="values">
+                            Price: ₹<span id="range1">0</span> - ₹<span id="range2">5000</span>
+                        </div>
+
+                        <!-- Slider Wrapper -->
+                        <div class="wrapper">
+                            <div class="container-slider">
+                                <div class="slider-track" id="sliderTrack"></div>
+
+                                <!-- Slider 1: Min Price -->
+                                <input type="range" min="0" max="5000" value="{{ min_price|default:0 }}" id="slider-1" oninput="slideOne()">
+
+                                <!-- Slider 2: Max Price -->
+                                <input type="range" min="0" max="5000" value="{{ max_price|default:5000 }}" id="slider-2" oninput="slideTwo()">
+                            </div>
+                        </div>
+
+                        <!-- Hidden Inputs sent to Django -->
+                        <input type="hidden" name="min_price" id="hidden_min" value="{{ min_price|default:0 }}">
+                        <input type="hidden" name="max_price" id="hidden_max" value="{{ max_price|default:5000 }}">
+
+                        {% if current_sort %}
+                        <input type="hidden" name="sort" value="{{ current_sort }}">
+                        {% endif %}
+
+                        <button type="submit" class="btn-filter">Apply Filter</button>
+                    </form>
+                </div>
+
             </div>
 
-          </div>
-          <div class="col-lg-3 mx-auto mb-5 mb-lg-0">
-            <h3 class="footer-heading mb-4">Quick Links</h3>
-            <ul class="list-unstyled">
-              <li><a href="#">Supplements</a></li>
-              <li><a href="#">Vitamins</a></li>
-              <li><a href="#">Diet &amp; Nutrition</a></li>
-              <li><a href="#">Tea &amp; Coffee</a></li>
-            </ul>
-          </div>
+            <!-- PRODUCT GRID -->
+            <div class="col-lg-9">
 
-          <div class="col-md-6 col-lg-3">
-            <div class="block-5 mb-5">
-              <h3 class="footer-heading mb-4">Contact Info</h3>
-              <ul class="list-unstyled">
-                <li class="address">203 Fake St. Mountain View, San Francisco, California, USA</li>
-                <li class="phone"><a href="tel://23923929210">+2 392 3929 210</a></li>
-                <li class="email">emailaddress@domain.com</li>
-              </ul>
+                <!-- Grid Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white border rounded">
+                    <div>
+                        <span class="fw-bold text-dark">All Medicines</span>
+                        <span class="text-muted small ms-2">({{ products.count }} results)</span>
+                    </div>
+
+                    <form method="GET" action="/shop/" class="d-flex align-items-center">
+                        <label class="small me-2 text-muted">Sort By:</label>
+                        {% if min_price %}<input type="hidden" name="min_price" value="{{ min_price }}">{% endif %}
+                        {% if max_price %}<input type="hidden" name="max_price" value="{{ max_price }}">{% endif %}
+
+                        <select name="sort" class="sort-select" onchange="this.form.submit()">
+                            <option value="relevance" {% if current_sort == 'relevance' %}selected{% endif %}>Relevance</option>
+                            <option value="price_asc" {% if current_sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="price_desc" {% if current_sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="name_asc" {% if current_sort == 'name_asc' %}selected{% endif %}>Name: A to Z</option>
+                        </select>
+                    </form>
+                </div>
+
+                <!-- Products Row -->
+                <div class="row g-3">
+                    {% for product in products %}
+                    <div class="col-6 col-md-4">
+                        <div class="product-card">
+                            {% if product.is_popular %}
+                                <span class="badge-sale">Popular</span>
+                            {% endif %}
+
+                            <a href="{% url 'single_product' product.id %}" class="product-img-wrap">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/200?text=No+Image" class="product-img">
+                                {% endif %}
+                                {% if product.rx_required %}
+        <span class="badge bg-warning text-dark" style="position: absolute; top: 10px; right: 10px; z-index: 10; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+            Rx Required
+        </span>
+    {% endif %}
+                            </a>
+
+                            <div class="card-content">
+                                <a href="{% url 'single_product' product.id %}" class="product-title" title="{{ product.name }}">{{ product.name }}</a>
+
+                                <p class="product-meta">
+                                    {% if product.category %}
+                                        {{ product.category.name }}
+                                    {% else %}
+                                        Medicine
+                                    {% endif %}
+                                </p>
+
+                                <div class="price-box">
+                                    <span class="current-price">₹{{ product.price }}</span>
+                                </div>
+
+                                <a href="{% url 'single_product' product.id %}" class="btn-view">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-5">
+                        <div class="mb-3">
+                            <i class="fas fa-box-open fa-3x text-muted"></i>
+                        </div>
+                        <h4>No products found</h4>
+                        <p class="text-muted">Try adjusting your filters or search criteria.</p>
+                        <a href="/shop/" class="btn btn-outline-secondary mt-2">Reset Filters</a>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
-
-
-          </div>
         </div>
-        <div class="row pt-5 mt-5 text-center">
-          <div class="col-md-12">
-            <p>
-              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-              Copyright &copy;
-              <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made
-              with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank"
-                class="text-primary">Colorlib</a>
-              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-            </p>
-          </div>
+    </div>
 
+    <!-- Footer -->
+    <footer>
+        <div class="container pb-4">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h3 class="footer-heading">About Us</h3>
+                    <p class="text-muted small">CureVia is your trusted online pharmacy partner. We ensure that every cure finds its way to you with safety, speed, and reliability.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="/shop/" class="footer-link">Medicines</a></li>
+                        <li><a href="/upload_general/" class="footer-link">Upload Prescription</a></li>
+                        <li><a href="/about/" class="footer-link">About Us</a></li>
+                        <li><a href="/contact/" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Contact Info</h3>
+                    <ul class="list-unstyled text-muted small">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i> 123 Health Street, MedCity</li>
+                        <li class="mb-2"><a href="tel:+1234567890" class="text-muted"><i class="fas fa-phone me-2 text-primary"></i> +1 234 567 890</a></li>
+                        <li class="mb-2"><i class="fas fa-envelope me-2 text-primary"></i> support@curevia.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Follow Us</h3>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-twitter fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center pt-4 border-top">
+                <p class="small text-muted mb-0">
+                    &copy; <script>document.write(new Date().getFullYear());</script> CureVia. All rights reserved.
+                </p>
+            </div>
         </div>
-      </div>
     </footer>
-  </div>
 
-  <script src="{% static 'index/js/jquery-3.3.1.min.js' %}"></script>
-  <script src="{% static 'index/js/jquery-ui.js' %}"></script>
-  <script src="{% static 'index/js/popper.min.js' %}"></script>
-  <script src="{% static 'index/js/bootstrap.min.js' %}"></script>
-  <script src="{% static 'index/js/owl.carousel.min.js' %}"></script>
-  <script src="{% static 'index/js/jquery.magnific-popup.min.js' %}"></script>
-  <script src="{% static 'index/js/aos.js' %}"></script>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  <script src="{% static 'index/js/main.js' %}"></script>
+    <!-- SLIDER LOGIC SCRIPT -->
+    <script>
+        window.onload = function() {
+            slideOne();
+            slideTwo();
+        };
+
+        let sliderOne = document.getElementById("slider-1");
+        let sliderTwo = document.getElementById("slider-2");
+        let displayValOne = document.getElementById("range1");
+        let displayValTwo = document.getElementById("range2");
+        let minGap = 100; // Minimum price difference between handles
+        let sliderTrack = document.getElementById("sliderTrack");
+        let sliderMaxValue = document.getElementById("slider-1").max;
+
+        // Hidden inputs
+        let hiddenMin = document.getElementById("hidden_min");
+        let hiddenMax = document.getElementById("hidden_max");
+
+        function slideOne() {
+            if (parseInt(sliderTwo.value) - parseInt(sliderOne.value) <= minGap) {
+                sliderOne.value = parseInt(sliderTwo.value) - minGap;
+            }
+            displayValOne.textContent = sliderOne.value;
+            hiddenMin.value = sliderOne.value; // Update hidden input
+            fillColor();
+        }
+
+        function slideTwo() {
+            if (parseInt(sliderTwo.value) - parseInt(sliderOne.value) <= minGap) {
+                sliderTwo.value = parseInt(sliderOne.value) + minGap;
+            }
+            displayValTwo.textContent = sliderTwo.value;
+            hiddenMax.value = sliderTwo.value; // Update hidden input
+            fillColor();
+        }
+
+        function fillColor() {
+            percent1 = (sliderOne.value / sliderMaxValue) * 100;
+            percent2 = (sliderTwo.value / sliderMaxValue) * 100;
+            // The colored part is the gradient between percent1 and percent2
+            sliderTrack.style.background = `linear-gradient(to right, #dadae5 ${percent1}%, #10847e ${percent1}%, #10847e ${percent2}%, #dadae5 ${percent2}%)`;
+        }
+    </script>
 
 </body>
-
 </html>

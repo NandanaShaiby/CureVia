@@ -1,0 +1,353 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Inventory Management | CureVia</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Fonts: Rubik & Open Sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* --- CureVia Light Theme (Matches Home Page) --- */
+    :root {
+      --primary: #10847e;   /* Teal */
+      --primary-dark: #0a6b66;
+      --light: #f2f7fb;
+      --dark: #30363c;
+      --gray: #8897a2;
+      --border-color: #e0e0e0;
+      --card-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    }
+
+    body {
+        font-family: 'Open Sans', sans-serif;
+        background-color: #f8f9fa; /* Light Background */
+        color: var(--dark);
+    }
+
+    h1, h2, h3, h4, h5, h6, .brand-logo, .nav-link, .btn {
+        font-family: 'Rubik', sans-serif;
+    }
+
+    /* Navbar */
+    .navbar {
+        background-color: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        padding: 12px 0;
+    }
+    .brand-logo {
+        text-transform: uppercase;
+        letter-spacing: .1em;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--primary) !important;
+        text-decoration: none;
+    }
+    .nav-link {
+        font-weight: 500;
+        color: var(--gray);
+        margin: 0 10px;
+    }
+    .nav-link.active, .nav-link:hover {
+        color: var(--primary);
+    }
+    .user-badge {
+        background-color: var(--light);
+        padding: 6px 15px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        color: var(--primary-dark);
+        font-weight: 600;
+    }
+
+    /* Stats Cards */
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: var(--card-shadow);
+        border: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: transform 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); }
+    .stat-card h3 { font-size: 1.8rem; font-weight: 700; margin: 0; color: var(--dark); }
+    .stat-card span { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray); font-weight: 600; }
+    .stat-icon { font-size: 2rem; opacity: 0.8; }
+
+    /* Content Panels */
+    .content-panel {
+        background: white;
+        border-radius: 12px;
+        box-shadow: var(--card-shadow);
+        padding: 25px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 30px;
+    }
+
+    /* Table Styles */
+    .table thead th {
+        background-color: var(--light);
+        color: var(--dark);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        border-bottom: 2px solid #eee;
+    }
+    .table tbody td {
+        vertical-align: middle;
+        color: #555;
+        font-size: 0.95rem;
+    }
+
+    .med-img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #eee; }
+
+    /* Input Styling */
+    .form-control, .form-select {
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        padding: 8px 12px;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(16, 132, 126, 0.15);
+    }
+
+    .edit-input {
+        width: 80px;
+        padding: 5px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+    .edit-input:focus { border-color: var(--primary); outline: none; }
+
+    /* Badges & Buttons */
+    .btn-primary { background-color: var(--primary); border-color: var(--primary); }
+    .btn-primary:hover { background-color: var(--primary-dark); border-color: var(--primary-dark); }
+
+    .btn-outline-primary { color: var(--primary); border-color: var(--primary); }
+    .btn-outline-primary:hover { background-color: var(--primary); color: white; }
+
+    .badge-soft { padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .bg-soft-danger { background-color: #ffebee; color: #c62828; }
+    .bg-soft-warning { background-color: #fff8e1; color: #f57f17; }
+    .bg-soft-success { background-color: #e8f5e9; color: #2e7d32; }
+
+    footer { margin-top: 50px; padding: 20px 0; border-top: 1px solid #ddd; color: var(--gray); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+      <a class="navbar-brand brand-logo" href="/pharmacist/">CureVia <span class="fs-6 text-muted ms-2 fw-normal">| Partner</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navContent">
+        <ul class="navbar-nav me-auto ms-4">
+          <li class="nav-item"><a class="nav-link" href="/pharmacist/">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="/addmed/">Add Medicine</a></li>
+          <li class="nav-item"><a class="nav-link" href="/view_prescriptions/">Prescriptions</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/inventory/">Inventory</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-3">
+            <div class="user-badge d-none d-md-block">
+                <i class="fas fa-store me-2"></i> {{ pharmacy.name }}
+            </div>
+            <a href="/logout/" class="btn btn-outline-danger btn-sm px-3">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container mt-5 mb-5">
+
+      <!-- 1. HEADER & ACTIONS -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+              <h2 class="fw-bold text-dark mb-0">Inventory Management</h2>
+              <p class="text-muted mb-0">Manage stock and pricing for <strong>{{ pharmacy.location }}</strong></p>
+          </div>
+          <a href="/addmed/" class="btn btn-primary shadow-sm"><i class="fas fa-plus me-2"></i> Add Product</a>
+      </div>
+
+      <!-- 2. STATS ROW -->
+      <div class="row g-4 mb-4">
+          <div class="col-md-4">
+              <div class="stat-card border-start border-4 border-info">
+                  <div>
+                      <h3>{{ stats.total }}</h3>
+                      <span>Total Items</span>
+                  </div>
+                  <div class="bg-light rounded-circle p-3 text-info">
+                      <i class="fas fa-boxes fa-lg"></i>
+                  </div>
+              </div>
+          </div>
+          <div class="col-md-4">
+              <div class="stat-card border-start border-4 border-warning">
+                  <div>
+                      <h3>{{ stats.low }}</h3>
+                      <span>Low Stock (<10)</span>
+                  </div>
+                  <div class="bg-light rounded-circle p-3 text-warning">
+                      <i class="fas fa-exclamation-triangle fa-lg"></i>
+                  </div>
+              </div>
+          </div>
+          <div class="col-md-4">
+              <div class="stat-card border-start border-4 border-danger">
+                  <div>
+                      <h3>{{ stats.out }}</h3>
+                      <span>Out of Stock</span>
+                  </div>
+                  <div class="bg-light rounded-circle p-3 text-danger">
+                      <i class="fas fa-ban fa-lg"></i>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- 3. FILTERS -->
+      <div class="content-panel p-4 mb-4">
+          <form method="GET" class="row g-3 align-items-center">
+              <div class="col-md-5">
+                  <label class="form-label small fw-bold text-muted">Search</label>
+                  <div class="input-group">
+                      <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
+                      <input type="text" name="q" class="form-control border-start-0" placeholder="Search medicine name..." value="{{ request.GET.q }}">
+                  </div>
+              </div>
+              <div class="col-md-3">
+                  <label class="form-label small fw-bold text-muted">Category</label>
+                  <select name="category" class="form-select" onchange="this.form.submit()">
+                      <option value="all">All Categories</option>
+                      {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              <div class="col-md-3">
+                  <label class="form-label small fw-bold text-muted">Stock Status</label>
+                  <select name="stock" class="form-select" onchange="this.form.submit()">
+                      <option value="all">All Levels</option>
+                      <option value="low" {% if request.GET.stock == 'low' %}selected{% endif %}>Low Stock</option>
+                      <option value="out" {% if request.GET.stock == 'out' %}selected{% endif %}>Out of Stock</option>
+                  </select>
+              </div>
+              <div class="col-md-1">
+                  <label class="form-label d-none d-md-block">&nbsp;</label>
+                  <a href="/inventory/" class="btn btn-outline-secondary w-100"><i class="fas fa-redo"></i></a>
+              </div>
+          </form>
+      </div>
+
+      <!-- 4. INVENTORY TABLE -->
+      <div class="content-panel p-0 overflow-hidden shadow-sm">
+          <div class="table-responsive">
+              <table class="table table-hover mb-0 align-middle">
+                  <thead class="bg-light">
+                      <tr>
+                          <th class="ps-4" style="width: 30%;">Product</th>
+                          <th style="width: 15%;">Category</th>
+                          <th class="text-center" style="width: 15%;">Stock</th>
+                          <th class="text-center" style="width: 15%;">Price (₹)</th>
+                          <th class="text-center" style="width: 10%;">Status</th>
+                          <th class="text-center" style="width: 5%;">Save</th>
+                          <th class="text-end pe-4" style="width: 10%;">Delete</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for med in medicines %}
+                      <tr>
+                          <td class="ps-4">
+                              <div class="d-flex align-items-center">
+                                  {% if med.image %}
+                                    <img src="{{ med.image.url }}" class="med-img me-3 border">
+                                  {% else %}
+                                    <div class="med-img me-3 d-flex align-items-center justify-content-center bg-light text-muted border"><i class="fas fa-pills"></i></div>
+                                  {% endif %}
+                                  <div>
+                                      <div class="fw-bold text-dark">{{ med.name }}</div>
+                                      <div class="small text-muted">Exp: {{ med.expiry_date|date:"M Y" }}</div>
+                                      {% if med.rx_required %}
+                                        <span class="badge bg-danger rounded-pill mt-1" style="font-size:0.6rem;">Rx Required</span>
+                                      {% endif %}
+                                  </div>
+                              </div>
+                          </td>
+                          <td><span class="badge bg-light text-dark border">{{ med.category.name }}</span></td>
+
+                          <!-- EDITABLE FORM -->
+                          <form action="{% url 'update_inventory' med.id %}" method="POST">
+                              {% csrf_token %}
+                              <td class="text-center">
+                                  <input type="number" name="quantity" value="{{ med.quantity }}" class="edit-input">
+                              </td>
+                              <td class="text-center">
+                                  <input type="number" step="0.01" name="price" value="{{ med.price }}" class="edit-input">
+                              </td>
+                              <td class="text-center">
+                                  {% if med.quantity == 0 %}
+                                    <span class="badge badge-soft bg-soft-danger">Out</span>
+                                  {% elif med.quantity < 10 %}
+                                    <span class="badge badge-soft bg-soft-warning">Low</span>
+                                  {% else %}
+                                    <span class="badge badge-soft bg-soft-success">In stock</span>
+                                  {% endif %}
+                              </td>
+                              <td class="text-center">
+                                  <button type="submit" class="btn btn-sm btn-outline-primary rounded-circle" title="Save Changes">
+                                      <i class="fas fa-check"></i>
+                                  </button>
+                              </td>
+                          </form>
+
+                          <td class="text-end pe-4">
+                              <a href="{% url 'delete_medicine' med.id %}" class="btn btn-sm btn-light text-danger" onclick="return confirm('Delete {{ med.name }} permanently?');" title="Delete Item">
+                                  <i class="far fa-trash-alt"></i>
+                              </a>
+                          </td>
+                      </tr>
+                      {% empty %}
+                      <tr>
+                          <td colspan="7" class="text-center py-5">
+                              <div class="text-muted mb-3"><i class="fas fa-box-open fa-3x opacity-25"></i></div>
+                              <h5>No medicines found.</h5>
+                              <p class="small text-muted">Try adjusting your filters or add a new product.</p>
+                              <a href="/addmed/" class="btn btn-primary btn-sm mt-2">Add First Medicine</a>
+                          </td>
+                      </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+      </div>
+
+  </div>
+
+  <footer class="text-center">
+      <div class="container">
+          <p class="mb-0">&copy; <script>document.write(new Date().getFullYear());</script> CureVia Partner Portal. All rights reserved.</p>
+      </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

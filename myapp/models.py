@@ -6,6 +6,7 @@ class Register(models.Model):
     lname = models.CharField(max_length=100)
     email = models.EmailField()
     phone = models.IntegerField()
+    zip = models.IntegerField(default=0)
     gender = models.CharField(max_length=100)
     dob = models.DateField()
     password = models.CharField(max_length=100)
@@ -13,33 +14,20 @@ class Register(models.Model):
     def __str__(self):
         return f'{self.fname} {self.lname}'
 
+
 class Pharmacy(models.Model):
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
     address = models.TextField()
     contact = models.CharField(max_length=20)
-    email = models.EmailField(null=True, blank=True)
     service_pincodes = models.TextField(help_text="Enter pincodes separated by comma", default="")
     is_active = models.BooleanField(default=True)
+    email = models.EmailField(unique=True, null=True, blank=True)
+    password = models.CharField(max_length=100, null=True, blank=True)
+    rights = models.CharField(max_length=100, default="pharmacy")
 
     def __str__(self):
         return self.name
-
-class Pharmacist(models.Model):
-    fname = models.CharField(max_length=100)
-    lname = models.CharField(max_length=100)
-    email = models.EmailField()
-    phone = models.CharField(max_length=100)
-    qualif = models.CharField(max_length=100)
-    address = models.CharField(max_length=100)
-    license = models.CharField(max_length=100)
-    pharmacy = models.ForeignKey(Pharmacy, on_delete=models.CASCADE, null=True, blank=True)
-    date = models.DateTimeField(auto_now_add=True)
-    password = models.CharField(max_length=100)
-    is_active = models.BooleanField(default=True)
-    rights = models.CharField(max_length=100,default="pharmacist")
-    def __str__(self):
-        return f'{self.fname} {self.lname}'
 
 
 class DeliveryAgent(models.Model):
@@ -72,11 +60,9 @@ class Medicine(models.Model):
     rx_required = models.BooleanField(default=False)
     expiry_date = models.DateField()
     image = models.ImageField(upload_to='medicines/', blank=True, null=True)
-    added_by = models.ForeignKey(
-       Pharmacist,
-        on_delete=models.CASCADE,
-        related_name='added_medicines'
-    )
+    added_by_pharmacy = models.ForeignKey(Pharmacy, on_delete=models.CASCADE, related_name='added_medicines', null=True,
+                                          blank=True)
+
     added_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     is_popular = models.BooleanField(default=False)
@@ -122,7 +108,7 @@ class Order(models.Model):
     # Tracking
     status = models.CharField(max_length=50, default='Pending')
     assigned_pharmacy = models.ForeignKey(Pharmacy, on_delete=models.SET_NULL, null=True, blank=True)
-    processed_by = models.ForeignKey(Pharmacist, on_delete=models.SET_NULL, null=True, blank=True)
+    processed_by_name = models.CharField(max_length=100, blank=True, null=True)
     assigned_agent = models.ForeignKey(DeliveryAgent, on_delete=models.SET_NULL, null=True, blank=True)
 
     # --- THESE ARE THE MISSING FIELDS CAUSING THE ERROR ---
@@ -141,15 +127,13 @@ class Prescription(models.Model):
     status = models.CharField(max_length=100, default='Uploaded')
     created_at = models.DateTimeField(auto_now_add=True)
     assigned_pharmacy = models.ForeignKey(Pharmacy, on_delete=models.SET_NULL, null=True, blank=True)
-    handled_by = models.ForeignKey(Pharmacist, on_delete=models.SET_NULL, null=True, blank=True,
-                                   related_name='handled_prescriptions')
+    handled_by_name = models.CharField(max_length=100, blank=True, null=True)
     # 1. Delivery Choice (For Routing)
     DELIVERY_CHOICES = [('Home', 'Home Delivery'), ('Pickup', 'Store Pickup')]
     delivery_type = models.CharField(max_length=10, choices=DELIVERY_CHOICES, default='Home')
 
-    # 2. Locking Mechanism (Prevents 2 pharmacists from editing same order)
-    locked_by = models.ForeignKey(Pharmacist, on_delete=models.SET_NULL, null=True, blank=True,
-                                  related_name='locked_prescriptions')
+    locked_by_pharmacy = models.ForeignKey(Pharmacy, on_delete=models.SET_NULL, null=True, blank=True,
+                                           related_name='locked_prescriptions')
     locked_at = models.DateTimeField(null=True, blank=True)
 
     # 3. Communication
@@ -192,8 +176,6 @@ class OrderHistory(models.Model):
     description = models.TextField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     action_by = models.CharField(max_length=100, default="System")
-    order_group_id = models.CharField(max_length=100, blank=True, null=True)
-    payment_mode = models.CharField(max_length=50, default="COD")
 
     def __str__(self):
         return f"{self.order.id} - {self.status}"

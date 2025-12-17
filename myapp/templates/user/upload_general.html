@@ -1,82 +1,373 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>Upload Prescription</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="stylesheet" href="{% static 'index/css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/style.css' %}">
-</head>
-<body class="bg-light">
 
-<div class="site-wrap">
-    <!-- Navbar (Simplified for brevity) -->
-    <div class="site-navbar py-2">
+<head>
+    <title>Upload Prescription | CureVia Pharmacy</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Fonts: Rubik & Open Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #10847e;   /* CureVia Teal */
+            --primary-dark: #0a6b66;
+            --light: #f2f7fb;
+            --dark: #30363c;
+            --gray: #8897a2;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: var(--dark);
+            background-color: #f8f9fa;
+        }
+
+        h1, h2, h3, h4, h5, h6, .navbar-brand, .btn, .card-title {
+            font-family: 'Rubik', sans-serif;
+        }
+
+        /* --- Navbar --- */
+        .navbar { background-color: white; box-shadow: 0 2px 15px rgba(0,0,0,0.05); padding: 15px 0; }
+        .brand-logo { text-transform: uppercase; letter-spacing: .15em; font-size: 24px; font-weight: 700; color: var(--primary) !important; text-decoration: none; }
+        .nav-link { font-weight: 500; color: var(--dark); margin-left: 15px; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; text-decoration: none; }
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
+        .cart-icon { position: relative; font-size: 1.2rem; color: var(--dark); margin-left: 15px; text-decoration: none; }
+        .cart-badge { position: absolute; top: -8px; right: -8px; background-color: #dc3545; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 50%; }
+
+        /* --- Breadcrumb --- */
+        .breadcrumb-wrap { background-color: white; padding: 15px 0; border-bottom: 1px solid #eee; margin-bottom: 40px; }
+        .breadcrumb a { color: var(--gray); font-size: 0.9rem; text-decoration: none; }
+        .breadcrumb span { margin: 0 10px; color: #ccc; }
+        .breadcrumb strong { color: var(--dark); font-weight: 600; font-size: 0.9rem; }
+
+        /* --- Upload Card --- */
+        .upload-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            background: white;
+            overflow: hidden;
+        }
+
+        .upload-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .upload-icon-circle {
+            width: 70px; height: 70px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+        }
+
+        /* Form Elements */
+        .form-label { font-weight: 600; font-size: 0.9rem; color: var(--dark); }
+
+        .form-control {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            font-size: 1rem;
+        }
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 132, 126, 0.1);
+        }
+
+        /* Custom File Upload Zone */
+        .upload-zone {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            background-color: #fafafa;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background-color: #f2fcfb;
+        }
+        .upload-zone input[type="file"] {
+            position: absolute;
+            width: 100%; height: 100%;
+            top: 0; left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .upload-zone-icon { color: var(--gray); font-size: 2.5rem; margin-bottom: 10px; transition: 0.3s; }
+        .upload-zone:hover .upload-zone-icon { color: var(--primary); }
+
+        /* Delivery Option Cards */
+        .delivery-option {
+            display: block;
+            position: relative;
+            cursor: pointer;
+        }
+        .delivery-option input { position: absolute; opacity: 0; cursor: pointer; }
+
+        .option-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+        .delivery-option input:checked + .option-card {
+            border-color: var(--primary);
+            background-color: #f2fcfb;
+            box-shadow: 0 4px 10px rgba(16, 132, 126, 0.1);
+        }
+        .option-icon {
+            width: 40px; height: 40px;
+            background-color: #eee;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin-right: 15px;
+            color: #555;
+        }
+        .delivery-option input:checked + .option-card .option-icon {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: white;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 100%;
+            border: none;
+            transition: 0.3s;
+        }
+        .btn-submit:hover { background-color: var(--primary-dark); color: white; }
+
+        /* --- Footer --- */
+        footer { background-color: white; border-top: 1px solid #eee; padding-top: 60px; margin-top: 60px; }
+        .footer-heading { font-weight: 700; margin-bottom: 20px; font-size: 1.1rem; }
+        .footer-link { color: var(--gray); display: block; margin-bottom: 10px; font-size: 0.95rem; text-decoration: none; }
+        .footer-link:hover { color: var(--primary); }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-            <a href="/user/" class="site-logo">CureVia</a>
+            <a class="navbar-brand brand-logo" href="/user/">CureVia</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navContent">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="/user/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/shop/">Store</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'my_prescriptions' %}">My Prescriptions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'userprofile' request.session.uid %}">Profile</a></li>
+                    <li class="nav-item">
+                        <a href="/cart/" class="cart-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span class="cart-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/user/">Home</a> <span>/</span>
+                <strong>Upload Prescription</strong>
+            </div>
         </div>
     </div>
 
-    <div class="site-section">
-      <div class="container">
+    <!-- Main Content -->
+    <div class="container mb-5">
         <div class="row justify-content-center">
-          <div class="col-md-7">
+            <div class="col-lg-7">
 
-            <div class="card shadow-lg border-0 rounded-lg">
-                <div class="card-header bg-primary text-white text-center py-4">
-                    <h3 class="mb-0">💊 Upload Prescription</h3>
-                    <p class="small mb-0">We will find the best pharmacy for you.</p>
+                <div class="upload-card">
+                    <!-- Header -->
+                    <div class="upload-header">
+                        <div class="upload-icon-circle">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <h3 class="mb-1">Upload Prescription</h3>
+                        <p class="mb-0 small opacity-75">We will find the best pharmacy for your location.</p>
+                    </div>
+
+                    <div class="p-4 p-md-5">
+
+                        <!-- Check Login Status (Same logic as before) -->
+                        {% if request.session.uid %}
+
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <!-- 1. Image Upload (Visual Zone) -->
+                            <div class="mb-4">
+                                <label class="form-label">Prescription Photo <span class="text-danger">*</span></label>
+                                <div class="upload-zone" id="dropZone">
+                                    <input type="file" name="image" id="fileInput" accept="image/*" required onchange="showFileName()">
+                                    <i class="fas fa-cloud-upload-alt upload-zone-icon"></i>
+                                    <h6 class="fw-bold mb-1">Click to Upload</h6>
+                                    <p class="small text-muted mb-0" id="fileName">or drag and drop file here</p>
+                                </div>
+                            </div>
+
+                            <!-- 2. Pincode -->
+                            <div class="mb-4">
+                                <label class="form-label">Delivery Pincode <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-map-marker-alt"></i></span>
+                                    <input type="text" name="pincode" class="form-control border-start-0" placeholder="e.g. 682001" required pattern="[0-9]{6}" title="Enter valid 6 digit pincode">
+                                </div>
+                                <div class="form-text">We use this to assign the nearest pharmacy.</div>
+                            </div>
+
+                            <!-- 3. Delivery Type (Cards) -->
+                            <div class="mb-4">
+                                <label class="form-label mb-3">Delivery Preference</label>
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <label class="delivery-option">
+                                            <input type="radio" name="delivery_type" value="Home" checked>
+                                            <div class="option-card">
+                                                <div class="option-icon"><i class="fas fa-truck"></i></div>
+                                                <div>
+                                                    <div class="fw-bold text-dark">Home Delivery</div>
+                                                    <div class="small text-muted">to your doorstep</div>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="delivery-option">
+                                            <input type="radio" name="delivery_type" value="Pickup">
+                                            <div class="option-card">
+                                                <div class="option-icon"><i class="fas fa-store"></i></div>
+                                                <div>
+                                                    <div class="fw-bold text-dark">Store Pickup</div>
+                                                    <div class="small text-muted">collect yourself</div>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 4. Notes -->
+                            <div class="mb-4">
+                                <label class="form-label">Additional Notes (Optional)</label>
+                                <textarea name="notes" class="form-control" rows="3" placeholder="e.g. Please send brand X if available..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn-submit">
+                                <i class="fas fa-paper-plane me-2"></i> Submit Request
+                            </button>
+
+                        </form>
+
+                        {% else %}
+                            <!-- If Not Logged In -->
+                            <div class="text-center py-4">
+                                <div class="mb-3 text-muted"><i class="fas fa-lock fa-3x"></i></div>
+                                <h5>Login Required</h5>
+                                <p class="text-muted mb-4">Please login to upload prescriptions securely.</p>
+                                <a href="/login/" class="btn btn-teal px-4">Go to Login</a>
+                            </div>
+                        {% endif %}
+
+                    </div>
                 </div>
 
-                <div class="card-body p-5">
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
+            </div>
+        </div>
+    </div>
 
-                        <!-- 1. IMAGE UPLOAD -->
-                        <div class="form-group mb-4">
-                            <label class="font-weight-bold">Prescription Photo <span class="text-danger">*</span></label>
-                            <input type="file" name="image" class="form-control-file border p-2" required>
-                            <small class="text-muted">Ensure doctor's name and medicines are visible.</small>
-                        </div>
-
-                        <!-- 2. PINCODE (CRITICAL FOR ASSIGNMENT) -->
-                        <div class="form-group mb-4">
-                            <label class="font-weight-bold">Delivery Pincode <span class="text-danger">*</span></label>
-                            <input type="text" name="pincode" class="form-control" placeholder="e.g. 682001" required pattern="[0-9]{6}" title="Enter valid 6 digit pincode">
-                        </div>
-
-                        <!-- 3. DELIVERY TYPE -->
-                        <div class="form-group mb-4">
-                            <label class="font-weight-bold d-block">How do you want it?</label>
-
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" id="deliveryHome" name="delivery_type" value="Home" class="custom-control-input" checked>
-                                <label class="custom-control-label" for="deliveryHome">🏠 Home Delivery</label>
-                            </div>
-
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" id="deliveryPickup" name="delivery_type" value="Pickup" class="custom-control-input">
-                                <label class="custom-control-label" for="deliveryPickup">🏪 Store Pickup</label>
-                            </div>
-                        </div>
-
-                        <!-- 4. NOTES -->
-                        <div class="form-group mb-4">
-                            <label class="font-weight-bold">Notes (Optional)</label>
-                            <textarea name="notes" class="form-control" rows="2" placeholder="e.g. Please send only generic medicines..."></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-block btn-lg">🚀 Submit Prescription</button>
-                    </form>
+    <!-- Footer -->
+    <footer>
+        <div class="container pb-4">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h3 class="footer-heading">About Us</h3>
+                    <p class="text-muted small">CureVia is your trusted online pharmacy partner. We ensure that every cure finds its way to you with safety, speed, and reliability.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="/shop/" class="footer-link">Medicines</a></li>
+                        <li><a href="/upload_general/" class="footer-link">Upload Prescription</a></li>
+                        <li><a href="/about/" class="footer-link">About Us</a></li>
+                        <li><a href="/contact/" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Contact Info</h3>
+                    <ul class="list-unstyled text-muted small">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i> 123 Health Street, MedCity</li>
+                        <li class="mb-2"><a href="tel:+1234567890" class="text-muted"><i class="fas fa-phone me-2 text-primary"></i> +1 234 567 890</a></li>
+                        <li class="mb-2"><i class="fas fa-envelope me-2 text-primary"></i> support@curevia.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Follow Us</h3>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-twitter fa-lg"></i></a>
+                    </div>
                 </div>
             </div>
-
-          </div>
+            <div class="text-center pt-4 border-top">
+                <p class="small text-muted mb-0">
+                    &copy; <script>document.write(new Date().getFullYear());</script> CureVia. All rights reserved.
+                </p>
+            </div>
         </div>
-      </div>
-    </div>
-</div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script to Show File Name -->
+    <script>
+        function showFileName() {
+            var input = document.getElementById('fileInput');
+            var output = document.getElementById('fileName');
+            if (input.files.length > 0) {
+                output.innerText = "Selected: " + input.files[0].name;
+                output.classList.add('text-success', 'fw-bold');
+            } else {
+                output.innerText = "or drag and drop file here";
+                output.classList.remove('text-success', 'fw-bold');
+            }
+        }
+    </script>
 
 </body>
 </html>

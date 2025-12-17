@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 import uuid
+from django.utils import timezone
 from .models import *
 
 def index(request):
@@ -28,7 +29,7 @@ def login(request):
         e = request.POST.get("email")
         p = request.POST.get("password")
         log = Register.objects.filter(email=e, password=p)
-        plog=Pharmacist.objects.filter(email=e, password=p)
+        plog=Pharmacy.objects.filter(email=e, password=p)
         dlog=DeliveryAgent.objects.filter(email=e, password=p)
         if log:
             for i in log:
@@ -41,10 +42,8 @@ def login(request):
                     return redirect("/adminp")
         elif plog:
             for i in plog:
-                r = i.rights
-                if r == "pharmacist":
-                    request.session['pid']=i.id
-                    return redirect("/pharmacist")
+                request.session['pharmacy_id'] = i.id
+                return redirect("/pharmacy_staff_login")
         elif dlog:
             for i in dlog:
                 request.session['did'] = i.id
@@ -58,49 +57,52 @@ def user(request):
     if 'user_id' in request.session:
         uid = request.session['user_id']
         current_user = get_object_or_404(Register, id=uid)
+        current_pincode = request.session.get('user_pincode')
+        if not current_pincode and current_user.zip:
+            current_pincode = current_user.zip
+            request.session['user_pincode'] = current_pincode
         popular_products = Medicine.objects.filter(is_popular=True)
         new_products = Medicine.objects.all().order_by('-id')[:6]
-        return render(request, "user/userhome.html", {'user': current_user, 'products': popular_products,'new_products': new_products})
+        return render(request, "user/userhome.html", {'user': current_user, 'products': popular_products,'new_products': new_products, 'current_pincode': current_pincode or "Select Location"})
     else:
         return redirect("/login")
 
 def admin(request):
     return render(request, "admin/adminhome.html")
 
+
 def pharmacist(request):
-    if 'pid' in request.session:
-        pid = request.session['pid']
-        # 1. Get Logged in Pharmacist
-        pharmacist = get_object_or_404(Pharmacist, id=pid)
-        my_pharmacy = pharmacist.pharmacy
+    # CHANGED: Check for 'pharmacy_id' instead of 'pid'
+    if 'pharmacy_id' in request.session:
+        pid = request.session['pharmacy_id']
+        staff_name = request.session.get('staff_name', 'Staff')
 
-        if not my_pharmacy:
-            return render(request, "pharmacist/no_pharmacy_error.html")
+        # CHANGED: Get the Pharmacy Object directly
+        my_pharmacy = get_object_or_404(Pharmacy, id=pid)
 
-        # 2. Get Pending Prescriptions (The Images)
-        # We fetch 'Assigned' (New) OR 'Under Review' (Locked by someone)
+        # 1. Pending Prescriptions
         pending_prescriptions = Prescription.objects.filter(
             assigned_pharmacy=my_pharmacy,
             status__in=['Assigned to Pharmacy', 'Under Review']
         ).order_by('-created_at')
 
-        # 3. Get Pending Orders (The Cart Checkouts)
+        # 2. Pending Orders
         pending_orders = Order.objects.filter(
             assigned_pharmacy=my_pharmacy,
-            status__in=['Pending', 'Packed', 'Confirmed']
+            status__in=['Pending', 'Packed', 'Confirmed','Out for Pickup']
         ).order_by('order_group_id', '-created_at')
 
-        # 4. Low Stock Check
+        # 3. Low Stock (Linked directly to pharmacy now)
         low_stock_meds = Medicine.objects.filter(
-            added_by__pharmacy=my_pharmacy,
+            added_by_pharmacy=my_pharmacy,
             quantity__lt=10
         )
 
         context = {
-            'pharmacist': pharmacist,
             'pharmacy': my_pharmacy,
-            'pending_prescriptions': pending_prescriptions, # List for Table 1
-            'pending_orders': pending_orders,               # List for Table 2
+            'staff_name': staff_name,  # Pass name for display
+            'pending_prescriptions': pending_prescriptions,
+            'pending_orders': pending_orders,
             'low_stock_meds': low_stock_meds,
         }
         return render(request, "pharmacist/pharhome.html", context)
@@ -170,82 +172,16 @@ def adduser(request):
 
     return render(request, 'admin/add_user.html')
 
-def pharmacists(request):
-    us=Pharmacist.objects.all()
-    return render(request, "admin/pharmacist.html",{"us":us})
-
-def editphar(request,id):
-    phar = get_object_or_404(Pharmacist, id=id)
-
-    if request.method == 'POST':
-
-        new_fname = request.POST.get('fname')
-        new_lname = request.POST.get('lname')
-        new_email = request.POST.get('email')
-        new_phone = request.POST.get('phone')
-
-        phar.fname = new_fname
-        phar.lname = new_lname
-        phar.email = new_email
-        phar.phone = new_phone
-
-        phar.save()
-
-        return redirect("/pharmacists/")
-
-    else:
-
-        context = {
-            'phar': phar
-        }
-        return render(request, 'admin/edit_phar.html', context)
-
-
-def addphar(request):
-    if request.method == 'POST':
-        f = request.POST.get('fname')
-        l = request.POST.get('lname')
-        e = request.POST.get('email')
-        ph = request.POST.get('phone')
-        q = request.POST.get("qualif")
-        add = request.POST.get("address")
-        lic = request.POST.get("license")
-        p = request.POST.get("password")
-
-        pharmacist = Pharmacist(
-            fname=f,
-            lname=l,
-            email=e,
-            phone=ph,
-            qualif=q,
-            address=add,
-            license=lic,
-            password=p,
-
-        )
-        pharmacist.save()
-        return redirect("/pharmacists/")
-
-    return render(request, 'admin/add_phar.html')
-
-
-def blockphar(request, id):
-    pharmacist = get_object_or_404(Pharmacist, id=id)
-    pharmacist.is_active = False
-    pharmacist.save()
-    return redirect("/pharmacists/")
-
-def unblockphar(request, id):
-    pharmacist = get_object_or_404(Pharmacist, id=id)
-    pharmacist.is_active = True
-    pharmacist.save()
-    return redirect('/pharmacists/')
-
 @login_required
 def addmed(request):
-    addmed=Category.objects.all()
-    pid=request.session['pid']
-    ph=Pharmacist.objects.get(id=pid)
+    # 1. FIX: Check for the correct session key
+    if 'pharmacy_id' not in request.session:
+        return redirect('/login/')
+
+    pid = request.session['pharmacy_id']
+    ph = get_object_or_404(Pharmacy, id=pid)
+    addmed = Category.objects.all()
+
     if request.method == 'POST':
         n = request.POST.get('name')
         c = request.POST.get('category')
@@ -257,10 +193,10 @@ def addmed(request):
         ex = request.POST.get("expiry")
         i = request.FILES.get("image")
 
-        c=Category.objects.get(id=c)
+        c_obj = Category.objects.get(id=c)
         Medicine.objects.create(
             name=n,
-            category=c,
+            category=c_obj,
             purpose=p,
             description=d,
             price=pr,
@@ -268,12 +204,13 @@ def addmed(request):
             rx_required=rx,
             expiry_date=ex,
             image=i,
-            added_by=ph
+            # 2. FIX: Link to Pharmacy, not Pharmacist
+            added_by_pharmacy=ph
         )
 
         return redirect("/addmed/")
 
-    return render(request,'pharmacist/add_medicine.html',{'addmed':addmed} )
+    return render(request, 'pharmacist/add_medicine.html', {'addmed': addmed})
 
 def shop(request):
     products = Medicine.objects.all().order_by('-id')
@@ -479,22 +416,73 @@ def forgotpass(request):
 
 def search_product(request):
     query = request.GET.get('q')
-    products = []
+    pincode = request.GET.get('pincode')
+
+    # Session Management
+    if pincode:
+        request.session['user_pincode'] = pincode
+    else:
+        pincode = request.session.get('user_pincode')
+
+    products_list = []
+    locked_pharmacy = None  # Flag to tell HTML if we are restricted
+
+    # --- 1. CHECK CART STATUS ---
+    if 'uid' in request.session:
+        user = Register.objects.get(id=request.session['uid'])
+        existing_cart_item = Cart.objects.filter(user=user).first()
+
+        if existing_cart_item:
+            # CART IS NOT EMPTY -> LOCK THE SEARCH
+            locked_pharmacy = existing_cart_item.medicine.added_by_pharmacy
 
     if query:
-        products = Medicine.objects.filter(
-            Q(name__icontains=query) |
-            Q(purpose__icontains=query) |
-            Q(description__icontains=query) |
-            Q(category__name__icontains=query)
-        ).distinct()  # distinct() prevents duplicates if a keyword matches both name and category
+        # --- SCENARIO A: CART LOCKED (Search only specific pharmacy) ---
+        if locked_pharmacy:
+            # We skip the deduplication logic because we are only looking at ONE store.
+            products_list = Medicine.objects.filter(
+                Q(name__icontains=query) |
+                Q(purpose__icontains=query) |
+                Q(category__name__icontains=query),
+
+                # STRICT FILTER: Only this pharmacy
+                added_by_pharmacy=locked_pharmacy
+            )
+
+        # --- SCENARIO B: GLOBAL SEARCH (Best Price Logic) ---
+        else:
+            all_matches = Medicine.objects.filter(
+                Q(name__icontains=query) |
+                Q(purpose__icontains=query) |
+                Q(category__name__icontains=query)
+            )
+
+            # Filter by Pincode
+            if pincode:
+                all_matches = all_matches.filter(
+                    added_by_pharmacy__service_pincodes__icontains=pincode,
+                    added_by_pharmacy__is_active=True
+                )
+
+            # Deduplicate (Show Best Price)
+            unique_medicines = {}
+            for med in all_matches:
+                name_key = med.name.strip().lower()
+                if name_key in unique_medicines:
+                    if med.price < unique_medicines[name_key].price:
+                        unique_medicines[name_key] = med
+                else:
+                    unique_medicines[name_key] = med
+
+            products_list = list(unique_medicines.values())
 
     context = {
-        'products': products,
-        'query': query
+        'products': products_list,
+        'query': query,
+        'pincode': pincode,
+        'locked_pharmacy': locked_pharmacy  # Pass this to show a banner
     }
     return render(request, "user/search_results.html", context)
-
 
 def upload_prescription(request, id):
     if request.method == "POST":
@@ -642,6 +630,7 @@ def addpharmacy(request):
         c = request.POST.get('contact')
         e = request.POST.get("email")
         s = request.POST.get("service")
+        p = request.POST.get('password')
 
         pharmacy = Pharmacy(
             name=n,
@@ -649,6 +638,7 @@ def addpharmacy(request):
             address=add,
             contact=c,
             email=e,
+            password=p,
             service_pincodes=s,
 
         )
@@ -674,71 +664,70 @@ def admin_products(request):
     products = Medicine.objects.all().order_by('-id')
     categories = Category.objects.all()
     pharmacies = Pharmacy.objects.all()
-    pharmacists = Pharmacist.objects.all()
+
 
     context = {
         "products": products,
         "categories": categories,
         "pharmacies": pharmacies,
-        "pharmacists": pharmacists,
+
     }
     return render(request, "admin/products.html", context)
 
-from django.utils import timezone
+
 
 def lock_and_process(request, id):
-    if 'pid' in request.session:
-        pid = request.session['pid']
-        pharmacist = Pharmacist.objects.get(id=pid)
+    if 'pharmacy_id' in request.session:
+        pid = request.session['pharmacy_id']
+        my_pharmacy = get_object_or_404(Pharmacy, id=pid)
         pres = get_object_or_404(Prescription, id=id)
 
-        # 1. CHECK LOCK STATUS
-        # If locked by someone else...
-        if pres.locked_by and pres.locked_by != pharmacist:
-            # You can show an error page, or just redirect back with a message
-            # For now, simple redirect back
+        # 1. Check Lock (Compare Pharmacy Objects)
+        if pres.locked_by_pharmacy and pres.locked_by_pharmacy != my_pharmacy:
             return redirect('/pharmacist/')
 
-        # 2. APPLY LOCK (If not already locked by me)
-        if pres.locked_by != pharmacist:
-            pres.locked_by = pharmacist
-            pres.locked_at = timezone.now()
-            pres.status = 'Under Review' # Step 3 of Master Plan
+        # 2. Apply Lock
+        if pres.locked_by_pharmacy != my_pharmacy:
+            pres.locked_by_pharmacy = my_pharmacy
+            pres.status = 'Under Review'
             pres.save()
 
-        # 3. Redirect to the Workspace
         return redirect(f'/process_prescription/{id}/')
     return redirect('/login/')
 
 
 def process_prescription(request, id):
-    if 'pid' in request.session:
-        pid = request.session['pid']
-        pharmacist = Pharmacist.objects.get(id=pid)
+    if 'pharmacy_id' in request.session:
+        pid = request.session['pharmacy_id']
+        staff_name = request.session.get('staff_name', 'Staff')
+        my_pharmacy = get_object_or_404(Pharmacy, id=pid)
         pres = get_object_or_404(Prescription, id=id)
 
-        # Security: Ensure this pharmacist owns the lock!
-        if pres.locked_by != pharmacist:
+        # Security Check
+        if pres.locked_by_pharmacy != my_pharmacy:
             return redirect('/pharmacist/')
 
-        # 1. Get Inventory
-        my_inventory = Medicine.objects.filter(added_by__pharmacy=pharmacist.pharmacy)
+        # CHANGED: Filter inventory by Pharmacy
+        my_inventory = Medicine.objects.filter(added_by_pharmacy=my_pharmacy)
+
         query = request.GET.get('search_med')
         if query:
             my_inventory = my_inventory.filter(name__icontains=query)
 
-        # 2. Get SPECIAL CART Items (Items added by pharmacist for this specific order)
         added_items = PrescriptionItem.objects.filter(prescription=pres)
-
-        # Calculate Total for display
         total_cost = sum(item.total_price for item in added_items)
+
+        # Transfer logic
+        other_pharmacies = Pharmacy.objects.filter(is_active=True).exclude(id=my_pharmacy.id)
 
         context = {
             'pres': pres,
             'customer': pres.user,
             'inventory': my_inventory,
-            'added_items': added_items,  # <--- NEW LIST
-            'total_cost': total_cost
+            'added_items': added_items,
+            'total_cost': total_cost,
+            'other_pharmacies': other_pharmacies,
+            'staff_name': staff_name
         }
         return render(request, "pharmacist/process_prescription.html", context)
     else:
@@ -793,19 +782,21 @@ def remove_pres_item(request, item_id):
         return redirect(f'/process_prescription/{pres.id}/')
     return redirect('/login/')
 
+
 def submit_to_user(request, pres_id):
-    if 'pid' in request.session:
-        pid = request.session['pid']
-        pharmacist = Pharmacist.objects.get(id=pid)
+    if 'pharmacy_id' in request.session:
+        staff_name = request.session.get('staff_name', 'Staff')
         pres = get_object_or_404(Prescription, id=pres_id)
         note = request.POST.get('pharmacist_note')
-        # Change status so User sees it
+
         pres.status = 'Awaiting User Confirmation'
         pres.pharmacist_note = note
-        pres.handled_by = pharmacist
 
-        # Release the Lock (Job done)
-        pres.locked_by = None
+        # CHANGED: Save the text name
+        pres.handled_by_name = staff_name
+
+        # Unlock
+        pres.locked_by_pharmacy = None
         pres.save()
 
         return redirect('/pharmacist/')
@@ -856,20 +847,16 @@ def confirm_prescription_order(request, id):
         pres = get_object_or_404(Prescription, id=id)
 
         if request.method == "POST":
-            # 1. Get Form Data
             address = request.POST.get('address')
             city = request.POST.get('city')
             zip_code = request.POST.get('zip')
-            payment_mode = request.POST.get('payment_mode')  # 'COD' or 'Online'
+            payment_mode = request.POST.get('payment_mode')
 
-            # 2. Generate a Group ID (e.g. "ORD-8392")
             group_id = f"ORD-{uuid.uuid4().hex[:8].upper()}"
 
-            # 3. Update Prescription
             pres.status = 'Confirmed'
             pres.save()
 
-            # 4. Create Orders
             items = PrescriptionItem.objects.filter(prescription=pres)
 
             for item in items:
@@ -877,24 +864,20 @@ def confirm_prescription_order(request, id):
                     user=pres.user,
                     medicine=item.medicine,
                     quantity=item.quantity,
-
-                    # Address from Form
                     fname=pres.user.fname,
                     address=f"{address}, {city}",
                     zip=zip_code,
-
-                    # Tracking
                     assigned_pharmacy=pres.assigned_pharmacy,
                     status='Confirmed',
-                    processed_by=pres.handled_by,  # Use the permanent field
-                    notes=f"Generated from Prescription #{pres.id}",
 
-                    # Grouping & Payment
+                    # 1. FIX: Use 'processed_by_name' and fetch string from prescription
+                    processed_by_name=pres.handled_by_name,
+
+                    notes=f"Generated from Prescription #{pres.id}",
                     order_group_id=group_id,
                     payment_mode=payment_mode
                 )
 
-                # Deduct Stock
                 item.medicine.quantity -= item.quantity
                 item.medicine.save()
 
@@ -927,10 +910,13 @@ def mark_processed(request, pres_id):
 
 
 def transfer_prescription(request, id):
-    if 'pid' in request.session:
-        pid = request.session['pid']
-        current_pharmacist = Pharmacist.objects.get(id=pid)
-        current_pharmacy_id = str(current_pharmacist.pharmacy.id)
+    # 1. FIX: Use 'pharmacy_id'
+    if 'pharmacy_id' in request.session:
+        pid = request.session['pharmacy_id']
+
+        # 2. FIX: Get Pharmacy directly
+        current_pharmacy = get_object_or_404(Pharmacy, id=pid)
+        current_pharmacy_id = str(current_pharmacy.id)
 
         pres = get_object_or_404(Prescription, id=id)
 
@@ -938,17 +924,12 @@ def transfer_prescription(request, id):
             new_pharmacy_id = request.POST.get('new_pharmacy_id')
             new_pharmacy = Pharmacy.objects.get(id=new_pharmacy_id)
 
-            # 1. Update Assigned Pharmacy
             pres.assigned_pharmacy = new_pharmacy
-
-            # 2. Reset Status (So the new pharmacy sees it as a fresh request)
             pres.status = 'Assigned to Pharmacy'
 
-            # 3. UNLOCK IT (Crucial: otherwise the new pharmacy can't open it)
-            pres.locked_by = None
-            pres.locked_at = None
+            # 3. FIX: Unlock using the Pharmacy Field
+            pres.locked_by_pharmacy = None
 
-            # 4. Add CURRENT pharmacy to history (To prevent looping back)
             if pres.previous_pharmacies:
                 pres.previous_pharmacies += f",{current_pharmacy_id}"
             else:
@@ -956,7 +937,7 @@ def transfer_prescription(request, id):
 
             pres.save()
 
-            return redirect('/pharmacist/')  # Back to dashboard
+            return redirect('/pharmacist/')
 
     return redirect('/login/')
 
@@ -970,9 +951,8 @@ def reject_quote(request, id):
 
 
 def process_order_action(request, id):
-    if 'pid' in request.session:
-        pid = request.session['pid']
-        pharmacist = Pharmacist.objects.get(id=pid)
+    if 'pharmacy_id' in request.session:
+        staff_name = request.session.get('staff_name', 'Staff')  # Get name from session
         order = get_object_or_404(Order, id=id)
 
         if request.method == "POST":
@@ -980,33 +960,37 @@ def process_order_action(request, id):
 
             if action == 'approve':
                 if order.medicine.quantity >= order.quantity:
-                    # Deduct Stock
                     order.medicine.quantity -= order.quantity
                     order.medicine.save()
-
                     order.status = 'Packed'
-                    order.processed_by = pharmacist
+
+                    # CHANGED: Save the text name
+                    order.processed_by_name = staff_name
                     order.save()
 
             elif action == 'reject':
                 order.status = 'Rejected'
-                order.processed_by = pharmacist
+                order.processed_by_name = staff_name
                 order.save()
+                assign_driver_to_order(order)
 
         return redirect('/pharmacist/')
     return redirect('/login/')
 
 
 def process_group_order(request, group_id):
-    if 'pid' in request.session:
-        pid = request.session['pid']
-        pharmacist = get_object_or_404(Pharmacist, id=pid)
+    # 1. FIX: Check correct session
+    if 'pharmacy_id' in request.session:
+        pid = request.session['pharmacy_id']
+        staff_name = request.session.get('staff_name', 'Staff')
 
-        # 1. FIX: Include 'Confirmed' in the filter so we find the new orders
+        # 2. FIX: Get Pharmacy Object
+        my_pharmacy = get_object_or_404(Pharmacy, id=pid)
+
         group_orders = Order.objects.filter(
             order_group_id=group_id,
-            assigned_pharmacy=pharmacist.pharmacy,
-            status__in=['Pending', 'Confirmed']  # <--- Added 'Confirmed'
+            assigned_pharmacy=my_pharmacy,
+            status__in=['Pending', 'Confirmed']
         )
 
         if request.method == "POST":
@@ -1014,37 +998,196 @@ def process_group_order(request, group_id):
 
             if action == 'approve_all':
                 for order in group_orders:
-                    # Check Stock Logic
                     if order.medicine.quantity >= order.quantity:
-                        # Deduct Stock
                         order.medicine.quantity -= order.quantity
                         order.medicine.save()
 
-                        # Update Status
-                        order.status = 'Packed'  # Ready for Delivery
-                        order.processed_by = pharmacist
+                        order.status = 'Packed'
+                        # 3. FIX: Save Staff Name (String)
+                        order.processed_by_name = staff_name
                         order.save()
+                        assign_driver_to_order(order)
 
-                        # Optional: Add to History
+                        # 4. FIX: History uses string name
                         OrderHistory.objects.create(
                             order=order,
                             status='Packed',
-                            description=f"Group Pack by {pharmacist.fname}",
-                            action_by=f"Pharmacist: {pharmacist.fname}"
+                            description=f"Group Pack by {staff_name}",
+                            action_by=f"Staff: {staff_name}"
                         )
 
             elif action == 'reject_all':
                 for order in group_orders:
                     order.status = 'Rejected'
-                    order.processed_by = pharmacist
+                    order.processed_by_name = staff_name
                     order.save()
 
                     OrderHistory.objects.create(
                         order=order,
                         status='Rejected',
                         description="Group Reject",
-                        action_by=f"Pharmacist: {pharmacist.fname}"
+                        action_by=f"Staff: {staff_name}"
                     )
 
         return redirect('/pharmacist/')
     return redirect('/login/')
+
+
+def pharmacy_staff_login(request):
+    # Security: Ensure they actually logged in as a pharmacy first
+    if 'pharmacy_id' not in request.session:
+        return redirect('/login/')
+
+    # Get Pharmacy details to show on screen (e.g. "Login to City Meds")
+    pid = request.session['pharmacy_id']
+    pharmacy = Pharmacy.objects.get(id=pid)
+
+    if request.method == "POST":
+        staff_name = request.POST.get("staff_name")
+
+        if staff_name:
+            # 3. Save the name to session
+            request.session['staff_name'] = staff_name
+            # 4. Final Redirect to Dashboard
+            return redirect("/pharmacist")
+
+    return render(request, "pharmacy_staff_login.html", {'pharmacy': pharmacy})
+
+
+def update_pincode(request):
+    if request.method == "POST":
+        pincode = request.POST.get('pincode')
+
+        # 1. Save to Session (Used for filtering search results)
+        request.session['user_pincode'] = pincode
+
+        # 2. Save to Database (If user is logged in)
+        if 'uid' in request.session:
+            user = Register.objects.get(id=request.session['uid'])
+            user.zip = pincode
+            user.save()
+
+        # Redirect back to the page they came from (or Home)
+        return redirect(request.META.get('HTTP_REFERER', '/user/'))
+
+    return redirect('/user/')
+
+
+def pharmacy_inventory(request):
+    if 'pharmacy_id' in request.session:
+        pid = request.session['pharmacy_id']
+        my_pharmacy = get_object_or_404(Pharmacy, id=pid)
+        staff_name = request.session.get('staff_name', 'Staff')
+
+        # 1. Base Query
+        medicines = Medicine.objects.filter(added_by_pharmacy=my_pharmacy).order_by('-id')
+        categories = Category.objects.all()
+
+        # 2. Filtering Logic
+        query = request.GET.get('q')
+        cat_filter = request.GET.get('category')
+        stock_filter = request.GET.get('stock')
+
+        if query:
+            medicines = medicines.filter(name__icontains=query)
+
+        if cat_filter and cat_filter != 'all':
+            medicines = medicines.filter(category__id=cat_filter)
+
+        if stock_filter == 'low':
+            medicines = medicines.filter(quantity__lt=10)
+        elif stock_filter == 'out':
+            medicines = medicines.filter(quantity=0)
+
+        # 3. Stats for Top Bar
+        total_meds = medicines.count()
+        low_stock_count = medicines.filter(quantity__lt=10).count()
+        out_of_stock_count = medicines.filter(quantity=0).count()
+
+        context = {
+            'pharmacy': my_pharmacy,
+            'staff_name': staff_name,
+            'medicines': medicines,
+            'categories': categories,
+            'stats': {
+                'total': total_meds,
+                'low': low_stock_count,
+                'out': out_of_stock_count
+            }
+        }
+        return render(request, "pharmacist/inventory.html", context)
+    return redirect('/login/')
+
+
+def update_inventory(request, id):
+    if 'pharmacy_id' in request.session:
+        pid = request.session['pharmacy_id']
+        my_pharmacy = get_object_or_404(Pharmacy, id=pid)
+        med = get_object_or_404(Medicine, id=id)
+
+        # Security: Ensure this pharmacy owns this medicine
+        if med.added_by_pharmacy != my_pharmacy:
+            return redirect('/inventory/')
+
+        if request.method == "POST":
+            new_price = request.POST.get('price')
+            new_qty = request.POST.get('quantity')
+
+            med.price = new_price
+            med.quantity = new_qty
+            med.save()
+
+        return redirect('/inventory/')
+    return redirect('/login/')
+
+
+def delete_medicine(request, id):
+    if 'pharmacy_id' in request.session:
+        pid = request.session['pharmacy_id']
+        my_pharmacy = get_object_or_404(Pharmacy, id=pid)
+        med = get_object_or_404(Medicine, id=id)
+
+        if med.added_by_pharmacy == my_pharmacy:
+            med.delete()
+
+        return redirect('/inventory/')
+    return redirect('/login/')
+
+
+def assign_driver_to_order(order):
+
+    # 1. Get the location of the Pharmacy
+    pharmacy_location = order.assigned_pharmacy.location
+
+    # 2. Find Agents who are:
+    #    a) In the same location
+    #    b) Marked as 'Available'
+    candidates = DeliveryAgent.objects.filter(
+        current_location__icontains=pharmacy_location,
+        is_available=True
+    )
+
+    if candidates.exists():
+        # 3. Load Balancing: Find the agent with the fewest active jobs
+        # We count orders that are 'Out for Pickup' or 'Out for Delivery'
+        best_agent = candidates.annotate(
+            active_load=Count('order', filter=Q(order__status__in=['Out for Pickup', 'Out for Delivery']))
+        ).order_by('active_load').first()
+
+        # 4. Assign the Agent
+        order.assigned_agent = best_agent
+
+        # 5. Update Status: It moves from 'Packed' -> 'Out for Pickup'
+        order.status = 'Out for Pickup'
+        order.save()
+
+        # Log it
+        OrderHistory.objects.create(
+            order=order,
+            status='Out for Pickup',
+            description=f"Auto-assigned to agent: {best_agent.name}",
+            action_by="System"
+        )
+        return True
+
+    return False  # No agent found

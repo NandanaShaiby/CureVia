@@ -1,374 +1,690 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <title>CureVia &mdash; Online Pharmacy</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>User Home | CureVia Pharmacy</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'index/fonts/icomoon/style.css' %}">
+    <!-- Fonts: Rubik (Headings) & Open Sans (Body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="{% static 'index/css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/magnific-popup.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/jquery-ui.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/owl.carousel.min.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/owl.theme.default.min.css' %}">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <link rel="stylesheet" href="{% static 'index/css/aos.css' %}">
+    <!-- Swiper CSS (For Dynamic Sliders) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
-  <link rel="stylesheet" href="{% static 'index/css/style.css' %}">
+    <style>
+        :root {
+            --primary: #10847e;   /* CureVia Teal */
+            --primary-dark: #0a6b66;
+            --light: #f2f7fb;
+            --dark: #30363c;
+            --gray: #8897a2;
+        }
 
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: var(--dark);
+            background-color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* --- Typography --- */
+        h1, h2, h3, h4, h5, h6, .navbar-brand, .btn, .section-title {
+            font-family: 'Rubik', sans-serif;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        a:hover { color: var(--primary); }
+
+        /* --- Navbar --- */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 15px 0;
+        }
+
+        .brand-logo {
+            text-transform: uppercase;
+            letter-spacing: .15em;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary) !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--dark);
+            margin-left: 15px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
+
+        .search-form input {
+            border: 1px solid #e0e0e0;
+            border-radius: 20px 0 0 20px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            width: 250px;
+        }
+        .search-form button {
+            border-radius: 0 20px 20px 0;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+        }
+
+        .cart-icon {
+            position: relative;
+            font-size: 1.2rem;
+            color: var(--dark);
+            margin-left: 15px;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #dc3545;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 50%;
+        }
+
+        /* --- Hero Section --- */
+        .hero-wrap {
+            background: linear-gradient(to right, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%),
+                        url('https://images.unsplash.com/photo-1576602976047-174e57a47881?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 80px 0;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        @media (max-width: 1200px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+        }
+        .hero-sub { color: var(--gray); font-size: 1.2rem; margin-bottom: 30px; }
+
+        .btn-teal {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-weight: 500;
+            border: 2px solid var(--primary);
+        }
+        .btn-teal:hover { background-color: var(--primary-dark); color: white; }
+
+        /* --- Promo Boxes --- */
+        .promo-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #eee;
+            height: 100%;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .promo-box:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: var(--primary); }
+
+        .promo-box.highlight { background-color: var(--primary); color: white; border: none; }
+        .promo-box.highlight h5, .promo-box.highlight p { color: white; }
+        .promo-box.highlight .icon-box { background-color: rgba(255,255,255,0.2); color: white; }
+
+        .icon-box {
+            width: 50px; height: 50px;
+            background-color: var(--light);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        /* --- Product Cards --- */
+        .section-title {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 40px;
+            position: relative;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: ''; display: block; width: 50px; height: 3px; background: var(--primary); margin: 10px auto 0;
+        }
+
+        .product-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 15px;
+            transition: 0.3s;
+            text-align: center;
+            height: 100%;
+            position: relative;
+        }
+        .product-card:hover { border-color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+
+        .product-img {
+            height: 180px;
+            width: 100%;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+
+        .product-name { font-weight: 600; color: var(--dark); font-size: 1.1rem; margin-bottom: 5px; display: block; }
+        .product-price { color: var(--primary); font-weight: 700; font-size: 1.2rem; }
+
+        /* --- Testimonials --- */
+        .testimony-card {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            height: 100%;
+            border: 1px solid #eee;
+        }
+        .user-img {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 15px;
+            border: 3px solid var(--primary);
+        }
+
+        /* --- Why Choose Us (Bottom Section) --- */
+        .feature-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 30px 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: white;
+            height: 100%;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(16, 132, 126, 0.1); /* Teal Shadow */
+            border-color: var(--light);
+        }
+
+        .feature-icon-circle {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin: 0 auto 20px;
+            background: var(--light);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        /* --- Swiper Customization --- */
+        .swiper-pagination-bullet-active {
+            background-color: var(--primary) !important;
+        }
+
+        /* --- Footer --- */
+        footer { background-color: white; border-top: 1px solid #eee; padding-top: 60px; margin-top: 60px; }
+        .footer-heading { font-weight: 700; margin-bottom: 20px; font-size: 1.1rem; }
+        .footer-link { color: var(--gray); display: block; margin-bottom: 10px; font-size: 0.95rem; }
+        .footer-link:hover { color: var(--primary); }
+    </style>
 </head>
 
 <body>
 
-  <div class="site-wrap">
-
-
-    <div class="site-navbar py-2">
-
-      <div class="search-wrap">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-          <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
-          <form action="{% url 'search' %}" method="get">
-            {% csrf_token %}
-            <input type="text" name="q" class="form-control" placeholder="Search keyword and hit enter...">
-          </form>
-        </div>
-      </div>
+            <a class="navbar-brand brand-logo" href="/user/">CureVia</a>
 
-      <div class="container">
-        <div class="d-flex align-items-center justify-content-between">
-          <div class="logo">
-            <div class="site-logo">
-              <a href="/user/" class="js-logo-clone">CureVia</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navContent">
+                <!-- Search Form -->
+                <form action="{% url 'search' %}" method="get" class="search-form mx-auto d-flex my-3 my-lg-0">
+                    <input type="text" name="q" placeholder="Search medicines...">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+
+                <!-- NEW CLEAN LOCATION SELECTOR (FIXED: Added data-bs- attributes) -->
+                <div class="ml-3 mr-auto d-none d-md-flex align-items-center" style="cursor: pointer;">
+                    <a href="#" class="d-flex align-items-center text-decoration-none" data-bs-toggle="modal" data-bs-target="#pincodeModal">
+                        <span class="fas fa-map-marker-alt h4 mb-0 mr-2 text-primary"></span>
+                        <div style="line-height: 1.1; margin-left: 8px;">
+                            <span class="d-block text-muted small text-uppercase" style="font-size: 10px;">Deliver to</span>
+                            <strong class="text-dark" style="font-size: 14px;">
+                                {% if current_pincode == "Select Location" %}
+                                    Select Location
+                                {% else %}
+                                    {{ current_pincode }}
+                                {% endif %}
+                            </strong>
+                        </div>
+                    </a>
+                </div>
+                <!-- END LOCATION SELECTOR -->
+
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link active" href="/user/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/shop/">Store</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'my_prescriptions' %}">My Prescriptions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'userprofile' user.id %}">Profile</a></li>
+
+                    <li class="nav-item">
+                        <a href="/cart/" class="cart-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                            {% if cart.count > 0 %}
+                                <span class="cart-badge">{{ cart.count }}</span>
+                            {% else %}
+                                <span class="cart-badge">0</span>
+                            {% endif %}
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-3">
+                        <a href="/login/" class="btn btn-outline-danger btn-sm" style="font-family: 'Open Sans'; font-size: 0.8rem;">Logout</a>
+                    </li>
+                </ul>
             </div>
-          </div>
-          <div class="main-nav d-none d-lg-block">
-            <nav class="site-navigation text-right text-md-center" role="navigation">
-              <ul class="site-menu js-clone-nav d-none d-lg-block">
-                <li class="active"><a href="/user/">Home</a></li>
-                <li><a href="/shop/">Store</a></li>
-                <li><a href="/about/">About</a></li>
-                <li><a href="/contact/">Contact</a></li>
-
-                <!-- NEW LINK ADDED HERE -->
-                <li><a href="{% url 'my_prescriptions' %}">My Prescriptions</a></li>
-
-                <li><a href="{% url 'userprofile' user.id %}">Profile</a></li>
-              </ul>
-            </nav>
-          </div>
-          <div class="icons">
-            <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
-            <a href="/cart/" class="icons-btn d-inline-block bag">
-              <span class="icon-shopping-bag"></span>
-              <!-- You can make this dynamic later with {{ cart.count }} -->
-              <span class="number">2</span>
-            </a>
-            <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span
-                class="icon-menu"></span></a>
-          </div>
         </div>
-      </div>
+    </nav>
+
+
+
+    <!-- Hero Section -->
+    <div class="hero-wrap">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="hero-title">"Every Cure Has a Way"</h1>
+                    <p class="hero-sub">We provide genuine medicines, expert advice, and fast delivery to ensure your health is never compromised.</p>
+                    <a href="/shop/" class="btn btn-teal">Shop Medicines</a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="site-blocks-cover" style="background-image: url('{% static 'index/images/hero_1.jpg' %}');">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-7 mx-auto order-lg-2 align-self-center">
-            <div class="site-block-cover-content text-center">
 
-              <h1>"Every Cure Has a Way"</h1>
-              <h2 class="sub-title"></h2>
-              <p>
-                <a href="/shop/" class="btn btn-primary px-5 py-3">Shop Now</a>
-              </p>
+    <!-- Promo / Features Section -->
+    <div class="site-section py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="promo-box">
+                        <div class="icon-box"><i class="fas fa-truck-fast"></i></div>
+                        <h5>Free Shipping</h5>
+                        <p class="text-muted small">On all orders above ₹499. Get fast & safe delivery to your doorstep.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="promo-box">
+                        <div class="icon-box"><i class="fas fa-tags"></i></div>
+                        <h5>Season Sale 50% Off</h5>
+                        <p class="text-muted small">Top health essentials at half price. Limited time offer.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <a href="{% url 'upload_general' %}" style="text-decoration: none;">
+                        <div class="promo-box highlight">
+                            <div class="icon-box"><i class="fas fa-file-prescription"></i></div>
+                            <h5>Have a Prescription?</h5>
+                            <p class="small">Skip the search. Upload your doctor's note here and we will fill your cart.</p>
+                        </div>
+                    </a>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
 
-    <div class="site-section">
-      <div class="container">
-        <div class="row align-items-stretch section-overlap">
 
-          <!-- Box 1: Free Shipping -->
-          <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
-            <div class="banner-wrap bg-primary h-100">
-              <a href="#" class="h-100">
-                <h5>Free <br> Shipping</h5>
-                <p>
-                  On orders above ₹499
-                  <strong>Get your medicines delivered fast & safe to your doorstep</strong>
+    <!-- Popular Products Section (Static Grid) -->
+    <div class="site-section py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-7 text-center">
+                    <h2 class="section-title">Popular Products</h2>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                {% for product in products %}
+                <div class="col-md-3 col-6">
+                    <div class="product-card">
+
+                        <!-- 1. Wrapper for Image & Badge -->
+                        <div style="position: relative;">
+                            <a href="{% url 'single_product' product.id %}">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" class="product-img" alt="{{ product.name }}">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/200?text=No+Image" class="product-img" alt="No Image">
+                                {% endif %}
+                            </a>
+
+                            <!-- 2. Rx Badge (Fixed Positioning) -->
+                            {% if product.rx_required %}
+                                <span class="badge bg-warning text-dark"
+                                      style="position: absolute; top: 0; right: 0; z-index: 10; font-size: 0.7rem; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                    Rx Required
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <a href="{% url 'single_product' product.id %}" class="product-name">{{ product.name }}</a>
+                        <p class="product-price">₹{{ product.price }}</p>
+                        <a href="{% url 'single_product' product.id %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">View</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center">
+                    <p class="text-muted">No popular products available right now.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="/shop/" class="btn btn-teal">View All Products</a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- DYNAMIC CAROUSEL: New Arrivals -->
+    <div class="site-section py-5">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-7 text-center">
+                    <h2 class="section-title">New Arrivals</h2>
+                    <p class="text-muted">Check out the latest additions to our store.</p>
+                </div>
+            </div>
+
+            <!-- Swiper Slider Container -->
+            <!-- Swiper Slider Container -->
+            <div class="swiper myProductSwiper">
+                <div class="swiper-wrapper">
+                    {% for new_item in new_products %}
+                    <div class="swiper-slide">
+                        <div class="product-card mx-2">
+
+                            <!-- 1. Wrapper for Image & Badges -->
+                            <div style="position: relative;">
+                                <!-- "New" Badge -->
+                                <div class="badge bg-success position-absolute top-0 start-0 m-2" style="z-index:10;">New</div>
+
+                                <!-- "Rx" Badge (FIXED VARIABLE NAME) -->
+                                {% if new_item.rx_required %}
+                                    <span class="badge bg-warning text-dark"
+                                          style="position: absolute; top: 0; right: 0; m-2; z-index: 10; font-size: 0.7rem; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                        Rx Required
+                                    </span>
+                                {% endif %}
+
+                                <a href="{% url 'single_product' new_item.id %}">
+                                    {% if new_item.image %}
+                                        <img src="{{ new_item.image.url }}" class="product-img" alt="{{ new_item.name }}">
+                                    {% else %}
+                                        <img src="https://via.placeholder.com/200?text=No+Image" class="product-img" alt="No Image">
+                                    {% endif %}
+                                </a>
+                            </div>
+
+                            <a href="{% url 'single_product' new_item.id %}" class="product-name">{{ new_item.name }}</a>
+                            <p class="product-price">₹{{ new_item.price }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="swiper-pagination mt-4"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- DYNAMIC CAROUSEL: Testimonials -->
+    <div class="site-section py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-7 text-center">
+                    <h2 class="section-title">What Our Customers Say</h2>
+                </div>
+            </div>
+
+            <div class="swiper myTestimonySwiper">
+                <div class="swiper-wrapper">
+                    <!-- Testimony 1 -->
+                    <div class="swiper-slide">
+                        <div class="testimony-card mx-3">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Kelly" class="user-img">
+                            <p class="text-muted fst-italic">"CureVia made it so easy to order my monthly medicines. The prescription upload feature works like a charm!"</p>
+                            <h6 class="fw-bold mt-3">- Kelly Holmes</h6>
+                        </div>
+                    </div>
+
+                    <!-- Testimony 2 -->
+                    <div class="swiper-slide">
+                        <div class="testimony-card mx-3">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Lucas" class="user-img">
+                            <p class="text-muted fst-italic">"Super fast delivery. I got my package within 24 hours. The packaging was secure and professional."</p>
+                            <h6 class="fw-bold mt-3">- Lucas Gallone</h6>
+                        </div>
+                    </div>
+
+                    <!-- Testimony 3 -->
+                    <div class="swiper-slide">
+                        <div class="testimony-card mx-3">
+                            <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Rebecca" class="user-img">
+                            <p class="text-muted fst-italic">"Authentic products and great prices. I trust CureVia for all my family's healthcare needs."</p>
+                            <h6 class="fw-bold mt-3">- Rebecca Morando</h6>
+                        </div>
+                    </div>
+
+                    <!-- Testimony 4 (Added for loop effect) -->
+                    <div class="swiper-slide">
+                        <div class="testimony-card mx-3">
+                            <img src="https://randomuser.me/api/portraits/men/85.jpg" alt="John" class="user-img">
+                            <p class="text-muted fst-italic">"The customer support is excellent. They helped me find a rare medicine I couldn't find elsewhere."</p>
+                            <h6 class="fw-bold mt-3">- John Doe</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-pagination mt-4"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- WHY CHOOSE CUREVIA (Bottom Section) -->
+    <div class="site-section py-5 mt-4">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-7 text-center">
+                    <h2 class="section-title">Why Choose CureVia?</h2>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Card 1 -->
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon-circle">
+                            <i class="fas fa-user-doctor"></i>
+                        </div>
+                        <h5>Certified Pharmacists</h5>
+                        <p class="text-muted small">
+                            Every order is reviewed by a licensed pharmacist to ensure safety and accuracy before it leaves our store.
+                        </p>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon-circle">
+                            <i class="fas fa-truck-fast"></i>
+                        </div>
+                        <h5>Express Delivery</h5>
+                        <p class="text-muted small">
+                            Our dedicated delivery agents ensure your medicines reach you on time. Track your order in real-time.
+                        </p>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon-circle">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
+                        <h5>Genuine Medicines</h5>
+                        <p class="text-muted small">
+                            We source directly from manufacturers and authorized distributors. 100% authentic products guaranteed.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Footer -->
+    <footer>
+        <div class="container pb-4">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h3 class="footer-heading">About Us</h3>
+                    <p class="text-muted small">CureVia is your trusted online pharmacy partner. We ensure that every cure finds its way to you with safety, speed, and reliability.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="/shop/" class="footer-link">Medicines</a></li>
+                        <li><a href="/upload_general/" class="footer-link">Upload Prescription</a></li>
+                        <li><a href="/about/" class="footer-link">About Us</a></li>
+                        <li><a href="/contact/" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Contact Info</h3>
+                    <ul class="list-unstyled text-muted small">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i> 123 Health Street, MedCity</li>
+                        <li class="mb-2"><a href="tel:+1234567890" class="text-muted"><i class="fas fa-phone me-2 text-primary"></i> +1 234 567 890</a></li>
+                        <li class="mb-2"><i class="fas fa-envelope me-2 text-primary"></i> support@curevia.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Follow Us</h3>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-twitter fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center pt-4 border-top">
+                <p class="small text-muted mb-0">
+                    &copy; <script>document.write(new Date().getFullYear());</script> CureVia. All rights reserved.
                 </p>
-              </a>
             </div>
-          </div>
-
-          <!-- Box 2: Season Sale -->
-          <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
-            <div class="banner-wrap h-100">
-              <a href="#" class="h-100">
-                <h5>Season <br> Sale 50% Off</h5>
-                <p>
-                  Top health essentials at half price
-                  <strong>Limited-time offer. Don't miss out!.</strong>
-                </p>
-              </a>
-            </div>
-          </div>
-
-          <!-- Box 3: General Prescription Upload -->
-          <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
-            <div class="banner-wrap bg-warning h-100">
-              <a href="{% url 'upload_general' %}" class="h-100">
-                <h5>Have a <br> Prescription?</h5>
-                <p>
-                  Skip the search.
-                  <strong>Upload your doctor's note here and we will fill your cart for you.</strong>
-                </p>
-              </a>
-            </div>
-          </div>
-
         </div>
-      </div>
-    </div>
-
-    <div class="site-section">
-      <div class="container">
-        <div class="row">
-          <div class="title-section text-center col-12">
-            <h2 class="text-uppercase">Popular Products</h2>
-          </div>
-        </div>
-
-        <div class="row">
-          {% for product in products %}
-          <div class="col-sm-6 col-lg-4 text-center item mb-4">
-            <a href="{% url 'single_product' product.id %}">
-              {% if product.image %}
-              <img src="{{ product.image.url }}" style="height: 250px; width: 100%; object-fit: cover;"
-                alt="{{ product.name }}">
-              {% endif %}
-            </a>
-            <h3 class="text-dark"><a href="{% url 'single_product' product.id %}">{{ product.name }}</a></h3>
-            <p class="price">₹{{ product.price }}</p>
-          </div>
-          {% empty %}
-          <div class="col-12 text-center">
-            <p>No products available at the moment.</p>
-          </div>
-          {% endfor %}
-        </div>
-        <div class="row mt-5">
-          <div class="col-12 text-center">
-            <a href="/shop/" class="btn btn-primary px-4 py-3">View All Products</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <div class="site-section bg-light">
-      <div class="container">
-        <div class="row">
-          <div class="title-section text-center col-12">
-            <h2 class="text-uppercase">New Products</h2>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12 block-3 products-wrap">
-            <div class="nonloop-block-3 owl-carousel">
-
-              <!-- START DYNAMIC CAROUSEL LOOP -->
-              {% for new_item in new_products %}
-              <div class="text-center item mb-4">
-
-                <a href="{% url 'single_product' new_item.id %}">
-                  {% if new_item.image %}
-                  <img src="{{ new_item.image.url }}" alt="{{ new_item.name }}"
-                    style="height: 300px; object-fit: cover;">
-                  {% else %}
-                  <img src="{% static 'index/images/product_01.png' %}" alt="Default Image">
-                  {% endif %}
-                </a>
-
-                <h3 class="text-dark"><a href="{% url 'single_product' new_item.id %}">{{ new_item.name }}</a></h3>
-                <p class="price">₹{{ new_item.price }}</p>
-
-              </div>
-              {% endfor %}
-              <!-- END LOOP -->
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="site-section">
-      <div class="container">
-        <div class="row">
-          <div class="title-section text-center col-12">
-            <h2 class="text-uppercase">Testimonials</h2>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12 block-3 products-wrap">
-            <div class="nonloop-block-3 no-direction owl-carousel">
-
-              <div class="testimony">
-                <blockquote>
-                  <img src="{% static 'index/images/person_1.jpg' %}" alt="Image"
-                    class="img-fluid w-25 mb-4 rounded-circle">
-                  <p>&ldquo;Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo omnis voluptatem consectetur
-                    quam tempore obcaecati maiores voluptate aspernatur iusto eveniet, placeat ab quod tenetur ducimus.
-                    Minus ratione sit quaerat unde.&rdquo;</p>
-                </blockquote>
-                <p>&mdash; Kelly Holmes</p>
-              </div>
-
-              <div class="testimony">
-                <blockquote>
-                  <img src="{% static 'index/images/person_2.jpg' %}" alt="Image"
-                    class="img-fluid w-25 mb-4 rounded-circle">
-                  <p>&ldquo;Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo omnis voluptatem consectetur
-                    quam tempore
-                    obcaecati maiores voluptate aspernatur iusto eveniet, placeat ab quod tenetur ducimus. Minus ratione
-                    sit quaerat
-                    unde.&rdquo;</p>
-                </blockquote>
-                <p>&mdash; Rebecca Morando</p>
-              </div>
-
-              <div class="testimony">
-                <blockquote>
-                  <img src="{% static 'index/images/person_3.jpg' %}" alt="Image"
-                    class="img-fluid w-25 mb-4 rounded-circle">
-                  <p>&ldquo;Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo omnis voluptatem consectetur
-                    quam tempore
-                    obcaecati maiores voluptate aspernatur iusto eveniet, placeat ab quod tenetur ducimus. Minus ratione
-                    sit quaerat
-                    unde.&rdquo;</p>
-                </blockquote>
-                <p>&mdash; Lucas Gallone</p>
-              </div>
-
-              <div class="testimony">
-                <blockquote>
-                  <img src="{% static 'index/images/person_4.jpg' %}" alt="Image"
-                    class="img-fluid w-25 mb-4 rounded-circle">
-                  <p>&ldquo;Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo omnis voluptatem consectetur
-                    quam tempore
-                    obcaecati maiores voluptate aspernatur iusto eveniet, placeat ab quod tenetur ducimus. Minus ratione
-                    sit quaerat
-                    unde.&rdquo;</p>
-                </blockquote>
-                <p>&mdash; Andrew Neel</p>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="site-section bg-secondary bg-image" style="background-image: url('{% static 'images/bg_2.jpg' %}');">
-      <div class="container">
-        <div class="row align-items-stretch">
-          <div class="col-lg-6 mb-5 mb-lg-0">
-            <a href="#" class="banner-1 h-100 d-flex"
-              style="background-image: url('{% static 'images/bg_1.jpg' %}');">
-              <div class="banner-1-inner align-self-center">
-                <h2>CureVia Products</h2>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestiae ex ad minus rem odio voluptatem.
-                </p>
-              </div>
-            </a>
-          </div>
-          <div class="col-lg-6 mb-5 mb-lg-0">
-            <a href="#" class="banner-1 h-100 d-flex"
-              style="background-image: url('{% static 'images/bg_2.jpg' %}');">
-              <div class="banner-1-inner ml-auto  align-self-center">
-                <h2>Rated by Experts</h2>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestiae ex ad minus rem odio voluptatem.
-                </p>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <footer class="site-footer">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
-
-            <div class="block-7">
-              <h3 class="footer-heading mb-4">About Us</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quae reiciendis distinctio voluptates
-                sed dolorum excepturi iure eaque, aut unde.</p>
-            </div>
-
-          </div>
-          <div class="col-lg-3 mx-auto mb-5 mb-lg-0">
-            <h3 class="footer-heading mb-4">Quick Links</h3>
-            <ul class="list-unstyled">
-              <li><a href="#">Supplements</a></li>
-              <li><a href="#">Vitamins</a></li>
-              <li><a href="#">Diet &amp; Nutrition</a></li>
-              <li><a href="#">Tea &amp; Coffee</a></li>
-            </ul>
-          </div>
-
-          <div class="col-md-6 col-lg-3">
-            <div class="block-5 mb-5">
-              <h3 class="footer-heading mb-4">Contact Info</h3>
-              <ul class="list-unstyled">
-                <li class="address">203 Fake St. Mountain View, San Francisco, California, USA</li>
-                <li class="phone"><a href="tel://23923929210">+2 392 3929 210</a></li>
-                <li class="email">emailaddress@domain.com</li>
-              </ul>
-            </div>
-
-
-          </div>
-        </div>
-        <div class="row pt-5 mt-5 text-center">
-          <div class="col-md-12">
-            <p>
-              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-              Copyright &copy;
-              <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made
-              with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank"
-                class="text-primary">Colorlib</a>
-              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-            </p>
-          </div>
-
-        </div>
-      </div>
     </footer>
-  </div>
 
-  <script src="{% static 'index/js/jquery-3.3.1.min.js' %}"></script>
-  <script src="{% static 'index/js/jquery-ui.js' %}"></script>
-  <script src="{% static 'index/js/popper.min.js' %}"></script>
-  <script src="{% static 'index/js/bootstrap.min.js' %}"></script>
-  <script src="{% static 'index/js/owl.carousel.min.js' %}"></script>
-  <script src="{% static 'index/js/jquery.magnific-popup.min.js' %}"></script>
-  <script src="{% static 'index/js/aos.js' %}"></script>
+    <!-- PINCODE UPDATE MODAL -->
+    <!-- Note: Bootstrap 5 uses data-bs-dismiss -->
+    <div class="modal fade" id="pincodeModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title text-black">Choose your Location</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small">Select a delivery location to see product availability and delivery options.</p>
 
-  <script src="{% static 'index/js/main.js' %}"></script>
+                    <form action="{% url 'update_pincode' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <input type="text" name="pincode" class="form-control" placeholder="Enter Pincode (e.g. 682001)" pattern="[0-9]{6}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block w-100">Apply</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Swiper JS (For Dynamic Sliders) -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+    <!-- Initialize Swiper -->
+    <script>
+        // 1. New Products Slider
+        var productSwiper = new Swiper(".myProductSwiper", {
+            slidesPerView: 1,
+            spaceBetween: 20,
+            loop: true,           // Infinite Loop
+            autoplay: {
+                delay: 2500,      // 2.5 seconds
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            breakpoints: {
+                640: { slidesPerView: 2, spaceBetween: 20 }, // Tablet
+                1024: { slidesPerView: 4, spaceBetween: 30 }, // Desktop
+            },
+        });
+
+        // 2. Testimonials Slider
+        var testimonySwiper = new Swiper(".myTestimonySwiper", {
+            slidesPerView: 1,
+            spaceBetween: 30,
+            loop: true,
+            autoplay: {
+                delay: 4000,      // Slower speed for reading text
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            breakpoints: {
+                768: { slidesPerView: 2, spaceBetween: 30 },
+                1024: { slidesPerView: 3, spaceBetween: 30 },
+            },
+        });
+    </script>
 
 </body>
-
 </html>

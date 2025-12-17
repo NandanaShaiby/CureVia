@@ -1,329 +1,434 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <title>Profile &mdash; CureVia</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>My Profile | CureVia Pharmacy</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'index/fonts/icomoon/style.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/magnific-popup.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/jquery-ui.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/owl.carousel.min.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/owl.theme.default.min.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/aos.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/style.css' %}">
+    <!-- Fonts: Rubik & Open Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 
-  <style>
-    .profile-card {
-      border: 1px solid #eee;
-      padding: 40px;
-      border-radius: 5px;
-      background: #fff;
-      box-shadow: 0 0 30px -10px rgba(0, 0, 0, 0.1);
-    }
-    .profile-img {
-        width: 180px;
-        height: 180px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin-bottom: 20px;
-        border: 5px solid #f8f9fa;
-    }
-    .label-text {
-        color: #8c92a0;
-        font-weight: 400;
-        font-size: 0.9rem;
-        padding-top: 10px;
-    }
-    .profile-input:disabled {
-        background-color: transparent;
-        border: none;
-        color: #000;
-        font-weight: 500;
-        font-size: 1.1rem;
-        padding-left: 0;
-    }
-    .profile-input {
-        font-weight: 500;
-        color: #000;
-    }
-    /* Hide password section initially */
-    #passwordSection {
-        display: none;
-        background-color: #f9f9f9;
-        padding: 20px;
-        border-radius: 5px;
-        margin-bottom: 20px;
-        border: 1px dashed #ccc;
-    }
-    .password-header {
-        font-size: 1rem;
-        font-weight: bold;
-        margin-bottom: 15px;
-        color: #51eaea;
-    }
-  </style>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #10847e;   /* CureVia Teal */
+            --primary-dark: #0a6b66;
+            --light: #f2f7fb;
+            --dark: #30363c;
+            --gray: #8897a2;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: var(--dark);
+            background-color: #f8f9fa; /* Slightly gray background for contrast */
+        }
+
+        /* --- Typography --- */
+        h1, h2, h3, h4, h5, h6, .navbar-brand, .btn {
+            font-family: 'Rubik', sans-serif;
+        }
+
+        /* --- Navbar (Same as UserHome) --- */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 15px 0;
+        }
+
+        .brand-logo {
+            text-transform: uppercase;
+            letter-spacing: .15em;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary) !important;
+            text-decoration: none;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--dark);
+            margin-left: 15px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+        }
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
+
+        .cart-icon {
+            position: relative;
+            font-size: 1.2rem;
+            color: var(--dark);
+            margin-left: 15px;
+            text-decoration: none;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #dc3545;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 50%;
+        }
+
+        /* --- Profile Card Styling --- */
+        .profile-section {
+            padding: 60px 0;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+        }
+
+        .profile-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .profile-icon-circle {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .profile-body {
+            padding: 40px;
+        }
+
+        /* Form Controls */
+        .form-label {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .form-control, .form-select {
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            font-size: 1rem;
+            background-color: #fcfcfc;
+        }
+
+        .form-control:disabled, .form-select:disabled {
+            background-color: #f0f2f5;
+            border-color: #eee;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 132, 126, 0.1);
+        }
+
+        /* Password Section (Hidden Initially) */
+        #passwordSection {
+            display: none; /* Hidden by default */
+            background-color: #f2f7fb;
+            border: 1px dashed var(--primary);
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .btn-teal {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-weight: 500;
+            border: none;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        .btn-teal:hover { background-color: var(--primary-dark); color: white; }
+
+        .btn-outline-danger {
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            padding: 10px 25px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .btn-outline-danger:hover { background-color: #dc3545; color: white; }
+
+        /* --- Footer --- */
+        footer { background-color: white; border-top: 1px solid #eee; padding-top: 60px; margin-top: 60px; }
+        .footer-heading { font-weight: 700; margin-bottom: 20px; font-size: 1.1rem; }
+        .footer-link { color: var(--gray); display: block; margin-bottom: 10px; font-size: 0.95rem; text-decoration: none; }
+        .footer-link:hover { color: var(--primary); }
+    </style>
 </head>
 
 <body>
 
-  <div class="site-wrap">
-
-    <!-- NAVBAR -->
-    <div class="site-navbar py-2">
-      <div class="search-wrap">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-          <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
-          <form action="#" method="post">
-            <input type="text" class="form-control" placeholder="Search keyword and hit enter...">
-          </form>
-        </div>
-      </div>
+            <a class="navbar-brand brand-logo" href="/user/">CureVia</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-      <div class="container">
-        <div class="d-flex align-items-center justify-content-between">
-          <div class="logo">
-            <div class="site-logo">
-              <a href="/user/" class="js-logo-clone">CureVia</a>
-            </div>
-          </div>
-          <div class="main-nav d-none d-lg-block">
-            <nav class="site-navigation text-right text-md-center" role="navigation">
-              <ul class="site-menu js-clone-nav d-none d-lg-block">
-                <li><a href="/user/">Home</a></li>
-                <li><a href="/shop/">Store</a></li>
-                <li><a href="/about/">About</a></li>
-                <li><a href="/contact/">Contact</a></li>
-                <li class="active"><a href="/userprofile/{{ user.id }}/">Profile</a></li>
-              </ul>
-            </nav>
-          </div>
-          <div class="icons">
-            <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
-            <a href="cart.html" class="icons-btn d-inline-block bag">
-              <span class="icon-shopping-bag"></span>
-              <span class="number">2</span>
-            </a>
-            <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span
-                class="icon-menu"></span></a>
-          </div>
-        </div>
-      </div>
-    </div>
+            <div class="collapse navbar-collapse" id="navContent">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link " href="/user/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/shop/">Store</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'my_prescriptions' %}">My Prescriptions</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="{% url 'userprofile' user.id %}">Profile</a></li>
 
-    <!-- BREADCRUMB -->
-    <div class="bg-light py-3">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12 mb-0">
-            <a href="/user/">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Profile</strong>
-          </div>
-        </div>
-      </div>
-    </div>
+                    <li class="nav-item">
+                        <a href="/cart/" class="cart-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                            {% if cart.count > 0 %}
+                                <span class="cart-badge">{{ cart.count }}</span>
+                            {% else %}
+                                <span class="cart-badge">0</span>
+                            {% endif %}
+                        </a>
+                    </li>
 
-    <!-- PROFILE CONTENT -->
-    <div class="site-section">
-      <div class="container">
-
-        <!-- Display Messages (Error/Success) -->
-        {% if messages %}
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                {% endfor %}
+                    <li class="nav-item ms-3">
+                        <a href="/login/" class="btn btn-outline-danger btn-sm" style="font-family: 'Open Sans'; font-size: 0.8rem;">Logout</a>
+                    </li>
+                </ul>
             </div>
         </div>
-        {% endif %}
+    </nav>
 
-        <div class="row justify-content-center">
-          <div class="col-lg-8">
+    <!-- Profile Section -->
+    <section class="profile-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
 
-            <div class="text-center mb-5">
-                <h2 class="h3 text-black text-uppercase">My Profile</h2>
-                <p>Manage your personal information and account settings.</p>
-            </div>
-
-            <form method="post" action="{% url 'userprofile' user.id %}">
-                {% csrf_token %}
-            <div class="profile-card">
-                <div class="row align-items-start">
-
-                    <!-- Left Side: Image -->
-                    <div class="col-md-5 text-center">
-                        <img src="{% static 'index/images/person_1.jpg' %}" alt="Profile Image" class="profile-img">
-                        <div class="mt-2">
-                           <h3 class="text-black h4">{{ user.fname }} {{ user.lname }}</h3>
-
+                    <!-- ALERT MESSAGES -->
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                    </div>
+                        {% endfor %}
+                    {% endif %}
 
-                    <!-- Right Side: Details -->
-                    <div class="col-md-7 mt-4 mt-md-0">
+                    <form method="post" action="{% url 'userprofile' user.id %}">
+                        {% csrf_token %}
 
-                        <!-- Personal Details -->
-                        <div class="row mb-3 border-bottom pb-2">
-                            <div class="col-4 label-text">First Name</div>
-                            <div class="col-8">
-                                <input type="text" name="fname" value="{{ user.fname }}" class="form-control profile-input" disabled>
+                        <div class="profile-card">
+                            <!-- Header -->
+                            <div class="profile-header">
+                                <div class="profile-icon-circle">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <h3 class="mb-0">My Profile</h3>
+                                <p class="mb-0 opacity-75 small">Manage your personal information</p>
+                            </div>
+
+                            <!-- Body -->
+                            <div class="profile-body">
+
+                                <div class="row g-3">
+                                    <!-- Name Row -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">First Name</label>
+                                        <input type="text" name="fname" value="{{ user.fname }}" class="form-control profile-input" disabled required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Last Name</label>
+                                        <input type="text" name="lname" value="{{ user.lname }}" class="form-control profile-input" disabled required>
+                                    </div>
+
+                                    <!-- Contact Row -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email Address</label>
+                                        <input type="email" name="email" value="{{ user.email }}" class="form-control profile-input" disabled required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Phone Number</label>
+                                        <input type="number" name="phone" value="{{ user.phone }}" class="form-control profile-input" disabled required>
+                                    </div>
+
+                                    <!-- Info Row -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Gender</label>
+                                        <select name="gender" class="form-select profile-input" disabled>
+                                            <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>
+                                            <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>Female</option>
+                                            <option value="Other" {% if user.gender == 'Other' %}selected{% endif %}>Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Date of Birth</label>
+                                        <input type="date" name="dob" value="{{ user.dob|date:'Y-m-d' }}" class="form-control profile-input" disabled required>
+                                    </div>
+                                </div>
+
+                                <!-- HIDDEN PASSWORD SECTION -->
+                                <div id="passwordSection">
+                                    <h5 class="mb-3" style="color: var(--primary); font-weight: 700;">
+                                        <i class="fas fa-lock me-2"></i>Change Password (Optional)
+                                    </h5>
+                                    <div class="row g-3">
+                                        <div class="col-md-12">
+                                            <label class="form-label">Current Password</label>
+                                            <input type="password" name="old_password" class="form-control" placeholder="Enter current password to confirm">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">New Password</label>
+                                            <input type="password" name="new_password" class="form-control" placeholder="New password">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Confirm New Password</label>
+                                            <input type="password" name="confirm_password" class="form-control" placeholder="Confirm new password">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="d-flex justify-content-between align-items-center mt-5 border-top pt-4">
+                                    <a href="/logout/" class="btn btn-outline-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    </a>
+
+                                    <div>
+                                        <button type="button" id="editBtn" class="btn btn-teal">
+                                            <i class="fas fa-edit me-2"></i>Edit Profile
+                                        </button>
+                                        <button type="submit" id="saveBtn" class="btn btn-success d-none">
+                                            <i class="fas fa-save me-2"></i>Save Changes
+                                        </button>
+                                        <button type="button" id="cancelBtn" class="btn btn-secondary d-none ms-2">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
+                    </form>
 
-                        <div class="row mb-3 border-bottom pb-2">
-                            <div class="col-4 label-text">Last Name</div>
-                            <div class="col-8">
-                                <input type="text" name="lname" value="{{ user.lname }}" class="form-control profile-input" disabled>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3 border-bottom pb-2">
-                            <div class="col-4 label-text">Email</div>
-                            <div class="col-8">
-                                <input type="email" name="email" value="{{ user.email }}" class="form-control profile-input" disabled>
-                            </div>
-                        </div>
-
-                        <div class="row mb-4 border-bottom pb-2">
-                            <div class="col-4 label-text">Phone</div>
-                            <div class="col-8">
-                                <input type="number" name="phone" value="{{ user.phone }}" class="form-control profile-input" disabled>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3 border-bottom pb-2">
-                            <div class="col-4 label-text">Gender</div>
-                            <div class="col-8">
-                                <input type="text" name="gender" value="{{ user.gender }}" class="form-control profile-input" disabled>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3 border-bottom pb-2">
-                            <div class="col-4 label-text">Date of Birth</div>
-                            <div class="col-8">
-                                <input type="date" name="dob" value="{{ user.dob|date:'Y-m-d' }}" class="form-control profile-input" disabled>
-                            </div>
-                        </div>
-
-                        <!-- NEW PASSWORD SECTION (Hidden by default) -->
-                        <div id="passwordSection">
-                            <div class="password-header">Change Password (Optional)</div>
-
-                            <div class="form-group">
-                                <label>Old Password</label>
-                                <input type="password" name="old_password" class="form-control" placeholder="Enter current password">
-                            </div>
-
-                            <div class="form-group">
-                                <label>New Password</label>
-                                <input type="password" name="new_password" class="form-control" placeholder="Enter new password">
-                            </div>
-
-                            <div class="form-group">
-                                <label>Confirm Password</label>
-                                <input type="password" name="confirm_password" class="form-control" placeholder="Re-enter new password">
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <button type="button" id="editBtn" class="btn btn-primary mr-2">Edit Profile</button>
-                                <button type="submit" id="saveBtn" class="btn btn-success mr-2" style="display: none;">Save Changes</button>
-                                <a href="/logout/" class="btn btn-outline-danger">Logout</a>
-                            </div>
-                        </div>
-
-                    </div>
                 </div>
             </div>
-            </form>
-
-          </div>
         </div>
-      </div>
-    </div>
+    </section>
 
-    <footer class="site-footer">
-        <!-- Footer code same as before -->
-         <div class="container">
-        <div class="row">
-          <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
-            <div class="block-7">
-              <h3 class="footer-heading mb-4">About Us</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quae reiciendis distinctio voluptates
-                sed dolorum excepturi iure eaque, aut unde.</p>
+    <!-- Footer -->
+    <footer>
+        <div class="container pb-4">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h3 class="footer-heading">About Us</h3>
+                    <p class="text-muted small">CureVia is your trusted online pharmacy partner. We ensure that every cure finds its way to you with safety, speed, and reliability.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="/shop/" class="footer-link">Medicines</a></li>
+                        <li><a href="/upload_general/" class="footer-link">Upload Prescription</a></li>
+                        <li><a href="/about/" class="footer-link">About Us</a></li>
+                        <li><a href="/contact/" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Contact Info</h3>
+                    <ul class="list-unstyled text-muted small">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i> 123 Health Street, MedCity</li>
+                        <li class="mb-2"><a href="tel:+1234567890" class="text-muted"><i class="fas fa-phone me-2 text-primary"></i> +1 234 567 890</a></li>
+                        <li class="mb-2"><i class="fas fa-envelope me-2 text-primary"></i> support@curevia.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Follow Us</h3>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-twitter fa-lg"></i></a>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col-lg-3 mx-auto mb-5 mb-lg-0">
-            <h3 class="footer-heading mb-4">Quick Links</h3>
-            <ul class="list-unstyled">
-              <li><a href="#">Supplements</a></li>
-              <li><a href="#">Vitamins</a></li>
-              <li><a href="#">Diet &amp; Nutrition</a></li>
-              <li><a href="#">Tea &amp; Coffee</a></li>
-            </ul>
-          </div>
-
-          <div class="col-md-6 col-lg-3">
-            <div class="block-5 mb-5">
-              <h3 class="footer-heading mb-4">Contact Info</h3>
-              <ul class="list-unstyled">
-                <li class="address">203 Fake St. Mountain View, San Francisco, California, USA</li>
-                <li class="phone"><a href="tel://23923929210">+2 392 3929 210</a></li>
-                <li class="email">emailaddress@domain.com</li>
-              </ul>
+            <div class="text-center pt-4 border-top">
+                <p class="small text-muted mb-0">
+                    &copy; <script>document.write(new Date().getFullYear());</script> CureVia. All rights reserved.
+                </p>
             </div>
-          </div>
         </div>
-        <div class="row pt-5 mt-5 text-center">
-          <div class="col-md-12">
-            <p>
-              Copyright &copy;
-              <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made
-              with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank"
-                class="text-primary">Colorlib</a>
-            </p>
-          </div>
-        </div>
-      </div>
     </footer>
-  </div>
 
-  <script src="{% static 'index/js/jquery-3.3.1.min.js' %}"></script>
-  <script src="{% static 'index/js/jquery-ui.js' %}"></script>
-  <script src="{% static 'index/js/popper.min.js' %}"></script>
-  <script src="{% static 'index/js/bootstrap.min.js' %}"></script>
-  <script src="{% static 'index/js/owl.carousel.min.js' %}"></script>
-  <script src="{% static 'index/js/jquery.magnific-popup.min.js' %}"></script>
-  <script src="{% static 'index/js/aos.js' %}"></script>
-  <script src="{% static 'index/js/main.js' %}"></script>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Updated Script -->
-  <script>
-      $(document).ready(function() {
-          $('#editBtn').click(function() {
-              // 1. Enable input fields
-              $('.profile-input').prop('disabled', false);
+    <!-- Custom Script for Edit Toggle -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const editBtn = document.getElementById('editBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const inputs = document.querySelectorAll('.profile-input');
+            const passSection = document.getElementById('passwordSection');
 
-              // 2. Show Password Section with a slide animation
-              $('#passwordSection').slideDown();
+            // Store original values in case of cancel
+            let originalValues = {};
+            inputs.forEach(input => originalValues[input.name] = input.value);
 
-              // 3. Toggle Buttons
-              $(this).hide();
-              $('#saveBtn').show();
-          });
-      });
-  </script>
+            editBtn.addEventListener('click', function() {
+                // Enable inputs
+                inputs.forEach(input => input.disabled = false);
+
+                // Show password section
+                passSection.style.display = 'block';
+
+                // Toggle Buttons
+                editBtn.classList.add('d-none');
+                saveBtn.classList.remove('d-none');
+                cancelBtn.classList.remove('d-none');
+            });
+
+            cancelBtn.addEventListener('click', function() {
+                // Disable inputs
+                inputs.forEach(input => {
+                    input.disabled = true;
+                    input.value = originalValues[input.name]; // Reset value
+                });
+
+                // Hide password section
+                passSection.style.display = 'none';
+
+                // Toggle Buttons
+                editBtn.classList.remove('d-none');
+                saveBtn.classList.add('d-none');
+                cancelBtn.classList.add('d-none');
+            });
+        });
+    </script>
 
 </body>
 </html>

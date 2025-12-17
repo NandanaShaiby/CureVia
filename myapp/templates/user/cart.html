@@ -1,340 +1,482 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <title>Pharma &mdash; Colorlib Template</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Shopping Cart | CureVia Pharmacy</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'index/fonts/icomoon/style.css' %}">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <link rel="stylesheet" href="{% static 'index/css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/magnific-popup.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/jquery-ui.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/owl.carousel.min.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/owl.theme.default.min.css' %}">
+    <style>
+        :root {
+            --primary: #10847e;
+            --primary-dark: #0a6b66;
+            --light: #f2f7fb;
+            --dark: #30363c;
+            --gray: #8897a2;
+        }
 
-  <link rel="stylesheet" href="{% static 'index/css/aos.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/style.css' %}">
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: var(--dark);
+            background-color: #f8f9fa;
+        }
 
+        h1, h2, h3, h4, h5, h6, .navbar-brand, .btn {
+            font-family: 'Rubik', sans-serif;
+        }
+
+        /* --- Navbar --- */
+        .navbar { background-color: white; box-shadow: 0 2px 15px rgba(0,0,0,0.05); padding: 15px 0; }
+        .brand-logo { text-transform: uppercase; letter-spacing: .15em; font-size: 24px; font-weight: 700; color: var(--primary) !important; text-decoration: none; }
+        .nav-link { font-weight: 500; color: var(--dark); margin-left: 15px; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; text-decoration: none; }
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
+        .cart-icon { position: relative; font-size: 1.2rem; color: var(--dark); margin-left: 15px; text-decoration: none; }
+        .cart-badge { position: absolute; top: -8px; right: -8px; background-color: #dc3545; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 50%; }
+
+        /* --- Breadcrumb --- */
+        .breadcrumb-wrap { background-color: white; padding: 15px 0; border-bottom: 1px solid #eee; margin-bottom: 40px; }
+        .breadcrumb a { color: var(--gray); font-size: 0.9rem; text-decoration: none; }
+        .breadcrumb span { margin: 0 10px; color: #ccc; }
+        .breadcrumb strong { color: var(--dark); font-weight: 600; font-size: 0.9rem; }
+
+        /* --- Cart Layout --- */
+        .cart-table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .table thead th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+            color: var(--dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            vertical-align: middle;
+            padding: 20px 15px;
+        }
+
+        .cart-img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            padding: 5px;
+        }
+
+        /* Quantity Buttons */
+        .qty-group {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            overflow: hidden;
+            width: 110px;
+        }
+        .qty-btn {
+            background: #f8f9fa;
+            border: none;
+            width: 35px;
+            height: 35px;
+            font-weight: 700;
+            color: var(--dark);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .qty-btn:hover { background: #e0e0e0; }
+        .qty-input {
+            width: 40px;
+            text-align: center;
+            border: none;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            height: 35px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .qty-input:focus { outline: none; }
+
+        /* Remove Button */
+        .btn-remove {
+            color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: 0.3s;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .btn-remove:hover { background: #dc3545; color: white; }
+
+        /* --- Cart Summary (Right Side) --- */
+        .cart-summary {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid #e0e0e0;
+            position: sticky;
+            top: 100px;
+            /* Flex Column to manage spacing */
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        /* Distinct Total Section */
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px dashed #eee;
+            padding-top: 20px;
+            margin-top: 10px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--dark);
+        }
+
+        /* Checkout Button */
+        .btn-checkout {
+            background-color: var(--primary);
+            color: white;
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            border: none;
+            transition: 0.3s;
+            margin-top: 15px; /* Spacing from total */
+            display: block;
+            text-align: center;
+            text-decoration: none;
+        }
+        .btn-checkout:hover { background-color: var(--primary-dark); color: white; }
+
+        .coupon-box { display: flex; }
+        .coupon-input { border-radius: 6px 0 0 6px; border: 1px solid #ddd; padding: 8px; flex-grow: 1; }
+        .btn-apply { border-radius: 0 6px 6px 0; background: var(--dark); color: white; border: none; padding: 0 15px; font-size: 0.85rem; font-weight: 600; }
+
+        /* Empty State */
+        .empty-cart { text-align: center; padding: 60px 20px; }
+        .empty-cart i { font-size: 4rem; color: #e0e0e0; margin-bottom: 20px; }
+
+        /* Footer */
+        footer { background-color: white; border-top: 1px solid #eee; padding-top: 60px; margin-top: 60px; }
+        .footer-heading { font-weight: 700; margin-bottom: 20px; font-size: 1.1rem; }
+        .footer-link { color: var(--gray); display: block; margin-bottom: 10px; font-size: 0.95rem; text-decoration: none; }
+        .footer-link:hover { color: var(--primary); }
+    </style>
 </head>
 
 <body>
 
-  <div class="site-wrap">
-
-
-    <div class="site-navbar py-2">
-
-      <div class="search-wrap">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-          <a href="#" class="search-close js-search-close"><span class="icon-close"></span></a>
-          <form action="#" method="post">
-            <input type="text" class="form-control" placeholder="Search keyword and hit enter...">
-          </form>
-        </div>
-      </div>
+            <a class="navbar-brand brand-logo" href="/user/">CureVia</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-      <div class="container">
-        <div class="d-flex align-items-center justify-content-between">
-          <div class="logo">
-            <div class="site-logo">
-              <a href="index.html" class="js-logo-clone">CureVia</a>
+            <div class="collapse navbar-collapse" id="navContent">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="/user/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/shop/">Store</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'my_prescriptions' %}">My Prescriptions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'userprofile' request.session.uid %}">Profile</a></li>
+                    <li class="nav-item">
+                        <a href="/cart/" class="cart-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span class="cart-badge">{{ cart.count|default:"0" }}</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
-          </div>
-          <div class="main-nav d-none d-lg-block">
-            <nav class="site-navigation text-right text-md-center" role="navigation">
-              <ul class="site-menu js-clone-nav d-none d-lg-block">
-                <li><a href="/user/">Home</a></li>
-                <li class="active"><a href="/shop/">Store</a></li>
-                <li><a href="/about/">About</a></li>
-                <li><a href="/contact/">Contact</a></li>
-                <li><a href="{% url 'userprofile' user.id %}">Profile</a></li>
-              </ul>
-            </nav>
-          </div>
-          <div class="icons">
-            <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
-            <a href="/cart/" class="icons-btn d-inline-block bag">
-              <span class="icon-shopping-bag"></span>
-              <span class="number"></span>
-            </a>
-            <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span
-                class="icon-menu"></span></a>
-          </div>
         </div>
-      </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/user/">Home</a> <span>/</span>
+                <a href="/shop/">Store</a> <span>/</span>
+                <strong>Shopping Cart</strong>
+            </div>
+        </div>
     </div>
 
-    <div class="bg-light py-3">
-      <div class="container">
+    <!-- Main Content -->
+    <div class="container mb-5">
+
+        {% if cart %}
         <div class="row">
-          <div class="col-md-12 mb-0">
-            <a href="index.html">Home</a> <span class="mx-2 mb-0">/</span>
-            <strong class="text-black">Cart</strong>
-          </div>
+
+            <!-- LEFT COLUMN: CART TABLE -->
+            <div class="col-lg-8">
+                <div class="cart-table-container">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40%;">Product</th>
+                                    <th style="width: 15%;">Price</th>
+                                    <th style="width: 20%;">Quantity</th>
+                                    <th style="width: 15%;">Total</th>
+                                    <th style="width: 10%;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart %}
+                                <tr class="cart-item-row">
+                                    <!-- Product Info (Category Removed) -->
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if item.medicine.image %}
+                                                <img src="{{ item.medicine.image.url }}" alt="{{ item.medicine.name }}" class="cart-img me-3">
+                                            {% else %}
+                                                <img src="https://via.placeholder.com/80" class="cart-img me-3">
+                                            {% endif %}
+                                            <div>
+                                                <h6 class="mb-0 text-dark fw-bold">{{ item.medicine.name }}</h6>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Unit Price -->
+                                    <td>
+                                        <span class="unit-price" data-price="{{ item.medicine.price }}">₹{{ item.medicine.price }}</span>
+                                    </td>
+
+                                    <!-- Quantity (Kept) -->
+                                    <td>
+                                        <div class="qty-group">
+                                            <button type="button" class="qty-btn btn-minus">-</button>
+                                            <input type="text" class="qty-input" value="{{ item.quantity }}" readonly>
+                                            <button type="button" class="qty-btn btn-plus">+</button>
+                                        </div>
+                                    </td>
+
+                                    <!-- Row Total -->
+                                    <td>
+                                        <strong class="text-primary row-total">₹{{ item.total_price }}</strong>
+                                    </td>
+
+                                    <!-- Remove -->
+                                    <td class="text-end">
+                                        <a href="/deletecart/{{ item.id }}/" class="btn-remove" title="Remove Item">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <a href="/shop/" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i> Continue Shopping
+                </a>
+            </div>
+
+            <!-- RIGHT COLUMN: SUMMARY (Fixed Spacing) -->
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="cart-summary">
+                    <h5 class="fw-bold mb-3">Cart Summary</h5>
+
+                    <!-- Coupon -->
+                    <label class="form-label small text-muted">Have a coupon?</label>
+                    <div class="coupon-box">
+                        <input type="text" class="form-control coupon-input" placeholder="Enter code">
+                        <button class="btn-apply">Apply</button>
+                    </div>
+
+                    <hr class="text-muted my-2">
+
+                    <!-- Totals -->
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="summary-subtotal">₹0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Discount</span>
+                        <span class="text-success">- ₹0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span class="text-success">Free</span>
+                    </div>
+
+                    <!-- Grand Total -->
+                    <div class="summary-total">
+                        <span>Total</span>
+                        <span id="summary-total" class="text-primary">₹0.00</span>
+                    </div>
+
+                    <!-- Checkout Button (Safe Spacing) -->
+                    <a href="/checkout/" class="btn-checkout">
+                        Proceed to Checkout <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+
         </div>
-      </div>
+
+        {% else %}
+        <!-- EMPTY CART STATE -->
+        <div class="row">
+            <div class="col-12">
+                <div class="empty-cart bg-white rounded shadow-sm">
+                    <div class="mb-3">
+                        <i class="fas fa-shopping-basket"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark">Your Cart is Empty</h3>
+                    <p class="text-muted mb-4">Looks like you haven't added anything yet.</p>
+                    <a href="/shop/" class="btn btn-primary px-5 py-2">Start Shopping</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
     </div>
 
-    <div class="site-section">
-      <div class="container">
-        <div class="row mb-5">
-          <form class="col-md-12" method="post">
-            <div class="site-blocks-table">
-              <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th class="product-thumbnail">Image</th>
-                    <th class="product-name">Product</th>
-                    <th class="product-price">Price</th>
-                    <th class="product-quantity">Quantity</th>
-                    <th class="product-total">Total</th>
-                    <th class="product-remove">Remove</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {% for i in cart %}
-
-                  <tr class="product-row">
-                    <td class="product-thumbnail">
-                      <img src="{{i.medicine.image.url}}" alt="Image" class="img-fluid">
-                    </td>
-                    <td class="product-name">
-                      <h2 class="h5 text-black">{{i.medicine.name}}</h2>
-                    </td>
-                    <!-- Added class product-price-cell for JS selection -->
-                    <td class="product-price-cell">{{i.medicine.price}}</td>
-                    <td>
-                      <div class="input-group mb-3" style="max-width: 120px;">
-                        <div class="input-group-prepend">
-                          <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
-                        </div>
-                        <!-- Added id or class to handle value logic -->
-                        <input type="text" class="form-control text-center quantity-input" value="1" placeholder=""
-                          aria-label="Example text with button addon" aria-describedby="button-addon1">
-                        <div class="input-group-append">
-                          <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
-                        </div>
-                      </div>
-
-                    </td>
-                    <!-- Added class product-total-cell for JS updating -->
-                    <td class="product-total-cell">{{i.medicine.price}}</td>
-                    <td><a href="/deletecart/{{i.id}}/" class="btn btn-primary height-auto btn-sm">X</a></td>
-                  </tr>
-                {% endfor %}
-
-
-                </tbody>
-              </table>
-            </div>
-          </form>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6">
-            <div class="row mb-5">
-              <div class="col-md-6 mb-3 mb-md-0">
-                <button class="btn btn-primary btn-md btn-block">Update Cart</button>
-              </div>
-              <div class="col-md-6">
-                <button class="btn btn-outline-primary btn-md btn-block">Continue Shopping</button>
-              </div>
-            </div>
+    <!-- Footer -->
+    <footer>
+        <div class="container pb-4">
             <div class="row">
-              <div class="col-md-12">
-                <label class="text-black h4" for="coupon">Coupon</label>
-                <p>Enter your coupon code if you have one.</p>
-              </div>
-              <div class="col-md-8 mb-3 mb-md-0">
-                <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code">
-              </div>
-              <div class="col-md-4">
-                <button class="btn btn-primary btn-md px-4">Apply Coupon</button>
-              </div>
+                <div class="col-md-4 mb-4">
+                    <h3 class="footer-heading">About Us</h3>
+                    <p class="text-muted small">CureVia is your trusted online pharmacy partner. We ensure that every cure finds its way to you with safety, speed, and reliability.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="/shop/" class="footer-link">Medicines</a></li>
+                        <li><a href="/upload_general/" class="footer-link">Upload Prescription</a></li>
+                        <li><a href="/about/" class="footer-link">About Us</a></li>
+                        <li><a href="/contact/" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Contact Info</h3>
+                    <ul class="list-unstyled text-muted small">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i> 123 Health Street, MedCity</li>
+                        <li class="mb-2"><a href="tel:+1234567890" class="text-muted"><i class="fas fa-phone me-2 text-primary"></i> +1 234 567 890</a></li>
+                        <li class="mb-2"><i class="fas fa-envelope me-2 text-primary"></i> support@curevia.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Follow Us</h3>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-twitter fa-lg"></i></a>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col-md-6 pl-5">
-            <div class="row justify-content-end">
-              <div class="col-md-7">
-                <div class="row">
-                  <div class="col-md-12 text-right border-bottom mb-5">
-                    <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <div class="col-md-6">
-                    <span class="text-black">Subtotal</span>
-                  </div>
-                  <div class="col-md-6 text-right">
-                    <!-- Added ID cart-subtotal -->
-                    <strong class="text-black" id="cart-subtotal"></strong>
-                  </div>
-                </div>
-                <div class="row mb-5">
-                  <div class="col-md-6">
-                    <span class="text-black">Total</span>
-                  </div>
-                  <div class="col-md-6 text-right">
-                    <!-- Added ID cart-total -->
-                    <strong class="text-black" id="cart-total"></strong>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-12">
-                    <a href="/checkout/" class="btn btn-primary btn-lg btn-block" onclick="window.location='checkout.html'">Proceed To
-                      Checkout</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="site-section bg-secondary bg-image" style="background-image: url('{% static 'index/images/bg_2.jpg' %}');">
-      <div class="container">
-        <div class="row align-items-stretch">
-          <div class="col-lg-6 mb-5 mb-lg-0">
-            <a href="#" class="banner-1 h-100 d-flex" style="background-image: url('{% static 'index/images/bg_1.jpg' %}');">
-              <div class="banner-1-inner align-self-center">
-                <h2>Pharma Products</h2>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestiae ex ad minus rem odio voluptatem.
+            <div class="text-center pt-4 border-top">
+                <p class="small text-muted mb-0">
+                    &copy; <script>document.write(new Date().getFullYear());</script> CureVia. All rights reserved.
                 </p>
-              </div>
-            </a>
-          </div>
-          <div class="col-lg-6 mb-5 mb-lg-0">
-            <a href="#" class="banner-1 h-100 d-flex" style="background-image: url('{% static 'index/images/bg_2.jpg' %}');">
-              <div class="banner-1-inner ml-auto  align-self-center">
-                <h2>Rated by Experts</h2>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestiae ex ad minus rem odio voluptatem.
-                </p>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <footer class="site-footer">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
-
-            <div class="block-7">
-              <h3 class="footer-heading mb-4">About Us</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quae reiciendis distinctio voluptates
-                sed dolorum excepturi iure eaque, aut unde.</p>
             </div>
-
-          </div>
-          <div class="col-lg-3 mx-auto mb-5 mb-lg-0">
-            <h3 class="footer-heading mb-4">Quick Links</h3>
-            <ul class="list-unstyled">
-              <li><a href="#">Supplements</a></li>
-              <li><a href="#">Vitamins</a></li>
-              <li><a href="#">Diet &amp; Nutrition</a></li>
-              <li><a href="#">Tea &amp; Coffee</a></li>
-            </ul>
-          </div>
-
-          <div class="col-md-6 col-lg-3">
-            <div class="block-5 mb-5">
-              <h3 class="footer-heading mb-4">Contact Info</h3>
-              <ul class="list-unstyled">
-                <li class="address">203 Fake St. Mountain View, San Francisco, California, USA</li>
-                <li class="phone"><a href="tel://23923929210">+2 392 3929 210</a></li>
-                <li class="email">emailaddress@domain.com</li>
-              </ul>
-            </div>
-
-
-          </div>
         </div>
-        <div class="row pt-5 mt-5 text-center">
-          <div class="col-md-12">
-            <p>
-              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-              Copyright &copy;
-              <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made
-              with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank"
-                class="text-primary">Colorlib</a>
-              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-            </p>
-          </div>
-
-        </div>
-      </div>
     </footer>
-  </div>
 
-  <script src="{% static 'index/js/jquery-3.3.1.min.js' %}"></script>
-  <script src="{% static 'index/js/jquery-ui.js' %}"></script>
-  <script src="{% static 'index/js/popper.min.js' %}"></script>
-  <script src="{% static 'index/js/bootstrap.min.js' %}"></script>
-  <script src="{% static 'index/js/owl.carousel.min.js' %}"></script>
-  <script src="{% static 'index/js/jquery.magnific-popup.min.js' %}"></script>
-  <script src="{% static 'index/js/aos.js' %}"></script>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  <script src="{% static 'index/js/main.js' %}"></script>
+    <!-- REAL-TIME CALCULATION SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-  <!-- Dynamic Price Calculation Script -->
-  <script>
-    $(document).ready(function() {
-        // Function to calculate totals
-        function updateCartTotals() {
-            var grandTotal = 0;
+            function updateTotals() {
+                let grandTotal = 0;
 
-            // Loop through each table row in the cart
-            $('.product-row').each(function() {
-                // Get price
-                var priceText = $(this).find('.product-price-cell').text();
-                var price = parseFloat(priceText.replace(/[^0-9.-]+/g,"")); // Clean price text to number
+                const rows = document.querySelectorAll('.cart-item-row');
 
-                // Get quantity
-                var quantity = parseInt($(this).find('.quantity-input').val());
+                rows.forEach(row => {
+                    // 1. Get Price
+                    const priceElement = row.querySelector('.unit-price');
+                    const price = parseFloat(priceElement.getAttribute('data-price'));
 
-                // Calculate row total
-                var rowTotal = price * quantity;
+                    // 2. Get Quantity
+                    const qtyInput = row.querySelector('.qty-input');
+                    let qty = parseInt(qtyInput.value);
 
-                // Update the specific row total cell
-                $(this).find('.product-total-cell').text(rowTotal.toFixed(2));
+                    // Safety check
+                    if(isNaN(qty) || qty < 1) qty = 1;
 
-                // Add to grand total
-                grandTotal += rowTotal;
+                    // 3. Calculate Row Total
+                    const rowTotal = price * qty;
+
+                    // 4. Update Row UI
+                    row.querySelector('.row-total').innerText = '₹' + rowTotal.toFixed(2);
+
+                    // 5. Add to Grand Total
+                    grandTotal += rowTotal;
+                });
+
+                // 6. Update Summary UI
+                document.getElementById('summary-subtotal').innerText = '₹' + grandTotal.toFixed(2);
+                document.getElementById('summary-total').innerText = '₹' + grandTotal.toFixed(2);
+            }
+
+            // Run once on load
+            updateTotals();
+
+            // Event Listeners for Buttons
+            document.querySelectorAll('.btn-plus').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const input = this.previousElementSibling;
+                    input.value = parseInt(input.value) + 1;
+                    updateTotals();
+                });
             });
 
-            // Update the bottom totals
-            $('#cart-subtotal').text('₹' + grandTotal.toFixed(2));
-            $('#cart-total').text('₹' + grandTotal.toFixed(2));
-        }
-
-        // Run calculation on page load
-        updateCartTotals();
-
-        // Event listener for Quantity Changes (Manual input)
-        $('.quantity-input').on('change keyup', function() {
-            updateCartTotals();
+            document.querySelectorAll('.btn-minus').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const input = this.nextElementSibling;
+                    let val = parseInt(input.value);
+                    if (val > 1) {
+                        input.value = val - 1;
+                        updateTotals();
+                    }
+                });
+            });
         });
-
-        // Event listeners for the Plus/Minus buttons
-        // Note: We use a small timeout because the main.js usually takes a moment
-        // to update the input value after the click.
-        $('.js-btn-plus, .js-btn-minus').on('click', function() {
-            setTimeout(function() {
-                updateCartTotals();
-            }, 50);
-        });
-    });
-  </script>
+    </script>
 
 </body>
-
 </html>

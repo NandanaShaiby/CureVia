@@ -1,397 +1,476 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <title>{{ product.name }} &mdash; CureVia</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{ product.name }} | CureVia Pharmacy</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'index/fonts/icomoon/style.css' %}">
+    <!-- Fonts: Rubik & Open Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="{% static 'index/css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/magnific-popup.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/jquery-ui.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/owl.carousel.min.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/owl.theme.default.min.css' %}">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <link rel="stylesheet" href="{% static 'index/css/aos.css' %}">
-  <link rel="stylesheet" href="{% static 'index/css/style.css' %}">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #10847e;   /* CureVia Teal */
+            --primary-dark: #0a6b66;
+            --light: #f2f7fb;
+            --dark: #30363c;
+            --gray: #8897a2;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: var(--dark);
+            background-color: #f8f9fa;
+        }
+
+        h1, h2, h3, h4, h5, h6, .navbar-brand, .btn {
+            font-family: 'Rubik', sans-serif;
+        }
+
+        /* --- Navbar (Consistent) --- */
+        .navbar { background-color: white; box-shadow: 0 2px 15px rgba(0,0,0,0.05); padding: 15px 0; }
+        .brand-logo { text-transform: uppercase; letter-spacing: .15em; font-size: 24px; font-weight: 700; color: var(--primary) !important; text-decoration: none; }
+        .nav-link { font-weight: 500; color: var(--dark); margin-left: 15px; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; text-decoration: none; }
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
+        .cart-icon { position: relative; font-size: 1.2rem; color: var(--dark); margin-left: 15px; text-decoration: none; }
+        .cart-badge { position: absolute; top: -8px; right: -8px; background-color: #dc3545; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 50%; }
+
+        /* --- Breadcrumb --- */
+        .breadcrumb-wrap { background-color: white; padding: 15px 0; border-bottom: 1px solid #eee; margin-bottom: 30px; }
+        .breadcrumb a { color: var(--gray); font-size: 0.9rem; text-decoration: none; }
+        .breadcrumb span { margin: 0 10px; color: #ccc; }
+        .breadcrumb strong { color: var(--dark); font-weight: 600; font-size: 0.9rem; }
+
+        /* --- Product Section --- */
+        .product-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .product-image-box {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+        }
+        .product-image-box img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .product-title { font-size: 2rem; font-weight: 700; margin-bottom: 10px; }
+        .product-category { color: var(--gray); font-size: 0.95rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .price-tag { font-size: 2rem; color: var(--primary); font-weight: 700; margin-bottom: 20px; }
+
+        .desc-box {
+            background: #fcfcfc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #f0f0f0;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        /* --- Quantity Selector --- */
+        .qty-input-group {
+            display: flex;
+            align-items: center;
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+        .qty-btn {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: 700;
+            color: #555;
+        }
+        .qty-btn:hover { background: #e0e0e0; }
+        .qty-input {
+            width: 50px;
+            height: 40px;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            border-left: none;
+            border-right: none;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* --- Buttons --- */
+        .btn-add-cart {
+            background-color: var(--primary);
+            color: white;
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            border: none;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+        .btn-add-cart:hover { background-color: var(--primary-dark); color: white; }
+
+        /* --- Rx Logic Box --- */
+        .rx-box {
+            border: 1px solid #ffecb5;
+            background-color: #fffbf2;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .rx-badge {
+            background-color: #ffc107;
+            color: #333;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .upload-area {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            text-align: center;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .upload-area:hover { border-color: var(--primary); background: #f2fcfb; }
+
+        /* --- Footer --- */
+        footer { background-color: white; border-top: 1px solid #eee; padding-top: 60px; margin-top: 60px; }
+        .footer-heading { font-weight: 700; margin-bottom: 20px; font-size: 1.1rem; }
+        .footer-link { color: var(--gray); display: block; margin-bottom: 10px; font-size: 0.95rem; text-decoration: none; }
+        .footer-link:hover { color: var(--primary); }
+    </style>
 </head>
 
 <body>
 
-  <div class="site-wrap">
-
-    <!-- NAVBAR -->
-    <div class="site-navbar py-2">
-      <div class="search-wrap">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-          <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
-          <form action="{% url 'search' %}" method="get">
-            <input type="text" name="q" class="form-control" placeholder="Search keyword and hit enter...">
-          </form>
-        </div>
-      </div>
+            <a class="navbar-brand brand-logo" href="/user/">CureVia</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-      <div class="container">
-        <div class="d-flex align-items-center justify-content-between">
-          <div class="logo">
-            <div class="site-logo">
-              <a href="/user/" class="js-logo-clone">CureVia</a>
+            <div class="collapse navbar-collapse" id="navContent">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="/user/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/shop/">Store</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'my_prescriptions' %}">My Prescriptions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'userprofile' user.id %}">Profile</a></li>
+                    <li class="nav-item">
+                        <a href="/cart/" class="cart-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span class="cart-badge">{{ cart.count|default:"0" }}</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
-          </div>
-          <div class="main-nav d-none d-lg-block">
-            <nav class="site-navigation text-right text-md-center" role="navigation">
-              <ul class="site-menu js-clone-nav d-none d-lg-block">
-                <li><a href="/user/">Home</a></li>
-                <li class="active"><a href="/shop/">Store</a></li>
-                <li><a href="/about/">About</a></li>
-                <li><a href="/contact/">Contact</a></li>
-                {% if request.session.uid %}
-                  <li><a href="{% url 'userprofile' request.session.uid %}">Profile</a></li>
-                {% else %}
-                  <li><a href="/login/">Login</a></li>
-                {% endif %}
-              </ul>
-            </nav>
-          </div>
-          <div class="icons">
-            <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
-            <a href="/cart/" class="icons-btn d-inline-block bag">
-              <span class="icon-shopping-bag"></span>
-            </a>
-            <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span
-                class="icon-menu"></span></a>
-          </div>
         </div>
-      </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/user/">Home</a> <span>/</span>
+                <a href="/shop/">Store</a> <span>/</span>
+                <strong>{{ product.name }}</strong>
+            </div>
+        </div>
     </div>
 
-    <!-- BREADCRUMBS -->
-    <div class="bg-light py-3">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12 mb-0">
-              <a href="/user/">Home</a> <span class="mx-2 mb-0">/</span>
-              <a href="/shop/">Store</a> <span class="mx-2 mb-0">/</span>
-              <strong class="text-black">{{ product.name }}</strong>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Main Content -->
+    <div class="container">
+        <div class="product-container">
+            <div class="row">
 
-    <!-- PRODUCT DETAILS SECTION -->
-    <div class="site-section">
-      <div class="container">
-        <div class="row">
+                <!-- Left: Image -->
+                <div class="col-md-5 mb-4 mb-md-0">
+                    <div class="product-image-box">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="https://via.placeholder.com/400?text=No+Image" alt="No Image">
+                        {% endif %}
+                    </div>
+                </div>
 
-          <!-- Product Image -->
-          <div class="col-md-5 mr-auto">
-            <div class="border text-center">
-              {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid p-5">
-              {% else %}
-                <img src="{% static 'index/images/product_01.png' %}" alt="Default Image" class="img-fluid p-5">
-              {% endif %}
+                <!-- Right: Details -->
+                <div class="col-md-7">
+                    <div class="ps-md-4">
+                        <div class="product-category">
+                            {% if product.category %}{{ product.category.name }}{% else %}Medicine{% endif %}
+                        </div>
+
+                        <h1 class="product-title">{{ product.name }}</h1>
+
+                        <!-- Dynamic Price (Updates with Quantity) -->
+                        <div class="price-tag" id="final-price">₹{{ product.price }}</div>
+<div class="mb-4 p-2 bg-light rounded border">
+                <p class="mb-0 text-muted small">
+                    <i class="icon-store_mall_directory mr-1"></i> Sold by:
+                    <strong class="text-dark">{{ product.added_by_pharmacy.name }}</strong>
+                    <span class="text-muted">({{ product.added_by_pharmacy.location }})</span>
+                </p>
             </div>
-          </div>
-
-          <!-- Product Info & Actions -->
-          <div class="col-md-6">
-            <h2 class="text-black">{{ product.name }}</h2>
-            <p>{{ product.purpose }}</p>
-            <p class="mb-4">{{ product.description }}</p>
-
-            <p>
-                <strong id="final-price" class="text-primary h4">₹{{ product.price }}</strong>
-            </p>
-
-            <hr>
-
-            <!-- ============================================== -->
-            <!--        PRESCRIPTION CHECK LOGIC START          -->
-            <!-- ============================================== -->
-
-            <!-- CASE 1: Prescription IS Required -->
-            {% if product.rx_required %}
-
-                <div class="mb-4">
-                    <span class="badge badge-warning p-2">
-                        <i class="icon-file-text mr-1"></i> Prescription Required
-                    </span>
-                </div>
-
-                <!-- Sub-Case A: Approved -->
-                {% if p_status == 'Approved' %}
-                    <div class="alert alert-success">
-                        <i class="icon-check"></i> <strong>Approved!</strong> You can now buy this medicine.
-                    </div>
-
-                    <!-- SHOW ADD TO CART (User allowed to buy) -->
-                    <div class="mb-5">
-                      <div class="input-group mb-3" style="max-width: 220px;">
-                        <div class="input-group-prepend">
-                          <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
-                        </div>
-                        <input type="text" id="quantity-input" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-                        <div class="input-group-append">
-                          <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
-                        </div>
-                      </div>
-                    </div>
-                    <p><a href="/addcart/{{product.id}}/" class="buy-now btn btn-sm height-auto px-4 py-3 btn-primary">Add To Cart</a></p>
-
-                <!-- Sub-Case B: Pending -->
-                {% elif p_status == 'Pending' %}
-                    <div class="p-4 border rounded bg-light text-center">
-                        <h4 class="text-info"><i class="icon-clock-o"></i> Verification Pending</h4>
-                        <p>Our pharmacist is currently reviewing your uploaded prescription.</p>
-                        <button class="btn btn-secondary disabled">Add to Cart Locked</button>
-                    </div>
-
-                <!-- Sub-Case C: Rejected -->
-                {% elif p_status == 'Rejected' %}
-                    <div class="alert alert-danger">
-                        <i class="icon-close"></i> <strong>Rejected.</strong> Your previous upload was not valid. Please upload a clear image.
-                    </div>
-                    <!-- Show Upload Form Again -->
-                    <form action="{% url 'upload_prescription' product.id %}" method="post" enctype="multipart/form-data" class="p-3 border rounded">
-                        {% csrf_token %}
-                        <div class="form-group mb-2">
-                            <label>Upload New Prescription</label>
-                            <input type="file" name="image" class="form-control-file" required>
-                        </div>
-
-                        <!-- NEW PINCODE FIELD (For Re-upload) -->
-                        <div class="form-group mb-3">
-                             <input type="text" name="pincode" class="form-control" placeholder="Confirm Pincode (e.g. 682001)" required>
-                        </div>
-
-                        <button type="submit" class="btn btn-danger btn-block">Re-Upload</button>
-                    </form>
-
-                <!-- Sub-Case D: No Upload Yet -->
-                {% else %}
-                    <div class="p-4 border rounded bg-white shadow-sm">
-                        <p class="mb-3"><strong><i class="icon-upload"></i> Upload Doctor's Note</strong></p>
-                        <form action="{% url 'upload_prescription' product.id %}" method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-
-                            <!-- 1. Image Input -->
-                            <div class="form-group mb-3">
-                                <label class="small text-muted">Prescription Image</label>
-                                <input type="file" name="image" class="form-control p-1" style="height:45px;" required>
-                            </div>
-
-                            <!-- 2. NEW PINCODE FIELD (Crucial for your Logic) -->
-                            <div class="form-group mb-3">
-                                <label class="small text-muted">Delivery Pincode (For Stock Check)</label>
-                                <input type="text" name="pincode" class="form-control" placeholder="e.g. 682001" required pattern="[0-9]{6}" title="Please enter a 6-digit pincode">
-                            </div>
-
-                            <button type="submit" class="btn btn-info btn-block">Submit for Approval</button>
-                        </form>
-                    </div>
-                {% endif %}
-
-            <!-- CASE 2: Prescription NOT Required (Normal Medicine) -->
-            {% else %}
-
-                <!-- Show Normal Add to Cart -->
-                <div class="mb-5">
-                  <div class="input-group mb-3" style="max-width: 220px;">
-                    <div class="input-group-prepend">
-                      <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
-                    </div>
-                    <input type="text" id="quantity-input" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-                    <div class="input-group-append">
-                      <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
-                    </div>
-                  </div>
-                </div>
-                <p><a href="/addcart/{{product.id}}/" class="buy-now btn btn-sm height-auto px-4 py-3 btn-primary">Add To Cart</a></p>
-
-            {% endif %}
-            <!-- ============================================== -->
-            <!--          PRESCRIPTION CHECK LOGIC END          -->
-            <!-- ============================================== -->
-
-            <!-- Tabs for Extra Info -->
-            <div class="mt-5">
-              <ul class="nav nav-pills mb-3 custom-pill" id="pills-tab" role="tablist">
-                <li class="nav-item">
-                  <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
-                    aria-controls="pills-home" aria-selected="true">Ordering Information</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab"
-                    aria-controls="pills-profile" aria-selected="false">Specifications</a>
-                </li>
-              </ul>
-
-              <div class="tab-content" id="pills-tabContent">
-                <!-- Ordering Info Tab -->
-                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                  <table class="table custom-table">
-                    <thead>
-                      <th>Category</th>
-                      <th>Available Stock</th>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row">{{ product.category }}</th>
-                        <td>{{ product.quantity }} units available</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <!-- Specifications Tab -->
-                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                  <table class="table custom-table">
-                    <tbody>
-                      <tr>
-                        <td>Medicine Name</td>
-                        <td class="bg-light">{{ product.name }}</td>
-                      </tr>
-                      <tr>
-                        <td>Expiry Date</td>
-                        <td class="bg-light">{{ product.expiry_date }}</td>
-                      </tr>
-                      <tr>
-                        <td>Prescription Required</td>
-                        <td class="bg-light">
-                            {% if product.rx_required %}
-                                <span class="text-danger">Yes</span>
-                            {% else %}
-                                <span class="text-success">No</span>
+                        <div class="desc-box">
+                            <h6 class="fw-bold mb-2">Description:</h6>
+                            <p class="mb-0">{{ product.description }}</p>
+                            {% if product.purpose %}
+                            <p class="mt-2 text-muted small"><i class="fas fa-info-circle me-1"></i> Purpose: {{ product.purpose }}</p>
                             {% endif %}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                        </div>
+
+                        <!-- ============================================== -->
+                        <!--        PRESCRIPTION CHECK LOGIC START          -->
+                        <!-- ============================================== -->
+
+                        {% if product.rx_required %}
+
+                            <div class="rx-box">
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="rx-badge"><i class="fas fa-file-prescription me-2"></i>Rx Required</span>
+                                    <span class="ms-2 small text-muted">This medicine requires a valid prescription.</span>
+                                </div>
+
+                                <!-- CASE A: Approved -->
+                                {% if p_status == 'Approved' %}
+                                    <div class="alert alert-success d-flex align-items-center mb-4">
+                                        <i class="fas fa-check-circle fa-lg me-3"></i>
+                                        <div>
+                                            <strong>Verification Complete!</strong><br>
+                                            Your prescription has been approved. You can now purchase this item.
+                                        </div>
+                                    </div>
+
+                                    <!-- Add to Cart (Unlocked) -->
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="qty-input-group me-3 mb-0">
+                                            <button class="qty-btn" onclick="updateQty(-1)">-</button>
+                                            <input type="text" id="quantity-input" class="qty-input" value="1" readonly>
+                                            <button class="qty-btn" onclick="updateQty(1)">+</button>
+                                        </div>
+                                        <span class="text-muted small">Available: {{ product.quantity }}</span>
+                                    </div>
+                                    <a href="/addcart/{{product.id}}/" class="btn btn-add-cart">
+                                        <i class="fas fa-shopping-cart me-2"></i> Add to Cart
+                                    </a>
+
+                                <!-- CASE B: Pending -->
+                                {% elif p_status == 'Pending' %}
+                                    <div class="p-4 bg-white border rounded text-center">
+                                        <i class="fas fa-clock fa-3x text-info mb-3"></i>
+                                        <h5>Verification In Progress</h5>
+                                        <p class="text-muted small">Our pharmacists are currently reviewing your document. Please check back soon.</p>
+                                        <button class="btn btn-secondary w-100 disabled">Waiting for Approval...</button>
+                                    </div>
+
+                                <!-- CASE C: Rejected -->
+                                {% elif p_status == 'Rejected' %}
+                                    <div class="alert alert-danger mb-3">
+                                        <i class="fas fa-times-circle me-2"></i> <strong>Rejected:</strong> Your previous upload was invalid. Please try again.
+                                    </div>
+
+                                    <form action="{% url 'upload_prescription' product.id %}" method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <label class="upload-area w-100 d-block mb-3">
+                                            <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
+                                            <div class="fw-bold">Click to Upload New Prescription</div>
+                                            <input type="file" name="image" class="d-none" onchange="this.form.submit()" required>
+                                        </label>
+                                    </form>
+
+                                <!-- CASE D: No Upload (Default) -->
+                                {% else %}
+                                    <form action="{% url 'upload_prescription' product.id %}" method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+
+                                        <div class="mb-3">
+                                            <label class="form-label small text-muted">1. Upload Doctor's Note (Image)</label>
+                                            <input type="file" name="image" class="form-control" required>
+                                        </div>
+
+                                        <!-- Pincode logic was in your view, keeping it hidden if user is logged in -->
+                                        <!-- Or we can just use the user's profile address later. Simplified here. -->
+
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-upload me-2"></i> Submit for Approval
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+
+                        {% else %}
+                            <!-- NO PRESCRIPTION REQUIRED (Normal Flow) -->
+
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="qty-input-group me-3 mb-0">
+                                    <button class="qty-btn" onclick="updateQty(-1)">-</button>
+                                    <input type="text" id="quantity-input" class="qty-input" value="1" readonly>
+                                    <button class="qty-btn" onclick="updateQty(1)">+</button>
+                                </div>
+                                <span class="text-muted small">Available Stock: {{ product.quantity }}</span>
+                            </div>
+
+                            <a href="/addcart/{{product.id}}/" class="btn btn-add-cart">
+                                <i class="fas fa-shopping-cart me-2"></i> Add to Cart
+                            </a>
+
+                        {% endif %}
+
+                        <!-- ============================================== -->
+                        <!--          PRESCRIPTION CHECK LOGIC END          -->
+                        <!-- ============================================== -->
+
+                    </div>
                 </div>
-              </div>
             </div>
-
-          </div>
         </div>
-      </div>
-    </div>
 
-    <!-- BOTTOM BANNERS -->
-    <div class="site-section bg-secondary bg-image" style="background-image: url('{% static 'index/images/bg_2.jpg' %}');">
-      <div class="container">
-        <div class="row align-items-stretch">
-          <div class="col-lg-6 mb-5 mb-lg-0">
-            <a href="#" class="banner-1 h-100 d-flex" style="background-image: url('{% static 'index/images/bg_1.jpg' %}');">
-              <div class="banner-1-inner align-self-center">
-                <h2>Pharma Products</h2>
-                <p>Top quality medicines for better health.</p>
-              </div>
-            </a>
-          </div>
-          <div class="col-lg-6 mb-5 mb-lg-0">
-            <a href="#" class="banner-1 h-100 d-flex" style="background-image: url('{% static 'index/images/bg_2.jpg' %}');">
-              <div class="banner-1-inner ml-auto  align-self-center">
-                <h2>Rated by Experts</h2>
-                <p>Trusted by doctors and pharmacists nationwide.</p>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- FOOTER -->
-    <footer class="site-footer">
-      <div class="container">
+        <!-- Extra Info Tabs -->
         <div class="row">
-          <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
-            <div class="block-7">
-              <h3 class="footer-heading mb-4">About Us</h3>
-              <p>CureVia is your trusted online pharmacy, delivering genuine medicines to your doorstep.</p>
+            <div class="col-12">
+                <div class="bg-white p-4 rounded border">
+                    <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="spec-tab" data-bs-toggle="tab" data-bs-target="#spec" type="button" role="tab">Specifications</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">Safety Info</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="spec" role="tabpanel">
+                            <table class="table table-bordered w-50">
+                                <tbody>
+                                    <tr>
+                                        <td class="bg-light fw-bold" width="30%">Expiry Date</td>
+                                        <td>{{ product.expiry_date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-light fw-bold">Stock Status</td>
+                                        <td>
+                                            {% if product.quantity > 0 %}
+                                                <span class="text-success">In Stock</span>
+                                            {% else %}
+                                                <span class="text-danger">Out of Stock</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="info" role="tabpanel">
+                            <p class="text-muted">
+                                Keep out of reach of children. Store in a cool, dry place. Do not exceed the recommended dosage.
+                                Consult a physician if you are pregnant, nursing, or have a medical condition.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col-lg-3 mx-auto mb-5 mb-lg-0">
-            <h3 class="footer-heading mb-4">Quick Links</h3>
-            <ul class="list-unstyled">
-              <li><a href="#">Supplements</a></li>
-              <li><a href="#">Vitamins</a></li>
-              <li><a href="#">Diet &amp; Nutrition</a></li>
-              <li><a href="#">Tea &amp; Coffee</a></li>
-            </ul>
-          </div>
-          <div class="col-md-6 col-lg-3">
-            <div class="block-5 mb-5">
-              <h3 class="footer-heading mb-4">Contact Info</h3>
-              <ul class="list-unstyled">
-                <li class="address">203 Fake St. Mountain View, San Francisco, California, USA</li>
-                <li class="phone"><a href="tel://23923929210">+2 392 3929 210</a></li>
-                <li class="email">info@curevia.com</li>
-              </ul>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container pb-4">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h3 class="footer-heading">About Us</h3>
+                    <p class="text-muted small">CureVia is your trusted online pharmacy partner. We ensure that every cure finds its way to you with safety, speed, and reliability.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="/shop/" class="footer-link">Medicines</a></li>
+                        <li><a href="/upload_general/" class="footer-link">Upload Prescription</a></li>
+                        <li><a href="/about/" class="footer-link">About Us</a></li>
+                        <li><a href="/contact/" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Contact Info</h3>
+                    <ul class="list-unstyled text-muted small">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i> 123 Health Street, MedCity</li>
+                        <li class="mb-2"><a href="tel:+1234567890" class="text-muted"><i class="fas fa-phone me-2 text-primary"></i> +1 234 567 890</a></li>
+                        <li class="mb-2"><i class="fas fa-envelope me-2 text-primary"></i> support@curevia.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Follow Us</h3>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-twitter fa-lg"></i></a>
+                    </div>
+                </div>
             </div>
-          </div>
+            <div class="text-center pt-4 border-top">
+                <p class="small text-muted mb-0">
+                    &copy; <script>document.write(new Date().getFullYear());</script> CureVia. All rights reserved.
+                </p>
+            </div>
         </div>
-        <div class="row pt-5 mt-5 text-center">
-          <div class="col-md-12">
-            <p>
-              Copyright &copy;
-              <script>document.write(new Date().getFullYear());</script> All rights reserved | CureVia
-            </p>
-          </div>
-        </div>
-      </div>
     </footer>
-  </div>
 
-  <!-- SCRIPTS -->
-  <script src="{% static 'index/js/jquery-3.3.1.min.js' %}"></script>
-  <script src="{% static 'index/js/jquery-ui.js' %}"></script>
-  <script src="{% static 'index/js/popper.min.js' %}"></script>
-  <script src="{% static 'index/js/bootstrap.min.js' %}"></script>
-  <script src="{% static 'index/js/owl.carousel.min.js' %}"></script>
-  <script src="{% static 'index/js/jquery.magnific-popup.min.js' %}"></script>
-  <script src="{% static 'index/js/aos.js' %}"></script>
-  <script src="{% static 'index/js/main.js' %}"></script>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-  $(document).ready(function() {
+    <!-- Quantity & Price Script -->
+    <script>
+        const unitPrice = parseFloat("{{ product.price }}");
+        const qtyInput = document.getElementById('quantity-input');
+        const priceDisplay = document.getElementById('final-price');
 
-    // 1. Get the Unit Price from Django (Normal Price Only)
-    var unitPrice = parseFloat("{{ product.price }}");
+        function updateQty(change) {
+            let currentQty = parseInt(qtyInput.value);
+            let newQty = currentQty + change;
 
-    // 2. Function to do the math
-    function updateTotalPrice() {
-        // Get current number from the input box
-        var qty = parseInt($('#quantity-input').val());
+            if (newQty < 1) newQty = 1;
+            // Optional: Limit to available stock
+            // if (newQty > {{ product.quantity }}) newQty = {{ product.quantity }};
 
-        // Safety: If box is empty or 0, assume 1
-        if (isNaN(qty) || qty < 1) {
-            qty = 1;
+            qtyInput.value = newQty;
+
+            // Update Price
+            let total = (unitPrice * newQty).toFixed(2);
+            priceDisplay.innerText = '₹' + total;
         }
+    </script>
 
-        // Calculate Total (Price * Quantity)
-        var total = (unitPrice * qty).toFixed(2);
-
-        // Update the text on the screen
-        $('#final-price').text('₹' + total);
-    }
-
-    // 3. Listen for button clicks (+ and -)
-    $('.js-btn-plus, .js-btn-minus').on('click', function() {
-        setTimeout(updateTotalPrice, 50);
-    });
-
-    // 4. Listen for manual typing
-    $('#quantity-input').on('change keyup', function() {
-        updateTotalPrice();
-    });
-
-  });
-</script>
 </body>
-
 </html>

@@ -13,11 +13,6 @@ urlpatterns =[
         path('unblock/<id>/',views.unblock ),
         path('edituser/<int:id>/', views.edituser, name='edit_user'),
         path('adduser/', views.adduser, name='add_user'),
-        path('pharmacists/', views.pharmacists),
-        path('blockphar/<int:id>/',views.blockphar, name='block_pharmacist' ),
-        path('unblockphar/<int:id>/',views.unblockphar, name='unblock_pharmacist' ),
-        path('editphar/<int:id>/', views.editphar, name='edit_pharmacist'),
-        path('addphar/', views.addphar, name='add_pharmacist'),
         path('addmed/', views.addmed,),
         path('shop/', views.shop),
         path('about/', views.about),
@@ -58,8 +53,11 @@ urlpatterns =[
         path('reject_quote/<int:id>/', views.reject_quote, name='reject_quote'),
         path('process_order_action/<int:id>/', views.process_order_action, name='process_order_action'),
         path('process_group_order/<str:group_id>/', views.process_group_order, name='process_group_order'),
-
-
+        path('pharmacy_staff_login/', views.pharmacy_staff_login, name='pharmacy_staff_login'),
+        path('update_pincode/', views.update_pincode, name='update_pincode'),
+        path('inventory/', views.pharmacy_inventory, name='pharmacy_inventory'),
+        path('update_inventory/<int:id>/', views.update_inventory, name='update_inventory'),
+        path('delete_medicine/<int:id>/', views.delete_medicine, name='delete_medicine'),
 
 
 

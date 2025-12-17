@@ -1,125 +1,368 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <title>Review Order</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Review Quote | CureVia Pharmacy</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Fonts: Rubik & Open Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #10847e;   /* CureVia Teal */
+            --primary-dark: #0a6b66;
+            --light: #f2f7fb;
+            --dark: #30363c;
+            --gray: #8897a2;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: var(--dark);
+            background-color: #f8f9fa;
+        }
+
+        h1, h2, h3, h4, h5, h6, .navbar-brand, .btn, .card-title {
+            font-family: 'Rubik', sans-serif;
+        }
+
+        /* --- Navbar --- */
+        .navbar { background-color: white; box-shadow: 0 2px 15px rgba(0,0,0,0.05); padding: 15px 0; }
+        .brand-logo { text-transform: uppercase; letter-spacing: .15em; font-size: 24px; font-weight: 700; color: var(--primary) !important; text-decoration: none; }
+        .nav-link { font-weight: 500; color: var(--dark); margin-left: 15px; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; text-decoration: none; }
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
+        .cart-icon { position: relative; font-size: 1.2rem; color: var(--dark); margin-left: 15px; text-decoration: none; }
+        .cart-badge { position: absolute; top: -8px; right: -8px; background-color: #dc3545; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 50%; }
+
+        /* --- Breadcrumb --- */
+        .breadcrumb-wrap { background-color: white; padding: 15px 0; border-bottom: 1px solid #eee; margin-bottom: 40px; }
+        .breadcrumb a { color: var(--gray); font-size: 0.9rem; text-decoration: none; }
+        .breadcrumb span { margin: 0 10px; color: #ccc; }
+        .breadcrumb strong { color: var(--dark); font-weight: 600; font-size: 0.9rem; }
+
+        /* --- Review Card --- */
+        .review-card {
+            background: white;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .card-header-custom {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px 30px;
+        }
+
+        /* Pharmacist Note */
+        .note-box {
+            background-color: #fffbf2;
+            border: 1px solid #ffeeba;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .note-icon { color: #ffc107; font-size: 1.2rem; margin-right: 10px; }
+
+        /* Table Styling */
+        .table thead th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #eee;
+            color: var(--dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+        .total-row { background-color: #f2fcfb; }
+        .grand-total { font-size: 1.3rem; color: var(--primary); font-weight: 700; }
+
+        /* Form Inputs */
+        .form-label { font-weight: 600; font-size: 0.9rem; color: var(--dark); }
+        .form-control { padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16, 132, 126, 0.1); }
+
+        /* Payment Option Cards */
+        .payment-option { display: block; position: relative; cursor: pointer; margin-bottom: 10px; }
+        .payment-option input { position: absolute; opacity: 0; cursor: pointer; }
+        .payment-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+        .payment-option input:checked + .payment-card {
+            border-color: var(--primary);
+            background-color: #f2fcfb;
+            box-shadow: 0 4px 10px rgba(16, 132, 126, 0.1);
+        }
+        .pay-icon { width: 40px; text-align: center; font-size: 1.2rem; color: var(--gray); margin-right: 15px; }
+        .payment-option input:checked + .payment-card .pay-icon { color: var(--primary); }
+
+        /* Buttons */
+        .btn-confirm {
+            background-color: var(--primary);
+            color: white;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            transition: 0.3s;
+        }
+        .btn-confirm:hover { background-color: var(--primary-dark); color: white; }
+
+        /* Footer */
+        footer { background-color: white; border-top: 1px solid #eee; padding-top: 60px; margin-top: 60px; }
+        .footer-heading { font-weight: 700; margin-bottom: 20px; font-size: 1.1rem; }
+        .footer-link { color: var(--gray); display: block; margin-bottom: 10px; font-size: 0.95rem; text-decoration: none; }
+        .footer-link:hover { color: var(--primary); }
+    </style>
 </head>
-<body class="bg-light">
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4>Review Your Medical Bill</h4>
-                </div>
-                <div class="card-body">
-                    {% if pres.pharmacist_note %}
-    <div class="alert alert-warning border-warning shadow-sm mb-4" role="alert">
-        <h5 class="text-dark mb-1">
-            <i class="icon-comment-o mr-2"></i> <strong>Message from Pharmacist:</strong>
-        </h5>
-        <p class="mb-0 text-black" style="font-size: 1.1rem;">
-            "{{ pres.pharmacist_note }}"
-        </p>
-    </div>
-    {% endif %}
-                    <p><strong>Pharmacy:</strong> {{ pres.assigned_pharmacy.name }}</p>
+<body>
 
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand brand-logo" href="/user/">CureVia</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                    <table class="table mt-4">
-                        <thead>
-                            <tr>
-                                <th>Medicine</th>
-                                <th>Qty</th>
-                                <th>Price</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in items %}
-                            <tr>
-                                <td>{{ item.medicine.name }}</td>
-                                <td>{{ item.quantity }}</td>
-                                <td>₹{{ item.price_at_time }}</td>
-                                <td>₹{{ item.total_price }}</td>
-                            </tr>
-                            {% endfor %}
-
-                            <!-- Delivery Fee Row -->
-                            {% if delivery_fee > 0 %}
-                            <tr>
-                                <td colspan="3" class="text-right"><strong>Delivery Fee (Home):</strong></td>
-                                <td>₹{{ delivery_fee }}</td>
-                            </tr>
-                            {% else %}
-                            <tr>
-                                <td colspan="3" class="text-right"><strong>Store Pickup:</strong></td>
-                                <td class="text-success">FREE</td>
-                            </tr>
-                            {% endif %}
-
-                            <!-- Total Row -->
-                            <tr class="bg-light">
-                                <td colspan="3" class="text-right"><h5>Grand Total:</h5></td>
-                                <td><h5 class="text-primary">₹{{ grand_total }}</h5></td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="d-flex justify-content-between mt-4">
-                        <a href="/my_prescriptions/" class="btn btn-secondary">Cancel / Back</a>
-
-                        <!-- Inside review_prescription.html -->
-
-<form action="{% url 'confirm_prescription_order' pres.id %}" method="POST">
-    {% csrf_token %}
-
-    <!-- ADDRESS SECTION -->
-    <h5 class="mt-4">Delivery Details</h5>
-    <div class="row">
-        <div class="col-md-6">
-            <input type="text" name="address" class="form-control mb-2" placeholder="Street Address" required>
+            <div class="collapse navbar-collapse" id="navContent">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="/user/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/shop/">Store</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#">My Prescriptions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'userprofile' request.session.uid %}">Profile</a></li>
+                    <li class="nav-item">
+                        <a href="/cart/" class="cart-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span class="cart-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
-        <div class="col-md-3">
-            <input type="text" name="city" class="form-control mb-2" placeholder="City" required>
-        </div>
-        <div class="col-md-3">
-            <input type="text" name="zip" class="form-control mb-2" placeholder="Pincode" required>
-        </div>
-    </div>
+    </nav>
 
-    <!-- PAYMENT SECTION -->
-    <h5 class="mt-3">Payment Method</h5>
-    <div class="form-check">
-        <input class="form-check-input" type="radio" name="payment_mode" value="COD" checked>
-        <label class="form-check-label">Cash on Delivery (COD)</label>
-    </div>
-    <div class="form-check mb-4">
-        <input class="form-check-input" type="radio" name="payment_mode" value="Online">
-        <label class="form-check-label">Online Payment (Simulated)</label>
-    </div>
-
-    <!-- BUTTONS -->
-    <div class="d-flex justify-content-between">
-        <!-- Reject Link -->
-        <a href="{% url 'reject_quote' pres.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to decline this quote?');">
-            Decline Quote
-        </a>
-
-        <!-- Confirm Button -->
-        <button type="submit" class="btn btn-success btn-lg">
-            Confirm & Place Order
-        </button>
-    </div>
-</form>
-                    </div>
-
-                </div>
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/user/">Home</a> <span>/</span>
+                <a href="{% url 'my_prescriptions' %}">My Prescriptions</a> <span>/</span>
+                <strong>Review Quote</strong>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Main Content -->
+    <div class="container mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <div class="review-card">
+                    <!-- Card Header -->
+                    <div class="card-header-custom d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 fw-bold">Review Quote</h4>
+                        <span class="badge bg-white text-dark">ID: #{{ pres.id }}</span>
+                    </div>
+
+                    <div class="p-4 p-md-5">
+
+                        <!-- 1. Pharmacist Note -->
+                        {% if pres.pharmacist_note %}
+                        <div class="note-box">
+                            <h6 class="fw-bold mb-2 text-dark">
+                                <i class="fas fa-user-md note-icon"></i> Message from Pharmacist:
+                            </h6>
+                            <p class="mb-0 text-muted fst-italic">"{{ pres.pharmacist_note }}"</p>
+                        </div>
+                        {% endif %}
+
+                        <p class="text-muted small mb-4">
+                            <strong>Fulfilling Pharmacy:</strong> {{ pres.assigned_pharmacy.name }} <br>
+                            <i class="fas fa-map-marker-alt me-1"></i> {{ pres.assigned_pharmacy.location }}
+                        </p>
+
+                        <!-- 2. Medical Bill Table -->
+                        <div class="table-responsive mb-5 border rounded">
+                            <table class="table mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Medicine</th>
+                                        <th class="text-center">Qty</th>
+                                        <th class="text-end">Price</th>
+                                        <th class="text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in items %}
+                                    <tr>
+                                        <td>
+                                            <div class="fw-bold">{{ item.medicine.name }}</div>
+                                            <!-- Optional: show category if needed -->
+                                        </td>
+                                        <td class="text-center">{{ item.quantity }}</td>
+                                        <td class="text-end">₹{{ item.price_at_time }}</td>
+                                        <td class="text-end">₹{{ item.total_price }}</td>
+                                    </tr>
+                                    {% endfor %}
+
+                                    <!-- Delivery Fee -->
+                                    <tr>
+                                        <td colspan="3" class="text-end text-muted">
+                                            {% if delivery_fee > 0 %} Delivery Fee (Home) {% else %} Store Pickup {% endif %}
+                                        </td>
+                                        <td class="text-end">
+                                            {% if delivery_fee > 0 %} ₹{{ delivery_fee }} {% else %} <span class="text-success">FREE</span> {% endif %}
+                                        </td>
+                                    </tr>
+
+                                    <!-- Grand Total -->
+                                    <tr class="total-row">
+                                        <td colspan="3" class="text-end fw-bold align-middle">Grand Total</td>
+                                        <td class="text-end grand-total">₹{{ grand_total }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 3. Checkout Form -->
+                        <form action="{% url 'confirm_prescription_order' pres.id %}" method="POST">
+                            {% csrf_token %}
+
+                            <h5 class="fw-bold mb-3 border-bottom pb-2">Delivery Details</h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">Street Address</label>
+                                    <input type="text" name="address" class="form-control" placeholder="House No, Street Name" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">City</label>
+                                    <input type="text" name="city" class="form-control" placeholder="City" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Pincode</label>
+                                    <input type="text" name="zip" class="form-control" placeholder="682001" required>
+                                </div>
+                            </div>
+
+                            <h5 class="fw-bold mb-3 border-bottom pb-2">Payment Method</h5>
+                            <div class="mb-4">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="payment-option">
+                                            <input type="radio" name="payment_mode" value="COD" checked>
+                                            <div class="payment-card">
+                                                <div class="pay-icon"><i class="fas fa-money-bill-wave"></i></div>
+                                                <div>
+                                                    <div class="fw-bold text-dark">Cash on Delivery</div>
+                                                    <div class="small text-muted">Pay when you receive</div>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="payment-option">
+                                            <input type="radio" name="payment_mode" value="Online">
+                                            <div class="payment-card">
+                                                <div class="pay-icon"><i class="fas fa-credit-card"></i></div>
+                                                <div>
+                                                    <div class="fw-bold text-dark">Online Payment</div>
+                                                    <div class="small text-muted">UPI / Card / Netbanking</div>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="d-flex justify-content-between align-items-center mt-5">
+                                <a href="{% url 'reject_quote' pres.id %}" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to decline this quote? This will cancel the order.');">
+                                    <i class="fas fa-times me-2"></i>Decline Quote
+                                </a>
+
+                                <button type="submit" class="btn btn-confirm px-5">
+                                    Place Order <i class="fas fa-check-circle ms-2"></i>
+                                </button>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <a href="{% url 'my_prescriptions' %}" class="text-muted text-decoration-none small">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Prescriptions
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container pb-4">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h3 class="footer-heading">About Us</h3>
+                    <p class="text-muted small">CureVia is your trusted online pharmacy partner. We ensure that every cure finds its way to you with safety, speed, and reliability.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="/shop/" class="footer-link">Medicines</a></li>
+                        <li><a href="/upload_general/" class="footer-link">Upload Prescription</a></li>
+                        <li><a href="/about/" class="footer-link">About Us</a></li>
+                        <li><a href="/contact/" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Contact Info</h3>
+                    <ul class="list-unstyled text-muted small">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i> 123 Health Street, MedCity</li>
+                        <li class="mb-2"><a href="tel:+1234567890" class="text-muted"><i class="fas fa-phone me-2 text-primary"></i> +1 234 567 890</a></li>
+                        <li class="mb-2"><i class="fas fa-envelope me-2 text-primary"></i> support@curevia.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Follow Us</h3>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-twitter fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center pt-4 border-top">
+                <p class="small text-muted mb-0">
+                    &copy; <script>document.write(new Date().getFullYear());</script> CureVia. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

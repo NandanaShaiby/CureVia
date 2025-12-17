@@ -12,11 +12,14 @@ class PrescriptionItemInline(admin.TabularInline):
 
 # 2. Define the Main Admin
 class PrescriptionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'status', 'assigned_pharmacy', 'handled_by')
+    # CHANGED: 'handled_by' -> 'handled_by_name'
+    list_display = ('id', 'user', 'status', 'assigned_pharmacy', 'handled_by_name')
     list_filter = ('status', 'delivery_type')
-
-    # Link the Inline here
     inlines = [PrescriptionItemInline]
+
+
+
+
 
 
 # 3. Register Models
@@ -25,7 +28,6 @@ admin.site.register(Order)
 admin.site.register(OrderHistory)
 admin.site.register(Register)
 admin.site.register(Pharmacy)
-admin.site.register(Pharmacist)
 admin.site.register(DeliveryAgent)
 admin.site.register(Category)
 admin.site.register(Medicine)

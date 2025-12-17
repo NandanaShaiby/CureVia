@@ -1,93 +1,317 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <!-- We include the same head as your index.html for styling -->
-    <title>Search Results</title>
+    <title>Search Results | CureVia Pharmacy</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'index/fonts/icomoon/style.css' %}">
-    <link rel="stylesheet" href="{% static 'index/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'index/css/style.css' %}">
+
+    <!-- Fonts: Rubik & Open Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #10847e;   /* CureVia Teal */
+            --primary-dark: #0a6b66;
+            --light: #f2f7fb;
+            --dark: #30363c;
+            --gray: #8897a2;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: var(--dark);
+            background-color: #f8f9fa;
+        }
+
+        h1, h2, h3, h4, h5, h6, .navbar-brand, .btn {
+            font-family: 'Rubik', sans-serif;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        a:hover { color: var(--primary); }
+
+        /* --- Navbar --- */
+        .navbar { background-color: white; box-shadow: 0 2px 15px rgba(0,0,0,0.05); padding: 15px 0; }
+        .brand-logo { text-transform: uppercase; letter-spacing: .15em; font-size: 24px; font-weight: 700; color: var(--primary) !important; text-decoration: none; }
+        .nav-link { font-weight: 500; color: var(--dark); margin-left: 15px; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; text-decoration: none; }
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
+        .cart-icon { position: relative; font-size: 1.2rem; color: var(--dark); margin-left: 15px; text-decoration: none; }
+        .cart-badge { position: absolute; top: -8px; right: -8px; background-color: #dc3545; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 50%; }
+
+        /* --- Breadcrumb --- */
+        .breadcrumb-wrap { background-color: white; padding: 15px 0; border-bottom: 1px solid #eee; margin-bottom: 40px; }
+        .breadcrumb a { color: var(--gray); font-size: 0.9rem; text-decoration: none; }
+        .breadcrumb span { margin: 0 10px; color: #ccc; }
+        .breadcrumb strong { color: var(--dark); font-weight: 600; font-size: 0.9rem; }
+
+        /* --- Product Card (Consistent with Shop) --- */
+        .product-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            transition: 0.3s;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .product-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transform: translateY(-3px);
+        }
+
+        .product-img-wrap {
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            background: #fff;
+        }
+        .product-img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .product-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 44px;
+        }
+
+        .product-meta { font-size: 0.85rem; color: var(--gray); margin-bottom: 10px; }
+
+        .price-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .current-price { color: var(--dark); font-weight: 700; font-size: 1.1rem; }
+
+        .btn-view {
+            width: 100%;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+            padding: 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: 0.3s;
+            text-align: center;
+            display: block;
+        }
+        .btn-view:hover { background-color: var(--primary); color: white; }
+
+        /* --- Empty State --- */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+        .btn-teal {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 30px;
+            border-radius: 6px;
+            font-weight: 500;
+            border: none;
+            transition: 0.3s;
+        }
+        .btn-teal:hover { background-color: var(--primary-dark); color: white; }
+
+        /* --- Footer --- */
+        footer { background-color: white; border-top: 1px solid #eee; padding-top: 60px; margin-top: 60px; }
+        .footer-heading { font-weight: 700; margin-bottom: 20px; font-size: 1.1rem; }
+        .footer-link { color: var(--gray); display: block; margin-bottom: 10px; font-size: 0.95rem; text-decoration: none; }
+        .footer-link:hover { color: var(--primary); }
+    </style>
 </head>
+
 <body>
 
-<div class="site-wrap">
-    <!-- Navbar (You might want to include your navbar here so user can navigate back) -->
-    <div class="site-navbar py-2">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="logo">
-                    <div class="site-logo">
-                        <a href="/user/" class="js-logo-clone">CureVia</a>
-                    </div>
-                </div>
-                <div class="main-nav d-none d-lg-block">
-                    <nav class="site-navigation text-right text-md-center" role="navigation">
-                        <ul class="site-menu js-clone-nav d-none d-lg-block">
-                            <li><a href="/user/">Home</a></li>
-                            <li><a href="/shop/">Store</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </div>
+            <a class="navbar-brand brand-logo" href="/user/">CureVia</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-    <div class="bg-light py-3">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 mb-0"><a href="/user/">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Search</strong></div>
-            </div>
-        </div>
-    </div>
+            <div class="collapse navbar-collapse" id="navContent">
+                <form action="{% url 'search' %}" method="get" class="d-flex mx-auto my-3 my-lg-0">
+                    <input type="text" name="q" class="form-control" style="width: 250px; border-radius: 20px 0 0 20px;" placeholder="Search medicines..." value="{{ query }}">
+                    <button type="submit" class="btn btn-primary" style="border-radius: 0 20px 20px 0;"><i class="fas fa-search"></i></button>
+                </form>
 
-    <div class="site-section">
-        <div class="container">
-            <div class="row mb-5">
-                <div class="col-12 text-center">
-                    <h2 class="text-uppercase">Search Results for: "{{ query }}"</h2>
-                </div>
-            </div>
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="/user/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/shop/">Store</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'my_prescriptions' %}">My Prescriptions</a></li>
 
-            <div class="row">
-                {% if products %}
-                    {% for product in products %}
-                    <div class="col-sm-6 col-lg-4 text-center item mb-4">
-                        <a href="{% url 'single_product' product.id %}">
-                            {% if product.image %}
-                                <img src="{{ product.image.url }}" style="height: 250px; width: 100%; object-fit: cover;" alt="{{ product.name }}">
-                            {% else %}
-                                <img src="{% static 'index/images/product_01.png' %}" alt="Image">
-                            {% endif %}
+                    <li class="nav-item">
+                        <a href="/cart/" class="cart-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span class="cart-badge">{{ cart.count|default:"0" }}</span>
                         </a>
-                        <h3 class="text-dark"><a href="{% url 'single_product' product.id %}">{{ product.name }}</a></h3>
-                        <p class="price">₹{{ product.price }}</p>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="col-12 text-center">
-                        <h3 class="text-danger">No products found.</h3>
-                        <p>Try searching for a different medicine or category.</p>
-                        <p><a href="/shop/" class="btn btn-primary px-5 py-3">View All Products</a></p>
-                    </div>
-                {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/user/">Home</a> <span>/</span>
+                <a href="/shop/">Store</a> <span>/</span>
+                <strong>Search</strong>
             </div>
         </div>
     </div>
 
-    <!-- Footer Section -->
-    <footer class="site-footer">
-      <div class="container">
-        <div class="row pt-5 mt-5 text-center">
-          <div class="col-md-12">
-            <p>Copyright &copy; CureVia</p>
-          </div>
+    <!-- Main Content -->
+    <div class="container mb-5">
+
+        <!-- Header Section -->
+        <div class="mb-4">
+            {% if query %}
+                <h4 class="fw-bold mb-1">Search Results for "<span style="color: var(--primary);">{{ query }}</span>"</h4>
+            <!-- CART LOCK ALERT -->
+    {% if locked_pharmacy %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-warning border-warning d-flex align-items-center" role="alert">
+                <i class="fas fa-lock mr-3" style="font-size: 1.5rem;"></i>
+                <div>
+                    <strong>Cart Locked to {{ locked_pharmacy.name }}</strong>
+                    <p class="mb-0 small">
+                        You have items in your cart from this pharmacy.
+                        To order from a different store, please <a href="/cart/" class="alert-link">clear your cart</a> first.
+                    </p>
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
+    {% endif %}
+                <p class="text-muted small">Found {{ products.count }} results</p>
+            {% else %}
+                <h4 class="fw-bold">All Products</h4>
+            {% endif %}
+        </div>
+
+        <div class="row g-3">
+            {% for product in products %}
+            <div class="col-6 col-md-3">
+                <div class="product-card">
+                    <a href="{% url 'single_product' product.id %}" class="product-img-wrap">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
+                        {% else %}
+                            <img src="https://via.placeholder.com/200?text=No+Image" class="product-img">
+                        {% endif %}
+                        {% if product.rx_required %}
+        <span class="badge bg-warning text-dark" style="position: absolute; top: 10px; right: 10px; z-index: 10; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+            Rx Required
+        </span>
+    {% endif %}
+                    </a>
+
+                    <div class="card-content">
+                        <a href="{% url 'single_product' product.id %}" class="product-title" title="{{ product.name }}">{{ product.name }}</a>
+
+                        <p class="product-meta">
+                            {% if product.category %}
+                                {{ product.category.name }}
+                            {% else %}
+                                Medicine
+                            {% endif %}
+                        </p>
+
+                        <div class="price-box">
+                            <span class="current-price">₹{{ product.price }}</span>
+                        </div>
+
+                        <a href="{% url 'single_product' product.id %}" class="btn-view">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="empty-state">
+                    <div class="mb-3">
+                        <i class="fas fa-search-minus fa-3x text-muted" style="opacity: 0.5;"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark">No products found</h3>
+                    <p class="text-muted">We couldn't find matches for "<strong>{{ query }}</strong>". <br> Try checking your spelling or use different keywords.</p>
+                    <a href="/shop/" class="btn btn-teal mt-3">Browse All Medicines</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container pb-4">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h3 class="footer-heading">About Us</h3>
+                    <p class="text-muted small">CureVia is your trusted online pharmacy partner. We ensure that every cure finds its way to you with safety, speed, and reliability.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="/shop/" class="footer-link">Medicines</a></li>
+                        <li><a href="/upload_general/" class="footer-link">Upload Prescription</a></li>
+                        <li><a href="/about/" class="footer-link">About Us</a></li>
+                        <li><a href="/contact/" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Contact Info</h3>
+                    <ul class="list-unstyled text-muted small">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i> 123 Health Street, MedCity</li>
+                        <li class="mb-2"><a href="tel:+1234567890" class="text-muted"><i class="fas fa-phone me-2 text-primary"></i> +1 234 567 890</a></li>
+                        <li class="mb-2"><i class="fas fa-envelope me-2 text-primary"></i> support@curevia.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h3 class="footer-heading">Follow Us</h3>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-twitter fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center pt-4 border-top">
+                <p class="small text-muted mb-0">
+                    &copy; <script>document.write(new Date().getFullYear());</script> CureVia. All rights reserved.
+                </p>
+            </div>
+        </div>
     </footer>
-</div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
