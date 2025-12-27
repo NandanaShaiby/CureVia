@@ -60,6 +60,7 @@ urlpatterns =[
         path('update_inventory/<int:id>/', views.update_inventory, name='update_inventory'),
         path('delete_medicine/<int:id>/', views.delete_medicine, name='delete_medicine'),
         path("chatbot/", include("chatbot.urls")),
+        path('my_orders/', views.my_orders, name='my_orders'),
 
 
 

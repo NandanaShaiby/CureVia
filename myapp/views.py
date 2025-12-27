@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 import uuid
 from django.utils import timezone
+from collections import defaultdict
 from .models import *
 
 def index(request):
@@ -1191,3 +1192,55 @@ def assign_driver_to_order(order):
         return True
 
     return False  # No agent found
+
+
+def my_orders(request):
+    if 'uid' in request.session:
+        uid = request.session['uid']
+        user = Register.objects.get(id=uid)
+
+        # 1. Fetch raw rows
+        raw_orders = Order.objects.filter(user=user).order_by('-created_at')
+
+        # 2. Grouping Logic
+        # We will create a list of dictionaries, where each dictionary is one "Shipment"
+        grouped_orders = {}
+
+        for order in raw_orders:
+            # Use Group ID. If missing (old data), make a unique fake ID
+            group_key = order.order_group_id if order.order_group_id else f"ORD-{order.id}"
+
+            if group_key not in grouped_orders:
+                # Initialize the Group
+                grouped_orders[group_key] = {
+                    'group_id': group_key,
+                    'date': order.created_at,
+                    'status': order.status,
+                    'pharmacy': order.assigned_pharmacy.name if order.assigned_pharmacy else "Processing",
+                    'items': [],
+                    'grand_total': 0,
+                    'delivery_agent': order.assigned_agent
+                }
+
+            # Calculate Item Total
+            item_total = order.quantity * order.medicine.price
+
+            # Add item to the list
+            grouped_orders[group_key]['items'].append({
+                'name': order.medicine.name,
+                'image': order.medicine.image,
+                'qty': order.quantity,
+                'price': order.medicine.price,
+                'total': item_total
+            })
+
+            # Add to Grand Total
+            grouped_orders[group_key]['grand_total'] += item_total
+
+        # Convert dict values to a list to send to template
+        context = {
+            'orders': list(grouped_orders.values())
+        }
+        return render(request, "user/my_orders.html", context)
+
+    return redirect('/login/')
