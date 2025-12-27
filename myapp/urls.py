@@ -62,7 +62,7 @@ urlpatterns =[
         path("chatbot/", include("chatbot.urls")),
         path('my_orders/', views.my_orders, name='my_orders'),
         path('track_order/<str:group_id>/', views.track_order, name='track_order'),
-
+        path('delivery_update_status/<int:id>/', views.delivery_update_status, name='delivery_update_status'),
 
 
 

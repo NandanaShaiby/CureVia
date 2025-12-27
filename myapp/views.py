@@ -1271,3 +1271,48 @@ def track_order(request, group_id):
         }
         return render(request, "user/track_order.html", context)
     return redirect('/login/')
+
+
+def delivery_update_status(request, id):
+    if 'did' in request.session:
+        agent_id = request.session['did']
+        agent = get_object_or_404(DeliveryAgent, id=agent_id)
+        order = get_object_or_404(Order, id=id)
+
+        if request.method == "POST":
+            action = request.POST.get('action')
+
+            if action == 'pickup':
+                # Agent has arrived at Pharmacy and taken the package
+                order.status = 'Out for Delivery'
+                order.save()
+
+                # Log History
+                OrderHistory.objects.create(
+                    order=order,
+                    status='Out for Delivery',
+                    description=f"Picked up from {order.assigned_pharmacy.name}",
+                    action_by=f"Agent: {agent.name}"
+                )
+
+            elif action == 'deliver':
+                # Agent has handed over to Customer
+                order.status = 'Delivered'
+
+                # If COD, we assume cash is collected here
+                if order.payment_mode == 'COD':
+                    # Optional: order.payment_status = 'Paid'
+                    pass
+
+                order.save()
+
+                # Log History
+                OrderHistory.objects.create(
+                    order=order,
+                    status='Delivered',
+                    description="Delivered successfully",
+                    action_by=f"Agent: {agent.name}"
+                )
+
+        return redirect('/delivery_home/')
+    return redirect('/login/')
