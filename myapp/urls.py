@@ -61,7 +61,7 @@ urlpatterns =[
         path('delete_medicine/<int:id>/', views.delete_medicine, name='delete_medicine'),
         path("chatbot/", include("chatbot.urls")),
         path('my_orders/', views.my_orders, name='my_orders'),
-
+        path('track_order/<str:group_id>/', views.track_order, name='track_order'),
 
 
 

@@ -132,7 +132,9 @@
                                 </button>
                                 <a href="#" class="btn btn-sm btn-light w-100 border">Invoice</a>
                             {% else %}
-                                <button class="btn btn-sm btn-light w-100 border text-muted">Track Package</button>
+                                <a href="{% url 'track_order' order.group_id %}" class="btn btn-sm btn-light w-100 border text-primary fw-bold">
+                                Track Package
+                                </a>
                             {% endif %}
                         </div>
                     </div>

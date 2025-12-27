@@ -1244,3 +1244,30 @@ def my_orders(request):
         return render(request, "user/my_orders.html", context)
 
     return redirect('/login/')
+
+
+def track_order(request, group_id):
+    if 'uid' in request.session:
+        uid = request.session['uid']
+        user = Register.objects.get(id=uid)
+
+        # 1. Get the orders in this group (to get current status & agent)
+        orders = Order.objects.filter(order_group_id=group_id, user=user)
+
+        if not orders.exists():
+            return redirect('/my_orders/')
+
+        # We take the first item to represent the whole shipment status
+        main_order = orders.first()
+
+        # 2. Get the Timeline (History)
+        # We fetch history for ONE item in the group (since they move together)
+        history = OrderHistory.objects.filter(order=main_order).order_by('-timestamp')
+
+        context = {
+            'order': main_order,
+            'history': history,
+            'item_count': orders.count()
+        }
+        return render(request, "user/track_order.html", context)
+    return redirect('/login/')
