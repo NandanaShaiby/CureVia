@@ -231,6 +231,11 @@ def shop(request):
             products = products.order_by('-price')  # High to Low
     else:
             products = products.order_by('-id')  # Relevance (Newest)
+
+    current_user = None
+    if 'uid' in request.session:
+        current_user = Register.objects.filter(id=request.session['uid']).first()
+
     context = {
         'products': products,
         'min_price': min_price,

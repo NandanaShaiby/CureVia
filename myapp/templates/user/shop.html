@@ -298,7 +298,13 @@
                     <li class="nav-item"><a class="nav-link " href="/user/">Home</a></li>
                     <li class="nav-item"><a class="nav-link active" href="/shop/">Store</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'my_prescriptions' %}">My Prescriptions</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'userprofile' user.id %}">Profile</a></li>
+                    <li class="nav-item">
+    {% if request.session.uid %}
+        <a class="nav-link" href="{% url 'userprofile' request.session.uid %}">Profile</a>
+    {% else %}
+        <a class="nav-link" href="/login/">Login</a>
+    {% endif %}
+</li>
 
                     <li class="nav-item">
                         <a href="/cart/" class="cart-icon">
