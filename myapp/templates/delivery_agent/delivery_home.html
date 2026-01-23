@@ -41,10 +41,35 @@
     <div class="app-header mb-4">
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h5 class="mb-0">Hi, {{ agent.name }}</h5>
-                <small>Location: {{ agent.current_location }} <span class="agent-status">Online</span></small>
+                <h5 class="mb-1">Hi, {{ agent.name }}</h5>
+
+                <!-- Location Display -->
+                <small class="d-block text-white-50 mb-2">
+                    <i class="fas fa-map-marker-alt"></i> {{ agent.current_location }}
+                </small>
+
+                <!-- STATUS TOGGLE FORM -->
+                <div class="d-flex align-items-center">
+                    <form action="{% url 'toggle_agent_status' %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm rounded-pill fw-bold border-0
+                            {% if agent.is_available %}btn-success{% else %}btn-secondary{% endif %}"
+                            style="min-width: 100px; font-size: 0.8rem;">
+
+                            {% if agent.is_available %}
+                                <i class="fas fa-toggle-on"></i> Online
+                            {% else %}
+                                <i class="fas fa-toggle-off"></i> Offline
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
             </div>
-            <a href="/logout/" class="text-white"><i class="fas fa-sign-out-alt fa-lg"></i></a>
+
+            <!-- Logout Icon -->
+            <a href="#" class="text-white opacity-75">
+                <i class="fas fa-sign-out-alt fa-lg"></i>
+            </a>
         </div>
     </div>
 
@@ -94,11 +119,18 @@
 
                             <hr>
 
-                            <!-- Action -->
-                            <form action="{% url 'delivery_update_status' order.id %}" method="POST">
+                            <!-- Actions: Accept OR Reject -->
+                            <form action="{% url 'delivery_update_status' order.id %}" method="POST" class="d-flex gap-2">
                                 {% csrf_token %}
-                                <button type="submit" name="action" value="pickup" class="btn btn-pickup py-2 rounded-pill">
+
+                                <!-- Accept Button (Green) -->
+                                <button type="submit" name="action" value="pickup" class="btn btn-pickup py-2 rounded-pill flex-grow-1">
                                     <i class="fas fa-box-open me-2"></i> Confirm Pickup
+                                </button>
+
+                                <!-- Reject Button (Red Outline) -->
+                                <button type="submit" name="action" value="reject" class="btn btn-outline-danger py-2 rounded-pill" onclick="return confirm('Reject this task? It will be re-assigned.');">
+                                    <i class="fas fa-times"></i>
                                 </button>
                             </form>
                         </div>
@@ -129,16 +161,17 @@
                             <!-- Payment Info -->
                             <div class="bg-light p-2 rounded mb-3 text-center border">
                                 {% if order.payment_mode == 'COD' %}
-                                    <span class="text-danger fw-bold"><i class="fas fa-money-bill-wave me-1"></i> Collect Cash:₹{{ order.medicine.price }}</span>
+                                    <!-- Using simple calculation or just text to avoid template error -->
+                                    <span class="text-danger fw-bold"><i class="fas fa-money-bill-wave me-1"></i> Collect Cash: ₹{{ order.medicine.price }} (x{{ order.quantity }})</span>
                                 {% else %}
                                     <span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i> Prepaid Order</span>
                                 {% endif %}
                             </div>
 
-                            <!-- Action -->
+                            <!-- Action: Mark Delivered (Only one button here!) -->
                             <form action="{% url 'delivery_update_status' order.id %}" method="POST">
                                 {% csrf_token %}
-                                <button type="submit" name="action" value="deliver" class="btn btn-deliver py-2 rounded-pill" onclick="return confirm('Confirm delivery complete?');">
+                                <button type="submit" name="action" value="deliver" class="btn btn-success w-100 py-2 rounded-pill fw-bold" onclick="return confirm('Confirm delivery complete?');">
                                     <i class="fas fa-check-double me-2"></i> Mark Delivered
                                 </button>
                             </form>
@@ -151,6 +184,7 @@
                     <div class="text-center mt-5 text-muted">
                         <i class="fas fa-clipboard-check fa-4x mb-3 text-secondary opacity-25"></i>
                         <p>No active tasks right now.</p>
+                        <p class="small">Make sure you are <strong class="text-success">Online</strong> to receive tasks.</p>
                     </div>
                 {% endif %}
             </div>
@@ -168,7 +202,7 @@
                         <small class="text-muted">To: {{ order.fname }}</small>
                     </div>
                     {% empty %}
-                    <div class="text-center p-4">No history yet.</div>
+                    <div class="text-center p-4 text-muted">No delivery history yet.</div>
                     {% endfor %}
                 </div>
             </div>

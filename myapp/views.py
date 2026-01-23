@@ -592,7 +592,37 @@ def upload_general(request):
 
 
 def delivery_home(request):
-    return render(request, "delivery_agent/delivery_home.html")
+    if 'did' in request.session:
+        did = request.session['did']
+        agent = get_object_or_404(DeliveryAgent, id=did) # <--- THIS IS CRITICAL
+
+        # 1. New Tasks
+        new_tasks = Order.objects.filter(
+            assigned_agent=agent,
+            status='Out for Pickup'
+        ).order_by('-created_at')
+
+        # 2. Active Deliveries
+        active_deliveries = Order.objects.filter(
+            assigned_agent=agent,
+            status='Out for Delivery'
+        ).order_by('-created_at')
+
+        # 3. History
+        history = Order.objects.filter(
+            assigned_agent=agent,
+            status='Delivered'
+        ).order_by('-created_at')[:10]
+
+        context = {
+            'agent': agent, # <--- Sending the data to HTML
+            'new_tasks': new_tasks,
+            'active_deliveries': active_deliveries,
+            'history': history
+        }
+        return render(request, "delivery_agent/delivery_home.html", context)
+    else:
+        return redirect('/login/')
 
 def pharmacies(request):
     us=Pharmacy.objects.all()
@@ -1318,6 +1348,18 @@ def delivery_update_status(request, id):
                     description="Delivered successfully",
                     action_by=f"Agent: {agent.name}"
                 )
+
+        return redirect('/delivery_home/')
+    return redirect('/login/')
+
+
+def toggle_agent_status(request):
+    if 'did' in request.session:
+        agent = get_object_or_404(DeliveryAgent, id=request.session['did'])
+
+        # Flip the status
+        agent.is_available = not agent.is_available
+        agent.save()
 
         return redirect('/delivery_home/')
     return redirect('/login/')
