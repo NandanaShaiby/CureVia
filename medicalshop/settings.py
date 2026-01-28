@@ -132,3 +132,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 
 OPENAI_API_KEY = "OPENAI_API_KEY"
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'nandanashaiby@gmail.com'  # <--- Gmail here
+EMAIL_HOST_PASSWORD = 'wcmk kfbi iizg cviq' # <--- App Password here

@@ -64,6 +64,9 @@ urlpatterns =[
         path('track_order/<str:group_id>/', views.track_order, name='track_order'),
         path('delivery_update_status/<int:id>/', views.delivery_update_status, name='delivery_update_status'),
         path('toggle_agent_status/', views.toggle_agent_status, name='toggle_agent_status'),
+        path('forgot_password/', views.forgot_password, name='forgot_password'),
+        path('verify_otp/', views.verify_otp, name='verify_otp'),
+        path('new_password/', views.new_password, name='new_password'),
 
 
 
@@ -73,7 +76,6 @@ urlpatterns =[
 
 
 
-path('forgotpass/',views.forgotpass),
 
 
 

@@ -5,6 +5,9 @@ import uuid
 from django.utils import timezone
 from collections import defaultdict
 from .models import *
+from django.core.mail import send_mail
+from django.conf import settings
+import random
 
 def index(request):
     return render(request, "index.html")
@@ -29,9 +32,15 @@ def login(request):
     if request.method == "POST":
         e = request.POST.get("email")
         p = request.POST.get("password")
+        remember_me = request.POST.get("remember_me")
         log = Register.objects.filter(email=e, password=p)
         plog=Pharmacy.objects.filter(email=e, password=p)
         dlog=DeliveryAgent.objects.filter(email=e, password=p)
+        if log or plog or dlog:
+            if remember_me:
+                request.session.set_expiry(1209600)  # 2 weeks (in seconds)
+            else:
+                request.session.set_expiry(0)  # Expires when browser closes
         if log:
             for i in log:
                 request.session['user_id'] = i.id
@@ -1363,3 +1372,91 @@ def toggle_agent_status(request):
 
         return redirect('/delivery_home/')
     return redirect('/login/')
+
+
+# 1. ASK EMAIL & SEND OTP
+def forgot_password(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+
+        # Check if email exists in ANY of your 3 tables
+        user = Register.objects.filter(email=email).first()
+        pharmacy = Pharmacy.objects.filter(email=email).first()
+        agent = DeliveryAgent.objects.filter(email=email).first()
+
+        target_user = user or pharmacy or agent
+
+        if target_user:
+            # Generate 4-digit OTP
+            otp = str(random.randint(1000, 9999))
+
+            # Save data to Session (Temporary storage)
+            request.session['reset_email'] = email
+            request.session['reset_otp'] = otp
+
+            # Determine user type for later updating
+            if user:
+                request.session['user_type'] = 'user'
+            elif pharmacy:
+                request.session['user_type'] = 'pharmacy'
+            elif agent:
+                request.session['user_type'] = 'agent'
+
+            # Send Email
+            subject = "CureVia Password Reset OTP"
+            message = f"Hello,\n\nYour OTP to reset your password is: {otp}\n\nDo not share this with anyone."
+            from_email = f"CureVia Support <{settings.EMAIL_HOST_USER}>"
+            recipient_list = [email]
+
+            try:
+                send_mail(subject, message, from_email, recipient_list)
+                return redirect('/verify_otp/')
+            except Exception as e:
+                return render(request, "forgot_password.html", {"msg": "Error sending email. Check internet."})
+        else:
+            return render(request, "forgot_password.html", {"msg": "Email not registered with us."})
+
+    return render(request, "forgot_password.html")
+
+
+# 2. VERIFY THE OTP
+def verify_otp(request):
+    if request.method == "POST":
+        entered_otp = request.POST.get("otp")
+        generated_otp = request.session.get('reset_otp')
+
+        if entered_otp == generated_otp:
+            return redirect('/new_password/')
+        else:
+            return render(request, "verify_otp.html", {"msg": "Invalid OTP. Try again."})
+
+    return render(request, "verify_otp.html")
+
+
+# 3. SET NEW PASSWORD
+def new_password(request):
+    if request.method == "POST":
+        new_pass = request.POST.get("new_password")
+        confirm_pass = request.POST.get("confirm_password")
+
+        email = request.session.get('reset_email')
+        user_type = request.session.get('user_type')
+
+        if new_pass == confirm_pass:
+            # Update the password in the correct table
+            if user_type == 'user':
+                Register.objects.filter(email=email).update(password=new_pass)
+            elif user_type == 'pharmacy':
+                Pharmacy.objects.filter(email=email).update(password=new_pass)
+            elif user_type == 'agent':
+                DeliveryAgent.objects.filter(email=email).update(password=new_pass)
+
+            # Clean up session
+            del request.session['reset_otp']
+            del request.session['reset_email']
+
+            return redirect('/login/')
+        else:
+            return render(request, "new_password.html", {"msg": "Passwords do not match."})
+
+    return render(request, "new_password.html")
