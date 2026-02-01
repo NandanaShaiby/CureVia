@@ -6,7 +6,7 @@ urlpatterns =[
         path('', views.index),
         path('reg/', views.reg),
         path('login/', views.login ,name='login'),
-        path('adminp/', views.admin),
+        path('adminp/', views.admin, name='admin_dashboard'),
         path('user/', views.user),
         path('pharmacist/', views.pharmacist),
         path('customer/', views.customer),
@@ -67,10 +67,14 @@ urlpatterns =[
         path('forgot_password/', views.forgot_password, name='forgot_password'),
         path('verify_otp/', views.verify_otp, name='verify_otp'),
         path('new_password/', views.new_password, name='new_password'),
-
-
-
-
+        path('admin_orders/', views.admin_orders, name='admin_orders'),
+        path('delivery_agents/', views.admin_delivery_agents, name='admin_delivery_agents'),
+        path('add_delivery_agent/', views.add_delivery_agent, name='add_delivery_agent'),
+        path('edit_delivery_agent/<int:id>/', views.edit_delivery_agent, name='edit_delivery_agent'),
+        path('delete_delivery_agent/<int:id>/', views.delete_delivery_agent, name='delete_delivery_agent'),
+        path('block_agent/<int:id>/', views.block_agent, name='block_agent'),
+        path('unblock_agent/<int:id>/', views.unblock_agent, name='unblock_agent'),
+        path('logout/', views.logout, name='logout'),
 
 
 

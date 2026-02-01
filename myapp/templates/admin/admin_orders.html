@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>All Orders | CureVia Admin</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://fonts.googleapis.com/css?family=Rubik:400,700,900|Crimson+Text:400,400i" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <style>
+    /* Exactly matching the Customer Page CSS */
+    body { font-family: 'Rubik', sans-serif; background-color: #f8f9fa; color: #343a40; }
+
+    .site-wrap { display: flex; min-height: 100vh; }
+    .main-content { margin-left: 250px; width: calc(100% - 250px); padding: 0; }
+
+    .sidebar { width: 250px; position: fixed; top: 0; left: 0; height: 100%; background-color: #343a40; z-index: 1000; }
+    .sidebar .nav { padding-top: 1.5rem; }
+    .sidebar a.nav-link { padding: 15px 25px; text-decoration: none; font-size: 1.05rem; font-weight: 500; color: #adb5bd; display: flex; align-items: center; transition: all 0.2s ease-in-out; }
+    .sidebar a.nav-link i { margin-right: 15px; width: 20px; text-align: center; }
+    .sidebar a.nav-link:hover { background-color: #495057; color: #ffffff; }
+    .sidebar a.nav-link.active { background-color: #8e44ad; color: #ffffff; border-right: 4px solid #c39bd3; }
+    .sidebar .sidebar-heading { padding: 10px 25px; font-size: 0.8rem; font-weight: 700; color: #6c757d; text-transform: uppercase; letter-spacing: .08em; }
+
+    .admin-navbar { background-color: #fff; border-bottom: 1px solid #dee2e6; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .admin-navbar .logo a { font-family: 'Rubik', sans-serif; text-transform: uppercase; letter-spacing: .2em; font-size: 22px; font-weight: 900; color: #000000; text-decoration: none; }
+    .admin-navbar .logo a:hover { opacity: 0.8; }
+    .admin-navbar .admin-profile { display: flex; align-items: center; font-weight: 500; color: #343a40; }
+    .admin-navbar .admin-profile i { font-size: 1.5rem; color: #8e44ad; margin-right: 12px; background-color: #e9ecef; padding: 8px; border-radius: 50%; }
+
+    .page-content { padding: 2.5rem; }
+    .card { border: none; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+
+    .badge { font-size: 0.85rem; padding: 0.5em 0.8em; border-radius: 15px; }
+    .badge-Pending { background: #ffc107; color: #000; }
+    .badge-Packed { background: #17a2b8; color: white; }
+    .badge-Out { background: #007bff; color: white; }
+    .badge-Delivered { background: #28a745; color: white; }
+    .badge-Rejected { background: #dc3545; color: white; }
+    .btn-primary { background-color: #8e44ad; border-color: #8e44ad; }
+    .btn-primary:hover { background-color: #7d3c98; border-color: #7d3c98; }
+  </style>
+</head>
+<body>
+
+<div class="site-wrap">
+    <!-- Clean Sidebar -->
+    <div class="sidebar">
+      <nav class="nav flex-column">
+        <div class="sidebar-heading">Main</div>
+        <a href="/adminp/" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="/admin_products/" class="nav-link"><i class="fas fa-pills"></i> Products</a>
+        <a href="/admin_orders/" class="nav-link active"><i class="fas fa-shopping-cart"></i> Orders</a>
+        <a href="/customer/" class="nav-link"><i class="fas fa-users"></i> Customers</a>
+        <a href="/pharmacies/" class="nav-link"><i class="fas fa-prescription-bottle-alt"></i> Pharmacies</a>
+        <a href="/delivery_agents/" class="nav-link"><i class="fas fa-shipping-fast"></i> Delivery Agents</a>
+        <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <header class="admin-navbar">
+        <div class="logo"><a href="#">CureVia</a></div>
+        <div class="admin-profile"><i class="fas fa-user-shield"></i><span>Administrator</span></div>
+      </header>
+
+      <main class="page-content">
+        <div class="container-fluid">
+
+          <div class="d-flex justify-content-between align-items-center mb-4">
+              <h1 style="font-weight: 700;">All Orders</h1>
+
+              <form action="" method="GET" class="form-inline">
+                  <input type="text" name="q" class="form-control mr-2" placeholder="Search Order ID / Name" value="{{ query|default:'' }}">
+                  <button type="submit" class="btn btn-primary">Search</button>
+              </form>
+          </div>
+
+          <div class="card">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead class="bg-light">
+                    <tr>
+                      <th class="pl-4">Order ID</th>
+                      <th>Date</th>
+                      <th>Customer</th>
+                      <th>Medicine</th>
+                      <th>Amount</th>
+                      <th>Pharmacy</th>
+                      <th>Agent</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for order in orders %}
+                    <tr>
+                      <td class="pl-4 font-weight-bold">#{{ order.order_group_id|default:order.id }}</td>
+                      <td>{{ order.created_at|date:"Y-m-d" }}</td>
+                      <td>{{ order.fname }}<br><small class="text-muted">{{ order.phone }}</small></td>
+                      <td>{{ order.medicine.name }} (x{{ order.quantity }})</td>
+                      <td>₹{{ order.quantity }}</td> <!-- Use custom filter for price if needed -->
+
+                      <td>{% if order.assigned_pharmacy %}{{ order.assigned_pharmacy.name }}{% else %}-{% endif %}</td>
+                      <td>{% if order.assigned_agent %}{{ order.assigned_agent.name }}{% else %}-{% endif %}</td>
+
+                      <td>
+                        <span class="badge
+                            {% if 'Pending' in order.status %}badge-Pending
+                            {% elif 'Packed' in order.status %}badge-Packed
+                            {% elif 'Out' in order.status %}badge-Out
+                            {% elif 'Delivered' in order.status %}badge-Delivered
+                            {% else %}badge-Rejected{% endif %}">
+                            {{ order.status }}
+                        </span>
+                      </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="8" class="text-center py-5">No orders found.</td></tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+</div>
+
+</body>
+</html>

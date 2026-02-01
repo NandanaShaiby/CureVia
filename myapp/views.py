@@ -77,8 +77,27 @@ def user(request):
     else:
         return redirect("/login")
 
+
 def admin(request):
-    return render(request, "admin/adminhome.html")
+    # 1. Calculate Stats
+    total_orders = Order.objects.count()
+    total_customers = Register.objects.exclude(rights='admin').count()
+
+    # Calculate Revenue
+    all_orders = Order.objects.all()
+    total_revenue = sum(item.quantity * item.medicine.price for item in all_orders)
+
+    # 2. Get Recent Orders
+    recent_orders = Order.objects.select_related('user', 'medicine').order_by('-created_at')[:10]
+
+    # 3. Context Dictionary (MUST MATCH HTML VARIABLES)
+    context = {
+        'total_orders': total_orders,  # Matches {{ total_orders }}
+        'total_customers': total_customers,  # Matches {{ total_customers }}
+        'total_revenue': total_revenue,  # Matches {{ total_revenue }}
+        'recent_orders': recent_orders  # Matches {% for order in recent_orders %}
+    }
+    return render(request, "admin/adminhome.html", context)
 
 
 def pharmacist(request):
@@ -543,6 +562,12 @@ def reject_prescription(request, id):
 
 
 def upload_general(request):
+    if 'uid' not in request.session:
+        return redirect('/login/')
+
+        # 2. Get User (So we can pass it to template if needed)
+    uid = request.session['uid']
+    user = Register.objects.get(id=uid)
     if request.method == "POST":
         if 'uid' in request.session:
             uid = request.session['uid']
@@ -1460,3 +1485,99 @@ def new_password(request):
             return render(request, "new_password.html", {"msg": "Passwords do not match."})
 
     return render(request, "new_password.html")
+
+
+def admin_orders(request):
+    # Base Query
+    orders = Order.objects.all().order_by('-created_at')
+
+    # Optional: Simple Search Filter (by Order ID or Customer Name)
+    query = request.GET.get('q')
+    if query:
+        orders = orders.filter(
+            Q(order_group_id__icontains=query) |
+            Q(fname__icontains=query)
+        )
+
+    context = {
+        'orders': orders,
+        'query': query
+    }
+    return render(request, "admin/admin_orders.html", context)
+
+
+def admin_delivery_agents(request):
+    agents = DeliveryAgent.objects.all()
+    return render(request, "admin/delivery_agents.html", {"agents": agents})
+
+
+def add_delivery_agent(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        password = request.POST.get('password')
+        location = request.POST.get('location')  # e.g. "Kochi"
+
+        DeliveryAgent.objects.create(
+            name=name,
+            email=email,
+            phone=phone,
+            password=password,
+            current_location=location,
+            is_available=True
+        )
+        return redirect('/delivery_agents/')
+
+    return render(request, "admin/add_delivery_agent.html")
+
+
+def edit_delivery_agent(request, id):
+    agent = get_object_or_404(DeliveryAgent, id=id)
+
+    if request.method == "POST":
+        agent.name = request.POST.get('name')
+        agent.email = request.POST.get('email')
+        agent.phone = request.POST.get('phone')
+        agent.current_location = request.POST.get('location')
+        # agent.is_available = request.POST.get('is_available') == 'on'
+        agent.save()
+        return redirect('/delivery_agents/')
+
+    return render(request, "admin/edit_delivery_agent.html", {'agent': agent})
+
+
+def delete_delivery_agent(request, id):
+    agent = get_object_or_404(DeliveryAgent, id=id)
+    agent.delete()
+    return redirect('/delivery_agents/')
+
+def block_agent(request, id):
+    agent = get_object_or_404(DeliveryAgent, id=id)
+    agent.is_available = False # Force offline
+    agent.save()
+    return redirect('/delivery_agents/')
+
+def unblock_agent(request, id):
+    agent = get_object_or_404(DeliveryAgent, id=id)
+    agent.is_available = True # Force online (or allow login)
+    agent.save()
+    return redirect('/delivery_agents/')
+
+
+def logout(request):
+    # --- SPECIAL LOGIC FOR DELIVERY AGENTS ---
+    if 'did' in request.session:
+        try:
+            # Find the agent and set them to Offline
+            agent = DeliveryAgent.objects.get(id=request.session['did'])
+            agent.is_available = False
+            agent.save()
+        except DeliveryAgent.DoesNotExist:
+            pass  # Continue logging out even if agent not found
+
+    # --- UNIVERSAL LOGOUT (For Everyone) ---
+    # This deletes 'uid', 'pharmacy_id', 'user_id', 'staff_name', etc.
+    request.session.flush()
+
+    return redirect('/login/')

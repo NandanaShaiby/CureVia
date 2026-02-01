@@ -115,6 +115,10 @@ class Order(models.Model):
     order_group_id = models.CharField(max_length=100, blank=True, null=True)
     payment_mode = models.CharField(max_length=50, default="COD")
 
+    @property
+    def total_cost(self):
+        return self.quantity * self.medicine.price
+
     def __str__(self):
         return f'{self.id} {self.medicine.name}'
 
