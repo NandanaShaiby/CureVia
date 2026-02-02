@@ -81,6 +81,15 @@
     .badge-Rejected { background-color: #dc3545; color: white; }
 
   </style>
+    <!--<script>
+    // Check if the page is being loaded from the Back-Forward Cache (RAM)
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            // If yes, FORCE a reload from the server
+            window.location.reload();
+        }
+    };
+</script>-->
 </head>
 <body>
 

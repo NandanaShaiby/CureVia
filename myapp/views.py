@@ -1,3 +1,5 @@
+from selectors import SelectSelector
+
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
@@ -7,6 +9,7 @@ from collections import defaultdict
 from .models import *
 from django.core.mail import send_mail
 from django.conf import settings
+from django.views.decorators.cache import never_cache
 import random
 
 def index(request):
@@ -63,6 +66,7 @@ def login(request):
             msg = True
     return render(request, "login.html",{"msg":msg})
 
+@never_cache
 def user(request):
     if 'user_id' in request.session:
         uid = request.session['user_id']
@@ -77,29 +81,45 @@ def user(request):
     else:
         return redirect("/login")
 
-
+@never_cache
 def admin(request):
-    # 1. Calculate Stats
-    total_orders = Order.objects.count()
-    total_customers = Register.objects.exclude(rights='admin').count()
+    if 'user_id' in request.session:
+        # Verify it's actually an admin (Optional but recommended)
+        uid = request.session['user_id']
+        try:
+            user_obj = Register.objects.get(id=uid)
+            if user_obj.rights != 'admin':
+                return redirect('/login/')
+        except Register.DoesNotExist:
+            return redirect('/login/')
 
-    # Calculate Revenue
-    all_orders = Order.objects.all()
-    total_revenue = sum(item.quantity * item.medicine.price for item in all_orders)
+        # 1. Calculate Stats
+        total_orders = Order.objects.count()
+        total_customers = Register.objects.exclude(rights='admin').count()
 
-    # 2. Get Recent Orders
-    recent_orders = Order.objects.select_related('user', 'medicine').order_by('-created_at')[:10]
+        # Calculate Revenue
+        all_orders = Order.objects.select_related('medicine')
+        total_revenue = sum(item.quantity * item.medicine.price for item in all_orders)
 
-    # 3. Context Dictionary (MUST MATCH HTML VARIABLES)
-    context = {
-        'total_orders': total_orders,  # Matches {{ total_orders }}
-        'total_customers': total_customers,  # Matches {{ total_customers }}
-        'total_revenue': total_revenue,  # Matches {{ total_revenue }}
-        'recent_orders': recent_orders  # Matches {% for order in recent_orders %}
-    }
-    return render(request, "admin/adminhome.html", context)
+        # 2. Get Recent Orders
+        recent_orders = Order.objects.select_related(
+            'user', 'medicine'
+        ).order_by('-created_at')[:10]
 
+        # 3. Context Dictionary
+        context = {
+            'total_orders': total_orders,
+            'total_customers': total_customers,
+            'total_revenue': total_revenue,
+            'recent_orders': recent_orders
+        }
 
+        return render(request, "admin/adminhome.html", context)
+
+    else:
+        return redirect('/login/')
+
+@never_cache
 def pharmacist(request):
     # CHANGED: Check for 'pharmacy_id' instead of 'pid'
     if 'pharmacy_id' in request.session:
@@ -138,6 +158,7 @@ def pharmacist(request):
     else:
         return redirect('/login/')
 
+@never_cache
 def customer(request):
     us=Register.objects.exclude(rights='admin')
     return render(request, "admin/customer.html",{"us":us})
@@ -150,6 +171,7 @@ def unblock(request,id):
     Register.objects.filter(id=id).update(rights='user')
     return redirect("/customer/")
 
+@never_cache
 def edituser(request,id):
     customer = get_object_or_404(Register, id=id)
 
@@ -176,7 +198,7 @@ def edituser(request,id):
         }
         return render(request, 'admin/edit_user.html', context)
 
-
+@never_cache
 def adduser(request):
     if request.method == 'POST':
         f = request.POST.get('fname')
@@ -444,10 +466,6 @@ def confirmpayment(request):
 def thanku(request):
     return render(request, "user/thankyou.html")
 
-def forgotpass(request):
-    return render(request, "forgot_password.html")
-
-
 def search_product(request):
     query = request.GET.get('q')
     pincode = request.GET.get('pincode')
@@ -624,7 +642,7 @@ def upload_general(request):
 
     return render(request, "user/upload_general.html")
 
-
+@never_cache
 def delivery_home(request):
     if 'did' in request.session:
         did = request.session['did']
@@ -658,6 +676,7 @@ def delivery_home(request):
     else:
         return redirect('/login/')
 
+@never_cache
 def pharmacies(request):
     us=Pharmacy.objects.all()
     return render(request, "admin/pharmacies.html",{"us":us})
@@ -729,7 +748,7 @@ def unblockpharmacy(request, id):
     pharmacy.save()
     return redirect("/pharmacies/")
 
-
+@never_cache
 def admin_products(request):
     products = Medicine.objects.all().order_by('-id')
     categories = Category.objects.all()
@@ -1486,7 +1505,7 @@ def new_password(request):
 
     return render(request, "new_password.html")
 
-
+@never_cache
 def admin_orders(request):
     # Base Query
     orders = Order.objects.all().order_by('-created_at')
@@ -1505,7 +1524,7 @@ def admin_orders(request):
     }
     return render(request, "admin/admin_orders.html", context)
 
-
+@never_cache
 def admin_delivery_agents(request):
     agents = DeliveryAgent.objects.all()
     return render(request, "admin/delivery_agents.html", {"agents": agents})
